@@ -9,26 +9,30 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique:true,
+      unique: true,
       lowercase: true,
-    trim: true,
-
+      trim: true,
     },
     password: {
       type: String,
       required: true,
     },
     verificationToken: {
-    type: String,
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
+      type: String,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     profilePic: {
       type: String,
-      default:
-        "https://res.cloudinary.com/dft2urwa8/image/upload/v1722854687/profile-circle-icon-256x256-cm91gqm2_yi3mhf.png",
+      default: "https://res.cloudinary.com/dft2urwa8/image/upload/v1722854687/profile-circle-icon-256x256-cm91gqm2_yi3mhf.png",
+    },
+    resetToken: {
+      type: String,
+    },
+    resetTokenExpiry: {
+      type: Date,
     },
   },
   {
