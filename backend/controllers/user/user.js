@@ -273,3 +273,19 @@ export const uploadProfilePicController = async (req, res) => {
     res.status(500).json({ msg: "Error uploading profile picture" });
   }
 };
+
+//logout controller
+export const logoutController = async (req, res) => {
+    try {
+        res.clearCookie('token', {
+          httpOnly: true,
+          secure: false, 
+          sameSite: 'strict',
+        });
+        
+        res.status(200).json({ msg: 'Logged out successfully' });
+      } catch (error) {
+        console.error('Error logging out:', error);
+        res.status(500).json({ msg: 'Internal server error' });
+      }
+    }

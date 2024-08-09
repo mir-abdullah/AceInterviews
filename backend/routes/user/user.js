@@ -17,6 +17,7 @@ import {
   updateAcoount,
   uploadProfilePicController,
   verifyEmailController,
+  logoutController
 } from "../../controllers/user/user.js";
 
 const router = express.Router();
@@ -55,5 +56,9 @@ router.delete("/delete-profile", auth, deleteProfileController);
 
 //update Account information
 router.put("/update-profile", auth, updateAcoount);
+
+//logout route
+router.get("/logout", auth, logoutController);
+
 
 export default router;
