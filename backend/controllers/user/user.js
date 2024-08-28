@@ -12,13 +12,16 @@ import transporter from "../../utils/nodeMailer.js";
 export const signupController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
     if (!name || !email || !password) {
       return res.status(400).json({ msg: "Please fill in all fields" });
     }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ msg: "Email already exists" });
+      return res.status(400).send({ msg: "Email already exists" });
     }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -29,13 +32,15 @@ export const signupController = async (req, res) => {
       password: hashedPassword,
       verificationToken,
     });
+
     const token = jwt.sign({ id: newUser._id }, process.env.SECRET);
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "strict",
     });
-    const verificationUrl = `http://localhost:4000/api/user/verify-email?token=${verificationToken}`;
+
+    const verificationUrl = `http://localhost:4444/api/user/verify-email?token=${verificationToken}`;
     const mailOptions = {
       from: "AceInterviews <no-reply@aceinterviews.com>",
       to: email,
@@ -70,6 +75,7 @@ export const signupController = async (req, res) => {
   }
 };
 
+
 //login controller
 export const loginController = async (req, res) => {
   try {
@@ -101,6 +107,7 @@ export const loginController = async (req, res) => {
     return res.status(200).json({ msg: "Login successful", token });
   } catch (error) {
     console.error(error);
+    res.cookie("token",token)
     return res
       .status(500)
       .json({ msg: "Internal server error Try again later" });
