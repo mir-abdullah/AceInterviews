@@ -4,6 +4,9 @@ import mongoose from 'mongoose'
 import fileUpload from 'express-fileupload'
 import userRouter from './routes/user/user.js'
 import cors from 'cors'
+import TechnicalInterviewRouter from './routes/technicalInterview/interviewTopic.js'
+import TechnicalQuestionRouter from './routes/technicalInterview/question.js'
+import InterviewRouter from './routes/technicalInterview/interview.js'
 
 
 dotenv.config()
@@ -16,6 +19,11 @@ app.use(fileUpload({
     useTempFiles:true
 }))
 app.use('/api/user', userRouter)
+
+//technical interview
+app.use('/technicalInterview',TechnicalInterviewRouter)
+app.use('/questions',TechnicalQuestionRouter)
+app.use('/technical',InterviewRouter)
 app.get('/',(req,res)=>{
     res.send('Hello World')
 })
