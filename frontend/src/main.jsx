@@ -17,7 +17,7 @@ import TechInterviewPage from "./pages/interviews/TechInterviewPage.jsx";
 import Feedback from "./pages/feedback/Feedback.jsx";
 import Quizes from './pages/quiz/Quizes.jsx';
 import QuizPage from "./pages/quiz/QuizPage.jsx";
-
+import Profile from "./pages/profile/Profile.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -63,6 +63,12 @@ const router = createBrowserRouter([
         path: "/dashboard/quiz/:id",
         element: <QuizPage />,
       },
+      {
+        path: "/dashboard/profile",
+        element: <Profile />,
+      },    
+     
+      
     ],
   },
 ]);

@@ -5,7 +5,6 @@ import {
   LuBarChart4,
   LuHome,
   LuMenu,
-  LuSearch,
   LuSettings,
   LuUser2,
   LuMail,
@@ -31,34 +30,27 @@ const Sidebar = () => {
       ],
     },
     { path: "/dashboard/quizes", name: "Quizes", icon: <LuMail /> },
-    { path: "/analytics", name: "Reports", icon: <LuBarChart4 /> },
+    { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
     { path: "/settings", name: "Settings", icon: <LuSettings /> },
   ];
 
   return (
     <motion.div
-      className="bg-gradient-to-tl from-teal-400 to-green-900 text-white h-screen flex flex-col"
+      className="bg-gradient-to-tl from-teal-400 to-green-900 text-white h-screen flex flex-col relative"
       animate={{ width: isOpen ? "200px" : "45px" }}
       transition={{ duration: 0.5, type: "spring", damping: 10 }}
     >
       <div className="flex items-center justify-between p-6">
-        <LuMenu onClick={toggle} className="text-xl cursor-pointer" />
+        <LuMenu
+          onClick={toggle}
+          className="text-xl cursor-pointer absolute left-4 top-5.5"
+        />
         {isOpen && (
-          <motion.h1 className="text-xl leading-none">AceInterview</motion.h1>
+          <motion.h1 className="text-xl leading-none ml-8">
+            AceInterview
+          </motion.h1>
         )}
       </div>
-      {isOpen && (
-        <div className="flex items-center mt-5 mb-5 p-2">
-          <LuSearch />
-          <motion.input
-            type="text"
-            placeholder="Search"
-            initial={{ width: 0 }}
-            animate={{ width: "full" }}
-            className="ml-2 bg-gray-200 text-black placeholder-gray-700 focus:outline-none"
-          />
-        </div>
-      )}
       <nav className="mt-8 space-y-1 flex-grow">
         {routes.map((route, index) => {
           if (route.submenu) {

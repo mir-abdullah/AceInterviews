@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../redux/slices/auth/auth.slice';
 import { useNavigate, Link } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
+import Cookies from 'js-cookie'
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -22,11 +23,17 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowError(false);  
-    setError(null);  // Clear previous error
+    setError(null);  
 
     try {
       const result = await dispatch(loginUser(formData));
+      const token=result.payload.token
+      // const {token,msg}=result
+      // console.log(token)
+      // console.log(msg)
       if (loginUser.fulfilled.match(result)) {
+        Cookies.set('token', token, { expires: 7 }); // Expires in 7 days
+
         navigate('/dashboard/overview');
       } else if (loginUser.rejected.match(result)) {
         setError("Invalid Email or Password Entered");
