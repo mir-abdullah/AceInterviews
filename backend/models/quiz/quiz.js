@@ -1,0 +1,42 @@
+import mongoose from 'mongoose';
+
+const quizResultSchema = mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  quizTopic: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'QuizTopic',
+    required: true
+  },
+  answers: [{
+    question: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'QuizQuestion' 
+    },
+    selectedOption: {
+      type: String, // Storing option value directly
+      required: true
+    },
+    correctOption: {
+      type: String, // Storing correct option value directly
+      required: true
+    },
+    isCorrect: {
+      type: Boolean,
+      required: true
+    }
+  }],
+  score: {
+    type: Number,
+    required: true
+  },
+  attemptedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+export default mongoose.model('QuizResult', quizResultSchema);

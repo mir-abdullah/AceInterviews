@@ -10,13 +10,13 @@ const quizTopicSchema =mongoose.Schema({
         required:true
     },
     picture: {
-        type: String, // Store the image URL
-        required: false // Make it optional in case some topics don't have images
+        type: String, 
+        required: false
       },
-    questions:[{
+    questions:[{    
         type:mongoose.Schema.Types.ObjectId,
         ref:'Question'
     }]
 })
 
-export default mongoose.model('InterviewTopic',interviewTopicSchema)
+export default mongoose.model('QuizTopic',quizTopicSchema)

@@ -17,7 +17,8 @@ import {
   updateAcoount,
   uploadProfilePicController,
   verifyEmailController,
-  logoutController
+  logoutController,
+  confirmOldPasswordController
 } from "../../controllers/user/user.js";
 
 const router = express.Router();
@@ -46,7 +47,7 @@ router.patch("/upload-profile-picture", auth, uploadProfilePicController);
 router.post("/forgot-password", forgotPasswordController);
 
 // reset password route
-router.post("/reset-password", resetPasswordController);
+router.post("/reset-password",auth, resetPasswordController);
 
 //get user profile
 router.get("/profile", auth, getProfileController);
@@ -59,6 +60,9 @@ router.put("/update-profile", auth, updateAcoount);
 
 //logout route
 router.get("/logout", auth, logoutController);
+
+//confirm old password
+router.post("/confirm-old-password", auth, confirmOldPasswordController);
 
 
 export default router;
