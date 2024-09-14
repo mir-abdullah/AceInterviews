@@ -13,15 +13,15 @@ import {
   Typography,
   Grow,
 } from '@mui/material';
-import { fetchUserProfile } from '../../redux/slices/user/user.slice.js'
-
+import { fetchUserProfile, logoutUser } from '../../redux/slices/user/user.slice.js'; // Import logoutUser action
+import { useNavigate } from 'react-router-dom';
 const Header = () => {
   const dispatch = useDispatch();
   const { user, loading, error } = useSelector((state) => state.user); // Access user state
 
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notificationEl, setNotificationEl] = React.useState(null);
+  const navigate =useNavigate()
 
   const notifications = [
     'Your interview is scheduled for tomorrow at 10 AM.',
@@ -47,6 +47,12 @@ const Header = () => {
 
   const handleCloseNotificationMenu = () => {
     setNotificationEl(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser()); // Dispatch logout action
+    navigate('/')
+    // Close profile menu after logout
   };
 
   return (
@@ -134,7 +140,7 @@ const Header = () => {
             TransitionComponent={Grow} // Using MUI's built-in Grow transition
           >
             <MenuItem onClick={handleCloseProfileMenu}>My Profile</MenuItem>
-            <MenuItem onClick={handleCloseProfileMenu}>Signout</MenuItem>
+            <MenuItem onClick={handleLogout}>Signout</MenuItem> {/* Call logout here */}
           </Menu>
         </div>
       </div>

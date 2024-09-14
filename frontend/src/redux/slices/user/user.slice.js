@@ -69,6 +69,16 @@ export const deleteProfile = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk('user/logout', async (_, thunkAPI) => {
+  try {
+    // Call the logout API endpoint
+    const response = await API.post('/api/user/logout'); // Assuming POST for logout
+    return response.data; // Return the success message or data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || 'Failed to logout');
+  }
+});
+
 
 const userSlice = createSlice({
   name: "user",
@@ -154,6 +164,21 @@ const userSlice = createSlice({
       .addCase(deleteProfile.rejected, (state, action) => {
         state.deleteProfileStatus = "failed";
         state.deleteProfileError = action.payload || 'Failed to delete profile';
+      })
+
+      //logout reducers
+
+      .addCase(logoutUser.pending, (state) => {
+        state.logoutStatus = "loading";
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.logoutStatus = "succeeded";
+        state.user = null; // Clear the user data on logout
+        state.status = "idle"; // Reset user-related states
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.logoutStatus = "failed";
+        state.logoutError = action.payload || 'Failed to logout';
       });
   },
 });

@@ -162,15 +162,20 @@ const Profile = () => {
 
   const handleDeleteProfile = async () => {
     try {
-      const result = await dispatch(deleteProfile());
-      if (result.msg) {
-        navigate('/ ');
+      const resultAction = await dispatch(deleteProfile());
+      
+      // Assuming deleteProfile is an async thunk, check for the fulfilled status or the payload
+      if (deleteProfile.fulfilled.match(resultAction)) {
+        // Assuming resultAction.payload contains the expected message
+        if (resultAction.payload?.msg) {
+          navigate('/');
+        }
       }
     } catch (error) {
-      // Handle any errors here
       console.error("Error deleting profile:", error);
     }
-  }
+  };
+  
 
   // Effect to handle profile update success or error
   useEffect(() => {
