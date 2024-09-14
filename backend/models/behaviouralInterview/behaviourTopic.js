@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const interviewTopicSchema =mongoose.Schema({
+const behaviouralInterviewTopic =mongoose.Schema({
     title :{
         type:String,
         required:true
@@ -19,4 +19,4 @@ const interviewTopicSchema =mongoose.Schema({
     }]
 })
 
-export default mongoose.model('InterviewTopic',interviewTopicSchema)
+export default mongoose.model('InterviewTopic',behaviouralInterviewTopic)

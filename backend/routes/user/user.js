@@ -24,11 +24,7 @@ import {
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-const cloudinaryConfig = cloudinary.config({
-  cloud_name: "dft2urwa8",
-  api_key: "833392216123692",
-  api_secret: "KRiko4Xdu6OMb-EN6NAtQ33PJkY",
-});
+
 
 //signup route
 
@@ -59,7 +55,7 @@ router.delete("/delete-profile", auth, deleteProfileController);
 router.put("/update-profile", auth, updateAcoount);
 
 //logout route
-router.get("/logout", auth, logoutController);
+router.post("/logout", auth, logoutController);
 
 //confirm old password
 router.post("/confirm-old-password", auth, confirmOldPasswordController);
