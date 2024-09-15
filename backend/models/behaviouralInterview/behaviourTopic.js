@@ -15,8 +15,8 @@ const behaviouralInterviewTopic =mongoose.Schema({
     },
     questions:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Question'
+        ref:'BehaviourQuestion'
     }]
 })
 
-export default mongoose.model('InterviewTopic',behaviouralInterviewTopic)
+export default mongoose.model('BehaviourInterviewTopic',behaviouralInterviewTopic)

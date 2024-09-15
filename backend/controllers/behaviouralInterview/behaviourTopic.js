@@ -1,7 +1,8 @@
 import express from "express";
 import User from "../../models/user/user.js";
-import InterviewTopic from '../../models/behaviouralInterview/behaviourTopic.js'
+import BehaviourInterviewTopic from '../../models/behaviouralInterview/behaviourTopic.js'
 import cloudinary from "../../utils/cloudinaryConfig.js";
+import BehaviourQuestion from "../../models/behaviouralInterview/behaviouralQuestion.js";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ export const addInterviewTopic = async (req, res) => {
     }
 
     // Create a new InterviewTopic with the provided data
-    const newInterviewTopic = await InterviewTopic.create({
+    const newInterviewTopic = await BehaviourInterviewTopic.create({
       title,
       description,
       picture: pictureUrl, // Use the URL obtained from Cloudinary
@@ -41,7 +42,7 @@ export const addInterviewTopic = async (req, res) => {
 //route to get all topics
 export const getAllInterviews = async (req, res) => {
   try {
-    const allInterviews = InterviewTopic.find();
+    const allInterviews = BehaviourInterviewTopic.find();
     res.status(200).json({ message: "All Interviews", allInterviews });
   } catch (error) {
     res.status(500).send("Something Went Wrong Try again later");
@@ -53,7 +54,7 @@ export const getInterview = async (req, res) => {
   try {
     const { interviewId } = req.params;
 
-    const interview = await InterviewTopic.findById(interviewId).populate(
+    const interview = await BehaviourInterviewTopic.findById(interviewId).populate(
       "questions"
     );
 
@@ -83,7 +84,7 @@ export const editInterviewTopic = async (req, res) => {
       });
       pictureUrl = result.secure_url;
     }
-    const updatedInterviewTopic = await InterviewTopic.findByIdAndUpdate(
+    const updatedInterviewTopic = await BehaviourInterviewTopic.findByIdAndUpdate(
       interviewId,
       { title, description,picture:pictureUrl },
       {
@@ -114,15 +115,15 @@ export const deleteInterviewTopic = async (req, res) => {
   try {
     const { interviewId } = req.params;
 
-    const interviewTopic = await InterviewTopic.findById(interviewId);
+    const interviewTopic = await BehaviourInterviewTopic.findById(interviewId);
 
     if (!interviewTopic) {
       return res.status(404).json({ message: "Interview Topic not found" });
     }
 
-    await Question.deleteMany({ _id: { $in: interviewTopic.questions } });
+    await BehaviourQuestion.deleteMany({ _id: { $in: interviewTopic.questions } });
 
-    await InterviewTopic.findByIdAndDelete(interviewId);
+    await BehaviourInterviewTopic.findByIdAndDelete(interviewId);
 
     res
       .status(200)

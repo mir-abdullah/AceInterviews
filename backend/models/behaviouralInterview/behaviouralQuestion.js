@@ -5,4 +5,4 @@ const behaviourQuestionSchema = new mongoose.Schema({
 
 });
 
-export default mongoose.model('Question', behaviourQuestionSchema);
+export default mongoose.model('BehaviourQuestion', behaviourQuestionSchema);

@@ -1,6 +1,6 @@
 import express from 'express'
 import { auth } from '../../middleware/auth.js';
-import { startInterview,interviewResults } from '../../controllers/technicalInterview/interview.js';
+import { startInterview,interviewResults ,getInterviewResult} from '../../controllers/technicalInterview/interview.js';
 
 const router =express.Router();
 
@@ -12,7 +12,7 @@ router.post('/start-interview/:interviewTopicId',auth,startInterview );
 router.get('/results',auth,interviewResults)
 
 //route to get single interview result
-router.get('/results/:interviewId',auth,interviewResults)
+router.get('/results/:interviewId',auth,getInterviewResult)
 
 export default router
 

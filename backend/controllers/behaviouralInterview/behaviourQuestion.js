@@ -1,12 +1,12 @@
 import express from 'express';
-import InterviewTopic from '../../models/behaviouralInterview/behaviourTopic.js';
-import Question from '../../models/behaviouralInterview/behaviouralQuestion.js'
+import BehaviourInterviewTopic from '../../models/behaviouralInterview/behaviourTopic.js';
+import BehaviourQuestion from '../../models/behaviouralInterview/behaviouralQuestion.js'
 
 // Route to add a question
 export const addQuestion = async (req, res) => {
     try {
         const { interviewId } = req.params;
-        const interviewTopic = await InterviewTopic.findById(interviewId);
+        const interviewTopic = await BehaviourInterviewTopic.findById(interviewId);
         if (!interviewTopic) {
             return res.status(404).json({ message: 'Interview Topic not found' });
         }
@@ -16,7 +16,7 @@ export const addQuestion = async (req, res) => {
             return res.status(400).json({ message: 'Please fill all fields' });
         }
 
-        const newQuestion = new Question({
+        const newQuestion = new BehaviourQuestion({
             text
            
         });
@@ -37,12 +37,12 @@ export const deleteQuestion = async (req, res) => {
     try {
         const { interviewId, questionId } = req.params;
 
-        const interviewTopic = await InterviewTopic.findById(interviewId);
+        const interviewTopic = await BehaviourInterviewTopic.findById(interviewId);
         if (!interviewTopic) {
             return res.status(404).json({ message: 'Interview Topic not found' });
         }
 
-        const question = await Question.findByIdAndDelete(questionId);
+        const question = await BehaviourQuestion.findByIdAndDelete(questionId);
         if (!question) {
             return res.status(404).json({ message: 'Question not found' });
         }
@@ -60,13 +60,13 @@ export const deleteQuestion = async (req, res) => {
 export const updateQuestion = async (req, res) => {
     try {
         const { interviewId, questionId } = req.params;
-        const interviewTopic = await InterviewTopic.findById(interviewId);
+        const interviewTopic = await BehaviourInterviewTopic.findById(interviewId);
         if (!interviewTopic) {
             return res.status(404).json({ message: 'Interview Topic not found' });
         }
 
         const { text, difficulty } = req.body;
-        const question = await Question.findByIdAndUpdate(
+        const question = await BehaviourQuestion.findByIdAndUpdate(
             questionId,
             { text},
             { new: true }

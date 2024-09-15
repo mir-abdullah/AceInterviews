@@ -120,7 +120,7 @@ async function evaluateAnswerWithGemini(question, answer) {
        "score" : {"type" : "integer"},
        "feedback" : {"type" : "string"}
        }
-       pr
+       
       }`;
 
     // Generate the evaluation content
@@ -186,7 +186,7 @@ export const getInterviewResult = async (req, res) => {
     const { interviewId } = req.params;
     const userId = req.userId;
     // Fetch the interview result for the specific user and interview
-    const interview = await Interview.find({ user: userId, _id: interviewId });
+    const interview = await Interview.findOne({ user: userId, _id: interviewId });
     // Check if no interview is found
     if (!interview || interview.length === 0) {
       return res.status(404).json({ message: "No interview found." });
