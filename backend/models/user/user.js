@@ -28,10 +28,10 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "https://res.cloudinary.com/dft2urwa8/image/upload/v1722854687/profile-circle-icon-256x256-cm91gqm2_yi3mhf.png",
     },
-    resetToken: {
+    resetOtp: {
       type: String,
     },
-    resetTokenExpiry: {
+    resetOtpExpiry: {
       type: Date,
     },
   },

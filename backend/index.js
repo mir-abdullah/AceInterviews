@@ -11,7 +11,10 @@ import InterviewRouter from './routes/technicalInterview/interview.js'
 import quizQuestionRouter from './routes/quiz/quizQuestion.js'
 import quizRouter from './routes/quiz/quiz.js'
 import quizTopicRouter from './routes/quiz/quizTopic.js'
-
+import BehaviouralInterviewRouter from './routes/behaviouralInterview/behaviouralInterview.js'
+import BehaviouralQuestionRouter from './routes/behaviouralInterview/behaviourQuestion.js'
+import BehaviouralTopicRouter from './routes/behaviouralInterview/behaviourTopic.js'
+import Admin from './routes/admin/admin.js'
 
 
 dotenv.config()
@@ -33,10 +36,18 @@ app.use(cookieParser());
 //user
 app.use('/api/user', userRouter)
 
+//admin
+app.use('/api/admin', Admin)
+
 //technical interview
-app.use('/technicalInterview',TechnicalInterviewRouter)
-app.use('/questions',TechnicalQuestionRouter)
-app.use('/technical',InterviewRouter)
+app.use('/technicalInterviewTopic',TechnicalInterviewRouter)
+app.use('/technicalQuestion',TechnicalQuestionRouter)
+app.use('/technicalInterview',InterviewRouter)
+
+//behavioural interview
+app.use('/behaviouralInterview',BehaviouralInterviewRouter)
+app.use('/behaviouralQuestion',BehaviouralQuestionRouter)
+app.use('/behaviouralTopic',BehaviouralTopicRouter)
 
 //quiz
 app.use('/quiz',quizRouter)

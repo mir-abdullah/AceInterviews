@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const interviewSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  topic: { type: mongoose.Schema.Types.ObjectId, ref: 'InterviewTopic', required: true },
+  topic: { type: mongoose.Schema.Types.ObjectId, ref: 'BehaviourInterviewTopic', required: true },
   responses: [
     {
       question: { type: String },
@@ -18,4 +18,4 @@ const interviewSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model('Interview', interviewSchema);
+export default mongoose.model('BehaviouralInterview', interviewSchema);
