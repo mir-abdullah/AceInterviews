@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { API } from '../../../utils/api';
 
 // Thunk for handling the signup process using Axios
 export const signupUser = createAsyncThunk(
@@ -7,7 +7,7 @@ export const signupUser = createAsyncThunk(
     async (formData, { rejectWithValue }) => {
       try {
         // Send formData directly as the request body
-        const response = await axios.post('http://localhost:4444/api/user/signup', formData, {
+        const response = await API.post('/api/user/signup', formData, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -28,12 +28,32 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:4444/api/user/login', formData, {
+      const response = await API.post('/api/user/login', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
+// Thunk for handling Google login
+export const googleLogin = createAsyncThunk(
+  'auth/googleLogin',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await API.post('/api/user/google-login', { token }, {
+        headers: { 'Content-Type': 'application/json' },
+      });
       return response.data;
     } catch (error) {
       if (error.response && error.response.data) {
@@ -86,6 +106,24 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+
+   
+
+      // Handle Google Login
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isLoggedIn = true;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

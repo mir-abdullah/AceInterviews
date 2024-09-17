@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import logo from '../../assets/logo.png'
 import {
   LuBarChart4,
   LuHome,
@@ -46,9 +47,21 @@ const Sidebar = () => {
           className="text-xl cursor-pointer absolute left-4 top-5.5"
         />
         {isOpen && (
-          <motion.h1 className="text-xl leading-none ml-8">
+          <motion.div
+          className="flex items-center ml-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* <img
+            src={logo}
+            alt="AceInterview Logo"
+            className="w-5 h-6 mr-3" // Adjust size and margin as needed
+          /> */}
+          <motion.h1 className="text-xl leading-none font-bold">
             AceInterview
           </motion.h1>
+        </motion.div>
         )}
       </div>
       <nav className="mt-8 space-y-1 flex-grow">

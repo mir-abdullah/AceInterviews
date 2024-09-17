@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../../redux/slices/auth/auth.slice';
+import { loginUser, googleLogin } from '../../redux/slices/auth/auth.slice';
 import { useNavigate, Link } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -22,18 +23,15 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowError(false);  
-    setError(null);  
+    setShowError(false);
+    setError(null);
 
     try {
       const result = await dispatch(loginUser(formData));
-      const token=result.payload.token
-      // const {token,msg}=result
-      // console.log(token)
-      // console.log(msg)
+      const token = result.payload.token;
+
       if (loginUser.fulfilled.match(result)) {
         Cookies.set('token', token, { expires: 7 }); // Expires in 7 days
-
         navigate('/dashboard/overview');
       } else if (loginUser.rejected.match(result)) {
         setError("Invalid Email or Password Entered");
@@ -44,6 +42,24 @@ export default function LoginPage() {
     } catch (error) {
       setError("An unexpected error occurred");
       setShowError(true);
+    }
+  };
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const { credential } = credentialResponse;
+      const result = await dispatch(googleLogin(credential));
+
+      if (googleLogin.fulfilled.match(result)) {
+        const token = result.payload.token;
+        Cookies.set('token', token, { expires: 7 }); // Expires in 7 days
+        navigate('/dashboard/overview');
+      } else if (googleLogin.rejected.match(result)) {
+        setError("Google Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error('Google Login Error:', error);
+      setError("An error occurred during Google Login. Please try again.");
     }
   };
 
@@ -103,6 +119,12 @@ export default function LoginPage() {
           <Link to="/signup">
             <span className="text-sm text-[#7747ff]">Sign up for free!</span>
           </Link>
+        </div>
+        <div className="text-center mt-4">
+          <GoogleLogin
+            onSuccess={handleGoogleLogin}
+            onError={() => console.log('Google Login Failed')}
+          />
         </div>
         {error && <p className="text-red-500 mt-5">{error}</p>}
       </div>

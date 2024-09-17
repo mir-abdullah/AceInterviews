@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { signupUser } from '../../redux/slices/auth/auth.slice';
-import OAuth from '../../components/OAuth';
+import { signupUser, googleLogin } from '../../redux/slices/auth/auth.slice';
+import { GoogleLogin } from '@react-oauth/google';
+import {jwtDecode} from 'jwt-decode'
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -30,14 +31,29 @@ export default function SignupPage() {
     if (signupUser.fulfilled.match(result)) {
       navigate('/login');
     } else if (signupUser.rejected.match(result)) {
-      // Check if the error is specifically due to the email being registered
-      console.log(result)
-      console.log()
-      if (result.payload && result.payload.msg ) {
+      if (result.payload && result.payload.msg) {
         setError("This email is already registered. Please use another email.");
       } else {
         setError("An error occurred. Please try again.");
       }
+    }
+  };
+
+  const handleGoogleSignUp = async (credentialResponse) => {
+    try {
+      const { credential } = credentialResponse;
+      // const decoded = jwtDecode(credential)
+      // console.log(decoded)
+      const result = await dispatch(googleLogin(credential));
+
+      if (googleLogin.fulfilled.match(result)) {
+        navigate('/dashboard/overview');
+      } else if (googleLogin.rejected.match(result)) {
+        setError("Google Sign-Up failed. Please try again.");
+      }
+    } catch (error) {
+      console.error('Google Sign-Up Error:', error);
+      setError("An error occurred during Google Sign-Up. Please try again.");
     }
   };
 
@@ -50,10 +66,7 @@ export default function SignupPage() {
           </h2>
           {error && <p className="text-red-500 text-sm">{error}</p>} {/* Display error message */}
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Name
             </label>
             <input
@@ -67,10 +80,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -84,10 +94,7 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
@@ -111,7 +118,10 @@ export default function SignupPage() {
           </div>
         </form>
         <div className="py-5">
-          <OAuth />
+          <GoogleLogin
+            onSuccess={handleGoogleSignUp}
+            onError={() => console.log('Google Sign-Up Failed')}
+          />
         </div>
         <div className="text-sm text-center">
           <Link to="/login">
