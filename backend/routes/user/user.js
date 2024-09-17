@@ -18,12 +18,16 @@ import {
   uploadProfilePicController,
   verifyEmailController,
   logoutController,
-  confirmOldPasswordController
+  confirmOldPasswordController,
+  sendOtpController,
+  verifyOtpController,
+  handleGoogleLogin,
+ 
+  
 } from "../../controllers/user/user.js";
 
 const router = express.Router();
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 
 //signup route
@@ -59,6 +63,19 @@ router.post("/logout", auth, logoutController);
 
 //confirm old password
 router.post("/confirm-old-password", auth, confirmOldPasswordController);
+
+//send otp
+router.post('/send-otp',sendOtpController)
+
+//verify otp
+router.post('/verify-otp',verifyOtpController)
+
+
+
+//google login
+router.post('/google-login',handleGoogleLogin)
+
+
 
 
 export default router;

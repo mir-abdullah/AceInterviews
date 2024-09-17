@@ -6,22 +6,26 @@ import QuizQuestion from "../../models/quiz/quizQuestion.js";
 // Route to add a quiz topic with an image upload
 export const addQuizTopic = async (req, res) => {
   try {
-    const { title, description } = req.body;
-    let picture = null;
+    const { title, description,picture } = req.body;
+    let pictureUrl = null;
 
-    // Check if an image file is uploaded
-    if (req.file) {
-      picture = req.file.path; // Assuming the Cloudinary URL is stored in req.file.path
-    }
+    
 
     if (!title || !description) {
       return res.status(400).json({ message: "Please fill in all fields" });
+    }
+    if (picture) {
+      // Upload picture to Cloudinary and get the URL
+      const result = await cloudinary.uploader.upload(picture, {
+        folder: "quiz_pictures",
+      });
+      pictureUrl = result.secure_url;
     }
 
     const newQuizTopic = await QuizTopic.create({
       title,
       description,
-      picture, // Store the image URL in the picture field
+      picture:pictureUrl, 
     });
 
     res
@@ -65,12 +69,19 @@ export const getQuizTopic = async (req, res) => {
 export const editQuizTopic = async (req, res) => {
   try {
     const { quizTopicId } = req.params;
-    const { title, description } = req.body;
-    let picture = req.file ? req.file.path : undefined; // Only update picture if a new one is uploaded
+    const { title, description,picture } = req.body;
+    let pictureUrl =null
+    if (picture) {
+      // Upload picture to Cloudinary and get the URL
+      const result = await cloudinary.uploader.upload(picture, {
+        folder: "quiz_pictures",
+      });
+      pictureUrl = result.secure_url;
+    }
 
     const updatedQuizTopic = await QuizTopic.findByIdAndUpdate(
       quizTopicId,
-      { title, description, picture },
+      { title, description, picture:pictureUrl },
       { new: true, runValidators: true }
     );
 

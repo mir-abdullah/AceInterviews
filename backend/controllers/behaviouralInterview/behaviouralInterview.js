@@ -37,7 +37,7 @@ export const startInterview = async (req, res) => {
       const userAnswer = answers[question._id]; // Retrieve user's answer for this question
 
       // Evaluate the answer using the Gemini API
-      const evaluation = await evaluateAnswerWithGemini(
+      const evaluation = await evaluateAnswer(
         question.text,
         userAnswer
       );
@@ -69,7 +69,7 @@ export const startInterview = async (req, res) => {
 };
 
 // Evaluation function
-async function evaluateAnswerWithGemini(question, answer) {
+async function evaluateAnswer(question, answer) {
   try {
     // Construct the prompt for evaluation with a request for structured JSON format
     const prompt = `

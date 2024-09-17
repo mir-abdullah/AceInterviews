@@ -15,7 +15,16 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
+    },
+    googleId: {
+      type: String,
+      
+    },
+    authMethod: {
+      type: String,
       required: true,
+      enum: ['local', 'google'], 
+      default:'local',
     },
     verificationToken: {
       type: String,

@@ -20,7 +20,7 @@ router.get("/:quizId", getQuizTopic);
 router.get("/quizes", getAllQuizTopics);
 
 //route to update interview
-router.patch("/:quizId", upload.single('picture'), editQuizTopic);
+router.patch("/:quizId",  editQuizTopic);
 
 //route to delete an interview
 router.delete("/:quizId", deleteQuizTopic);
