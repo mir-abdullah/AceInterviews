@@ -5,11 +5,11 @@ import QuizTopic from "../../models/quiz/quizTopic.js";
 
 export const submitAndEvaluateQuiz = async (req, res) => {
     try {
-      const { quizTopicId } = req.params;
+      const { quizId } = req.params;
       const { answers } = req.body; // answers should be an array of {questionId, selectedOption}
   
       // Find the quiz topic and populate questions
-      const quizTopic = await QuizTopic.findById(quizTopicId).populate('questions');
+      const quizTopic = await QuizTopic.findById(quizId).populate('questions');
   
       if (!quizTopic) {
         return res.status(404).json({ message: "Quiz topic not found" });
@@ -47,7 +47,7 @@ export const submitAndEvaluateQuiz = async (req, res) => {
       // Store the result in QuizResult
       const quizResult = await QuizResult.create({
         userId: req.user._id, // Assuming user is authenticated
-        quizTopic: quizTopicId,
+        quizTopic: quizId,
         answers: answerResults,
         score,
       });

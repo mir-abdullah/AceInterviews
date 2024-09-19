@@ -15,7 +15,7 @@ const quizTopicSchema =mongoose.Schema({
       },
     questions:[{    
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Question'
+        ref:'QuizQuestion'
     }]
 })
 

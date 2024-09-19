@@ -159,7 +159,7 @@ export const getQuestionsByDifficulty = async (req, res) => {
       let questions = interviewTopic.questions;
   
       if (difficulty) {
-        const validDifficulties = ['Easy', 'Medium', 'Hard']; // Adjust as necessary
+        const validDifficulties = ['Easy', 'Medium', 'Hard'];
         if (!validDifficulties.includes(difficulty)) {
           return res.status(400).json({ message: 'Invalid difficulty level' });
         }

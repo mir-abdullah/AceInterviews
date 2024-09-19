@@ -1,12 +1,12 @@
 import express from "express";
 import QuizTopic from "../../models/quiz/quizTopic.js";
 import QuizQuestion from "../../models/quiz/quizQuestion.js";
-
+import cloudinary from "../../utils/cloudinaryConfig.js";
 
 // Route to add a quiz topic with an image upload
 export const addQuizTopic = async (req, res) => {
+  const { title, description,picture } = req.body;
   try {
-    const { title, description,picture } = req.body;
     let pictureUrl = null;
 
     
@@ -134,13 +134,17 @@ export const getQuestionsByDifficulty = async (req, res) => {
       return res.status(400).json({ message: "Quiz Topic ID is required" });
     }
 
+    // Fetch quiz topic and populate questions
     const quizTopic = await QuizTopic.findById(quizTopicId).populate("questions");
 
     if (!quizTopic) {
       return res.status(404).json({ message: "Quiz Topic not found" });
     }
+    console.log(quizTopic.questions)
 
     let questions = quizTopic.questions;
+
+ 
 
     if (difficulty) {
       const validDifficulties = ["Easy", "Medium", "Hard"];
@@ -149,6 +153,7 @@ export const getQuestionsByDifficulty = async (req, res) => {
       }
 
       questions = questions.filter((question) => question.difficulty === difficulty);
+
     }
 
     res.status(200).json({
@@ -161,3 +166,4 @@ export const getQuestionsByDifficulty = async (req, res) => {
     res.status(500).json({ message: "Error retrieving quiz topic", error: error.message });
   }
 };
+;

@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         element:<InstructionsPage/>
       },
       {
-        path: "techinterviewpage",
+        path: "techinterviewpage/:interviewId",
         element: <TechInterviewPage />,
       },
       {
@@ -70,7 +70,7 @@ const router = createBrowserRouter([
         element: <Quizes />,
       },
       {
-        path: "/dashboard/quiz/:id",
+        path: "/dashboard/quiz/:quizid",
         element: <QuizPage />,
       },
       {
