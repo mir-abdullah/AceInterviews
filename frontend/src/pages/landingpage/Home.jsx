@@ -1,6 +1,9 @@
 import React from "react";
 import banner from "../../assets/banner.png";
+import { useNavigate } from "react-router-dom";
+
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <div className=" bg-neutralSilver" id="home">
       <div className="px-4 lg:px-14 max-w-screen-2xl mx-auto min-h-screen h-screen flex justify-center items-center">
@@ -20,7 +23,7 @@ export default function Home() {
               Where to grow your business as a photographer: site or social
               media?
             </p>
-            <button className="px-7 py-2 bg-brandPrimary text-white rounded hover:bg-neutralDGrey">
+            <button className="px-7 py-2 bg-brandPrimary text-white rounded hover:bg-neutralDGrey" onClick={()=>navigate('/signup')}>
               Register
             </button>
           </div>

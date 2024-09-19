@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import logo from '../../assets/logo.png'
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-scroll";
 
@@ -10,6 +11,7 @@ import { FaXmark, FaBars } from "react-icons/fa6";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  const navigate =useNavigate()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -52,15 +54,15 @@ const Navbar = () => {
           <ul className="md:flex space-x-12 hidden">
             
             {
-                navItems.map(({link, path}) => <Link to={path} spy={true} smooth={true} offset={-100} key={link} href={path} className="block text-base text-gray900 hover:text-brandPrimary first:font-medium">
+                navItems.map(({link, path}) => <Link to={path} spy={true} smooth={true} offset={-100} key={link} href={path} className="b lock text-base text-gray900 hover:text-brandPrimary first:font-medium">
                 {link}
               </Link> )
             }
           </ul>
 
           <div className="space-x-12 hidden lg:flex items-center">
-            <a href="/" className="hidden lg:flex items-center text-brandPrimary hover:text-gray900">Login</a>
-            <button className="bg-brandPrimary text-white  py-2 px-4 transition-all duration-300 rounded hover:bg-neutralDGrey">Sign up</button>
+            <a href="/login" className="hidden lg:flex items-center text-brandPrimary hover:text-gray900">Login</a>
+            <button className="bg-brandPrimary text-white  py-2 px-4 transition-all duration-300 rounded hover:bg-neutralDGrey " onClick={()=>navigate('/signup')}>Sign up</button>
           </div>
 
           {/* menu btn, visible on mobile screen */}

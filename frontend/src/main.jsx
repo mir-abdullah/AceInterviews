@@ -4,7 +4,9 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux"; 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import store from './redux/store/store.js'
+import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
+import store from './redux/store/store.js';
 import App from "./App.jsx";
 import "./index.css";
 import Landingpage from './pages/landingpage/Landingpage.jsx';
@@ -19,6 +21,8 @@ import Feedback from "./pages/feedback/Feedback.jsx";
 import Quizes from './pages/quiz/Quizes.jsx';
 import QuizPage from "./pages/quiz/QuizPage.jsx";
 import Profile from "./pages/profile/Profile.jsx";
+import InstructionsPage from "./pages/interviews/InstructionsPage.jsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,6 +36,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
+ 
   {
     path: "dashboard",
     element: <RootLayout />,
@@ -47,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "technical",
         element: <Technical />,
+      },
+      {
+        path:"instructions/:interviewId",
+        element:<InstructionsPage/>
       },
       {
         path: "techinterviewpage",
@@ -66,10 +75,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/profile",
-        element: <Profile />,
-      },    
-     
-      
+        element: <Profile />, 
+      },
+         
     ],
   },
 ]);
@@ -77,10 +85,13 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <GoogleOAuthProvider clientId="266863559400-es7p8gjuvrde2osfh4rho8bc4re5v4rb.apps.googleusercontent.com">
-    <Provider store={store}> 
-      <RouterProvider router={router} />
-    </Provider>
-
+      <Provider store={store}> 
+        <RouterProvider router={router} />
+        <ToastContainer
+        theme="colored"
+        autoClose={3000} 
+        /> {/* Add ToastContainer here */}
+      </Provider>
     </GoogleOAuthProvider>
   </StrictMode>
 );

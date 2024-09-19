@@ -12,8 +12,10 @@ export const signupUser = createAsyncThunk(
             'Content-Type': 'application/json',
           },
         });
+
   
-        return response.data; // This will contain user data if signup was successful
+        return response.data; 
+
       } catch (error) {
         if (error.response && error.response.data) {
           return rejectWithValue(error.response.data);
@@ -33,11 +35,13 @@ export const loginUser = createAsyncThunk(
           'Content-Type': 'application/json',
         },
       });
+      console.log(response.data)
 
       return response.data;
     } catch (error) {
+      console.log(error.response.data)
       if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
+        return rejectWithValue(error.response.data.msg);
       }
       return rejectWithValue(error.message);
     }

@@ -17,7 +17,7 @@ import {
 import { FaCamera } from "react-icons/fa";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
-
+import { ToastContainer, toast } from "react-toastify";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -56,7 +56,7 @@ const Profile = () => {
   const [oldPasswordError, setOldPasswordError] = useState("");
   const [passwordChangeError, setPasswordChangeError] = useState("");
 
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   // Fetch user profile when component mounts
   useEffect(() => {
@@ -102,9 +102,7 @@ const Profile = () => {
       }
     } catch (error) {
       setIsOldPasswordCorrect(false);
-      setOldPasswordError(
-        "Incorrect password " + (error.message || "")
-      );
+      setOldPasswordError("Incorrect password " + (error.message || ""));
     } finally {
       setIsPasswordChanging(false);
     }
@@ -114,11 +112,13 @@ const Profile = () => {
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       setPasswordChangeError("New password and confirmation do not match");
+      toast.error("New password and confirmation do not match"); // Toast for mismatched passwords
       return;
     }
 
     if (newPassword === "") {
       setPasswordChangeError("New password cannot be empty");
+      toast.error("New password cannot be empty"); // Toast for empty password
       return;
     }
 
@@ -128,7 +128,7 @@ const Profile = () => {
       const response = await dispatch(changePassword({ newPassword })).unwrap();
 
       if (response.msg === "Password updated successfully") {
-        alert("Password changed successfully!");
+        toast.success("Password changed successfully!"); // Success toast
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
@@ -137,11 +137,13 @@ const Profile = () => {
         setExpanded(false);
       } else {
         setPasswordChangeError(response.msg || "Error changing password");
+        toast.error(response.msg || "Error changing password"); // Error toast
       }
     } catch (error) {
       setPasswordChangeError(
         "Error changing password: " + (error.message || "")
       );
+      toast.error("Error changing password: " + (error.message || "")); // Error toast
     } finally {
       setIsPasswordChanging(false);
     }
@@ -154,28 +156,59 @@ const Profile = () => {
       email: email,
       profilePic: image,
     };
-    dispatch(updateProfile(profileData)).then(() => {
-      // Fetch updated profile after successful update
-      dispatch(fetchUserProfile());
+
+    dispatch(updateProfile(profileData)).then((result) => {
+      if (updateProfile.fulfilled.match(result)) {
+        // Show success toast
+        toast.success("Profile Updated Successfully", {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+
+        // Fetch updated profile after successful update
+        dispatch(fetchUserProfile());
+      } else {
+        // Handle update error if needed
+        toast.error("Failed to update profile", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
     });
   };
 
   const handleDeleteProfile = async () => {
     try {
       const resultAction = await dispatch(deleteProfile());
-      
+
       // Assuming deleteProfile is an async thunk, check for the fulfilled status or the payload
       if (deleteProfile.fulfilled.match(resultAction)) {
         // Assuming resultAction.payload contains the expected message
         if (resultAction.payload?.msg) {
-          navigate('/');
+          toast.success("Profile deleted successfully!"); // Success toast
+          navigate("/"); // Redirect to home or login page
         }
+      } else {
+        // Handle if not fulfilled but rejected
+        toast.error("Failed to delete profile. Please try again."); // Error toast
       }
     } catch (error) {
       console.error("Error deleting profile:", error);
+      toast.error("Error deleting profile: " + (error.message || "")); // Error toast
     }
   };
-  
 
   // Effect to handle profile update success or error
   useEffect(() => {

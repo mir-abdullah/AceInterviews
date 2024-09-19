@@ -25,25 +25,30 @@ export default function LoginPage() {
     e.preventDefault();
     setShowError(false);
     setError(null);
-
+  
     try {
       const result = await dispatch(loginUser(formData));
-      const token = result.payload.token;
 
+  
       if (loginUser.fulfilled.match(result)) {
-        Cookies.set('token', token, { expires: 7 }); // Expires in 7 days
+        const token = result.payload.token;
+        Cookies.set('token', token, { expires: 1 });
         navigate('/dashboard/overview');
       } else if (loginUser.rejected.match(result)) {
-        setError("Invalid Email or Password Entered");
+        // Extract error message from the server response
+        const errorMessage = result.payload || "Invalid Email or Password Entered";
+        setError(errorMessage);
         setShowError(true);
-        setFormData((prev) => ({ ...prev, password: '' })); // Clear password field
-        setTimeout(() => setShowError(false), 3000); // Reset border after 3 seconds
+        setFormData((prev) => ({ ...prev, password: '' }));
+        setTimeout(() => setShowError(false), 3000);
       }
     } catch (error) {
+      // Display a generic error message in case of unexpected errors
       setError("An unexpected error occurred");
       setShowError(true);
     }
   };
+  
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
@@ -52,7 +57,7 @@ export default function LoginPage() {
 
       if (googleLogin.fulfilled.match(result)) {
         const token = result.payload.token;
-        Cookies.set('token', token, { expires: 7 }); // Expires in 7 days
+        Cookies.set('token', token, { expires: 7 }); 
         navigate('/dashboard/overview');
       } else if (googleLogin.rejected.match(result)) {
         setError("Google Login failed. Please try again.");
@@ -74,7 +79,7 @@ export default function LoginPage() {
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div className="block relative">
-            <label className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2">
+            <label className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2" required>
               Email
             </label>
             <input
@@ -88,7 +93,7 @@ export default function LoginPage() {
             />
           </div>
           <div className="block relative">
-            <label className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2">
+            <label className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2" required>
               Password
             </label>
             <input

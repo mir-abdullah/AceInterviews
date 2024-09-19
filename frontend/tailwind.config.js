@@ -14,7 +14,12 @@ export default {
         "neutralSilver": "#F5F7FA",
         "gray900": "#18191F",
         "neutralBlack": "#263238",
-      }
+      },
+      fontFamily: {
+        cursive: ['"Dancing Script"', 'cursive'],
+      },
+
+
     },
   },
   plugins: [],

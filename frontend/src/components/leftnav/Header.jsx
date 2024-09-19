@@ -56,11 +56,11 @@ const Header = () => {
   };
 
   return (
-    <div className="w-full bg-gray-100 shadow-lg p-4 flex justify-between items-center">
+    <div className="w-full bg-gradient-to-tl from-green-900 to-teal-400 shadow-lg p-4 flex justify-between items-center">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-indigo-800">Welcome Back!</h1>
-        <p className="ml-3 text-xl font-semibold text-gray-700">
-          {loading ? 'Loading...' : user ? user.name : ''}
+        <h1 className="text-2xl font-bold text-white">Welcome</h1>
+        <p className="ml-3 text-xl font-semibold text-white">
+          {loading ? 'Loading...' : user ? user.name +" 👋, Let's Practice 🚀" : ''} 
         </p>
       </div>
       <div className="flex items-center space-x-5">
@@ -71,7 +71,7 @@ const Header = () => {
           {/* Notification Icon */}
           <IconButton onClick={handleNotificationMenuClick}>
             <Badge badgeContent={notifications.length} color="error">
-              <GoBell size={28} />
+              <GoBell size={28} color='white'/>
             </Badge>
           </IconButton>
 
@@ -113,7 +113,7 @@ const Header = () => {
 
           {/* Profile Image */}
           <img
-            className="w-10 h-10 rounded-full border-4 border-indigo-400 cursor-pointer"
+            className="w-10 h-10 rounded-full border-4 border-white cursor-pointer"
             // src="https://randomuser.me/api/portraits/women/50.jpg"
             src={user?.profilePic}
             alt="User Profile"

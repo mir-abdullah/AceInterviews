@@ -58,7 +58,7 @@ const Sidebar = () => {
             alt="AceInterview Logo"
             className="w-5 h-6 mr-3" // Adjust size and margin as needed
           /> */}
-          <motion.h1 className="text-xl leading-none font-bold">
+          <motion.h1 className="text-xl leading-none font-cursive">
             AceInterview
           </motion.h1>
         </motion.div>
