@@ -1,7 +1,7 @@
 import express from "express";
 import {
   addInterviewTopic,
-  getAllInterviews,
+  getAllInterviewTopics,
   getInterview,
   editInterviewTopic,
   deleteInterviewTopic,
@@ -17,7 +17,7 @@ router.post("/add", addInterviewTopic);
 router.get("/:interviewId", getInterview);
 
 //route to get all  interviews
-router.get("/interviews", getAllInterviews);
+router.get("/", getAllInterviewTopics);
 
 //route to update interview
 router.patch("/:interviewId", editInterviewTopic);
@@ -26,6 +26,6 @@ router.patch("/:interviewId", editInterviewTopic);
 router.delete("/:interviewId", deleteInterviewTopic);
 
 //get interview by difficulty
-router.get("/:interviewId/difficulty", getQuestionsByDifficulty);
+router.get("/difficulty/:interviewId", getQuestionsByDifficulty);
 
 export default router;

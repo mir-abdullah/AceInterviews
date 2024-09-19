@@ -73,7 +73,7 @@ export const startInterview = async (req, res) => {
       const userAnswer = answers[question._id]; // Retrieve user's answer for this question
 
       // Evaluate the answer using the Gemini API
-      const evaluation = await evaluateAnswerWithGemini(
+      const evaluation = await evaluateAnswer(
         question.text,
         userAnswer
       );
@@ -106,7 +106,7 @@ export const startInterview = async (req, res) => {
 };
 
 // Evaluation function
-async function evaluateAnswerWithGemini(question, answer) {
+async function evaluateAnswer(question, answer) {
   try {
     // Construct the prompt for evaluation with a request for structured JSON format
     const prompt = `
@@ -195,6 +195,23 @@ export const getInterviewResult = async (req, res) => {
     return res.status(200).json(interview);
   } catch (error) {
     // Return a 500 error if something goes wrong
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+//count number of interviews given by user
+export const countInterviews = async (req, res) => {
+  try {
+    // Destructure userId from the request object
+    const userId = req.userId;
+
+    // Fetch the count of interviews for the specific user
+    const count = await Interview.countDocuments({ user: userId });
+
+    // Return the count as a JSON object
+    return res.status(200).json({ count });
+  } catch (error) {
+    // Return the error message
     return res.status(500).json({ message: error.message });
   }
 };

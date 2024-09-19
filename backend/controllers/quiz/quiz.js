@@ -58,8 +58,6 @@ export const submitAndEvaluateQuiz = async (req, res) => {
     }
   };
 
-
-  
 //get all quizes results
 export const quizResults = async (req, res) => {
     try {
@@ -97,3 +95,21 @@ export const quizResults = async (req, res) => {
       return res.status(500).json({ message: error.message });
     }
   };
+
+  //count number of quiz given
+  export const countQuizes = async (req, res) => {
+    try {
+      // Destructure userId from the request object
+      const userId = req.userId;
+  
+      // Fetch the count of interviews for the specific user
+      const count = await QuizResult.countDocuments({ user: userId });
+  
+      // Return the count as a JSON object
+      return res.status(200).json({ count });
+    } catch (error) {
+      // Return the error message
+      return res.status(500).json({ message: error.message });
+    }
+  };
+  

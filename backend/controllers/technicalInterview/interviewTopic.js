@@ -39,14 +39,18 @@ export const addInterviewTopic = async (req, res) => {
 };
 
 //route to get all topics
-export const getAllInterviews = async (req, res) => {
+export const getAllInterviewTopics =async (req, res) => {
+
   try {
-    const allInterviews = InterviewTopic.find();
+    const allInterviews = await InterviewTopic.find({});
     res.status(200).json({ message: "All Interviews", allInterviews });
   } catch (error) {
-    res.status(500).send("Something Went Wrong Try again later");
+    res.status(500).json({ message: "Something went wrong. Try again later.", error });
   }
 };
+
+
+
 
 //route to get a specific interview with questions
 export const getInterview = async (req, res) => {

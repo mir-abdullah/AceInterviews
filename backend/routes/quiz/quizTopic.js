@@ -11,7 +11,7 @@ import upload from '../../utils/multerConfig.js'
 const router = express.Router();
 
 //route to add quiz topic
-router.post('/add', upload.single('picture'), addQuizTopic);
+router.post('/add', addQuizTopic);
 
 //route to get a specific quiz
 router.get("/:quizId", getQuizTopic);

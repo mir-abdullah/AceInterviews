@@ -8,7 +8,9 @@ export const submitFeedback = async (req, res) => {
       const feedback = new Feedback({
         user: userId, 
         rating,
-        comment
+        comment,
+      },{
+        timestamps:true
       });
   
       await feedback.save();
