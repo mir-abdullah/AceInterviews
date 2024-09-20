@@ -73,16 +73,21 @@ const TechInterviewPage = () => {
         [questions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
-
+  
     if (currentQuestionIndex === questions.length - 1) {
-      // Last question - call startInterview and show modal
-      dispatch(startInterview({
-        interviewTopicId:interviewId,  // Assuming topicId is passed in the location state
-        answers,
-        difficulty
-      })).then(() => {
-        setShowModal(true); // Show completion modal
-      });
+      // Last question - wait for answers to be updated and then call startInterview
+      setTimeout(() => {
+        dispatch(startInterview({
+          interviewTopicId: interviewId, // Assuming topicId is passed in the location state
+          answers: { 
+            ...answers, 
+            [questions[currentQuestionIndex]?._id]: transcribedText.trim() // Include the last answer
+          },
+          difficulty
+        })).then(() => {
+          setShowModal(true); // Show completion modal
+        });
+      }, 0); // Slight delay to ensure state updates before dispatching
     } else {
       handleNextQuestion();
     }

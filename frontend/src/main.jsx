@@ -22,6 +22,15 @@ import Quizes from './pages/quiz/Quizes.jsx';
 import QuizPage from "./pages/quiz/QuizPage.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import InstructionsPage from "./pages/interviews/InstructionsPage.jsx";
+import RootLayoutAdmin from "./RootLayoutAdmin.jsx";
+import OverviewAdmin from "./pages/admin/OverviewAdmin.jsx"
+import BehavioralAdmin from "./pages/admin/BehaviouralAdmin.jsx"
+import TechnicalAdmin from "./pages/admin/TechnicalAdmin.jsx"
+import AddTechScenario from "./pages/admin/AddTechScenario.jsx";
+import ReviewFeedback from "./pages/admin/ReviewFeedback.jsx";
+import ProfileAdmin from "./pages/admin/ProfileAdmin.jsx";
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
+
 
 const router = createBrowserRouter([
   {
@@ -35,6 +44,25 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path:"/admin/login",
+    element: <AdminLogin/>
+
+  },
+  {
+    path: "/admin",
+    element: <RootLayoutAdmin />,
+    children: [
+      { path: "overview", element: <OverviewAdmin /> },
+      { path: "behavioraladmin", element: <BehavioralAdmin /> },
+      { path: "technicaladmin", element: <TechnicalAdmin /> },
+      { path: "techscenario", element: <AddTechScenario /> },
+      { path: "reviewfeedback", element: <ReviewFeedback /> },
+      { path: "profileadmin", element: <ProfileAdmin /> },
+      // { path: "quizzes", element: <Quizzes /> },
+      // { path: "feedback", element: <FeedbackAdmin /> },
+    ],
   },
  
   {
@@ -70,7 +98,7 @@ const router = createBrowserRouter([
         element: <Quizes />,
       },
       {
-        path: "/dashboard/quiz/:quizid",
+        path: "/dashboard/quiz/:quizTopicId",
         element: <QuizPage />,
       },
       {

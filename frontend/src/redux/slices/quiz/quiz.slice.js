@@ -63,8 +63,8 @@ export const getQuestionsByDifficulty = createAsyncThunk(
 // Async thunk for evaluating the quiz
 export const evaluateQuiz = createAsyncThunk(
     'quiz/evaluateQuiz',
-    async ({ quizId, answers }) => {
-      const response = await API.post(`/quiz/evaluate/${quizId}`, { answers });
+    async ({ quizTopicId, answers }) => {
+      const response = await API.post(`/quiz/evaluate/${quizTopicId}`, { answers });
       return response.data; // Return the quiz result data
     }
   );

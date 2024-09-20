@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate,useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Box,
@@ -20,7 +20,7 @@ const QuizPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {quizTopicId} =useDispatch()
+  const { quizTopicId } = useParams();  // Correctly extracting quizTopicId from route
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -35,11 +35,12 @@ const QuizPage = () => {
   };
 
   const handleNextQuestion = () => {
+    // Add the selected answer to the answers object
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
       [quizData.questions[currentQuestionIndex]._id]: selectedAnswer,
     }));
-
+  
     const currentQuestion = quizData.questions[currentQuestionIndex];
     const correctAnswer = currentQuestion.options.find(
       (option) => option.text === selectedAnswer
@@ -47,15 +48,18 @@ const QuizPage = () => {
     if (correctAnswer && correctAnswer.isCorrect) {
       setScore(score + 1);
     }
-
-    // If on the last question, dispatch evaluateQuiz
+  
+    // If on the last question, submit the quiz
     if (currentQuestionIndex === quizData.questions.length - 1) {
-      const formattedAnswers = Object.entries(answers).map(([questionId, selectedOption]) => ({
-        questionId,
-        selectedOption,
-      }));
-
-      dispatch(evaluateQuiz({ quizId:quizTopicId, answers: formattedAnswers }))
+      const finalAnswers = {
+        answers: {
+          ...answers, // Spread previous answers
+          [currentQuestion._id]: selectedAnswer, // Add current answer
+        },
+        difficulty: quizData.difficulty || "Easy", // Assuming difficulty is part of quizData
+      };
+  
+      dispatch(evaluateQuiz({ quizTopicId, answers: finalAnswers }))
         .unwrap()
         .then(() => {
           setShowResult(true);
@@ -64,10 +68,12 @@ const QuizPage = () => {
           console.error("Error evaluating quiz:", error);
         });
     } else {
+      // Proceed to next question
       setSelectedAnswer("");
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
+  
 
   if (!quizData.questions.length) {
     return <Typography>Loading...</Typography>;
