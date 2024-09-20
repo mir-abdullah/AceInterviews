@@ -26,6 +26,6 @@ router.patch("/:quizTopicId",  editQuizTopic);
 router.delete("/:quizTopicId", deleteQuizTopic);
 
 //get interview by difficulty
-router.get("/:quizTopicId/difficulty", getQuestionsByDifficulty);
+router.get("/difficulty/:quizTopicId", getQuestionsByDifficulty);
 
 export default router;

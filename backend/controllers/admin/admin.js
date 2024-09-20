@@ -31,11 +31,11 @@ export const loginAdmin = async (req, res) => {
         // Check if admin exists
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'Invalid email ' });
         }
 
         // Compare the password
-        const isMatch = await bcrypt.compare(password, admin.password);
+        const isMatch = password === admin.password;
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }

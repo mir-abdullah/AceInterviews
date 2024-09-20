@@ -13,8 +13,8 @@ const quizResultSchema = mongoose.Schema({
   },
   answers: [{
     question: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'QuizQuestion' 
+    type:String,
+
     },
     selectedOption: {
       type: String, // Storing option value directly

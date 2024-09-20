@@ -1,62 +1,83 @@
 import QuizResult from "../../models/quiz/quiz.js";
 import QuizQuestion from "../../models/quiz/quizQuestion.js";
 import QuizTopic from "../../models/quiz/quizTopic.js";
-
+import mongoose from "mongoose";
 
 export const submitAndEvaluateQuiz = async (req, res) => {
-    try {
-      const { quizId } = req.params;
-      const { answers } = req.body; // answers should be an array of {questionId, selectedOption}
-  
-      // Find the quiz topic and populate questions
-      const quizTopic = await QuizTopic.findById(quizId).populate('questions');
-  
-      if (!quizTopic) {
-        return res.status(404).json({ message: "Quiz topic not found" });
-      }
-  
-      let score = 0;
-      const answerResults = [];
-  
-      for (let answer of answers) {
-        // Find the question and populate options
-        const question = await QuizQuestion.findById(answer.questionId);
-  
-        if (!question) {
-          return res.status(400).json({ message: `Invalid question: ${answer.questionId}` });
-        }
-  
-        // Find the correct option for the question
-        const correctOption = question.options.find(option => option.isCorrect);
-        if (!correctOption) {
-          return res.status(400).json({ message: `No correct option for question: ${answer.questionId}` });
-        }
-  
-        // Compare selected option with correct option value
-        const isCorrect = answer.selectedOption === correctOption.value;
-        if (isCorrect) score++;
-  
-        answerResults.push({
-          question: question._id,
-          selectedOption: answer.selectedOption,
-          correctOption: correctOption.value,
-          isCorrect,
-        });
-      }
-  
-      // Store the result in QuizResult
-      const quizResult = await QuizResult.create({
-        userId: req.user._id, // Assuming user is authenticated
-        quizTopic: quizId,
-        answers: answerResults,
-        score,
-      });
-  
-      res.status(200).json({ message: "Quiz submitted and evaluated", quizResult });
-    } catch (error) {
-      res.status(500).json({ message: "Error submitting quiz", error: error.message });
+  try {
+    const { quizTopicId } = req.params;
+    const { answers } = req.body; // Expecting answers to be an object
+
+    // Log the request body for debugging
+    console.log(req.body);
+
+    // Ensure the answers object is valid
+    if (typeof answers !== 'object' || Array.isArray(answers)) {
+      return res.status(400).json({ message: "Invalid format for answers. It should be an object." });
     }
-  };
+
+    // Find the quiz topic and populate questions
+    const quizTopic = await QuizTopic.findById(quizTopicId).populate('questions');
+
+    if (!quizTopic) {
+      return res.status(404).json({ message: "Quiz topic not found" });
+    }
+
+    let score = 0;
+    const answerResults = [];
+
+    // Iterate through the answers object
+    for (const [questionId, selectedOption] of Object.entries(answers)) {
+      // Log each questionId and selectedOption for debugging
+      console.log(`Processing questionId: ${questionId}, selectedOption: ${selectedOption}`);
+
+      // Validate that questionId is a valid ObjectId
+      if (!mongoose.Types.ObjectId.isValid(questionId)) {
+        return res.status(400).json({ message: `Invalid question ID: ${questionId}` });
+      }
+
+      // Find the question by ID
+      const question = await QuizQuestion.findById(questionId);
+
+      if (!question) {
+        return res.status(400).json({ message: `Question not found: ${questionId}` });
+      }
+
+      // Find the correct option for the question
+      const correctOption = question.options.find(option => option.isCorrect);
+
+      if (!correctOption) {
+        return res.status(400).json({ message: `No correct option for question: ${questionId}` });
+      }
+
+      // Compare selected option with correct option value
+      const isCorrect = selectedOption === correctOption.value;
+      if (isCorrect) score++;
+
+      answerResults.push({
+        question: question.questionText,
+        selectedOption,
+        correctOption: correctOption.value,
+        isCorrect,
+      });
+    }
+
+    // Store the result in QuizResult
+    const quizResult = await QuizResult.create({
+      userId: req.user._id, // Assuming user is authenticated
+      quizTopic: quizTopicId,
+      answers: answerResults,
+      score,
+    });
+
+    res.status(200).json({ message: "Quiz submitted and evaluated", quizResult });
+  } catch (error) {
+    res.status(500).json({ message: "Error submitting quiz", error: error.message });
+  }
+};
+
+
+
 
 //get all quizes results
 export const quizResults = async (req, res) => {
