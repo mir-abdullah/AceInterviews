@@ -27,7 +27,7 @@ const questions = [
   },
 ];
 
-const Behavioral = () => {
+const Behavioral = () => {  
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [videoSrc, setVideoSrc] = useState(null);

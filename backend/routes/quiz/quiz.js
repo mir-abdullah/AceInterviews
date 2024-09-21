@@ -5,13 +5,13 @@ const router =express.Router();
 
 
 //route to start quiz
-router.post('/evaluate/:quizId',auth,submitAndEvaluateQuiz );
+router.post('/evaluate/:quizTopicId',auth,submitAndEvaluateQuiz );
 
 //route to get quiz  results 
 router.get('/results',auth,quizResults)
 
 //route to get single quiz result
-router.get('/results/:quiz',auth,getQuizResult)
+router.get('/results/:quizId',auth,getQuizResult)
 
 //count number of quiz given
 router.get('/count',auth,countQuizes)

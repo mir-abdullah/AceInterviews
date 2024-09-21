@@ -24,7 +24,10 @@ const Technical = () => {
         padding: '20px',
         minHeight: '100vh',
         backgroundColor: '#f5f7fa',
+        borderRadius:'20px'
+      
       }}
+      className="bg-gradient-to-t from-lime-100 to-cyan-100 "
     >
       <Typography
         variant="h4"
