@@ -16,7 +16,7 @@ router.post("/add", addInterviewTopic);
 router.get("/:interviewId", getInterview);
 
 //route to get all  interviews
-router.get("/interviews", getAllInterviews);
+router.get("/", getAllInterviews);
 
 //route to update interview
 router.patch("/:interviewId", editInterviewTopic);

@@ -42,10 +42,10 @@ export const addInterviewTopic = async (req, res) => {
 //route to get all topics
 export const getAllInterviews = async (req, res) => {
   try {
-    const allInterviews = BehaviourInterviewTopic.find();
+    const allInterviews = await BehaviourInterviewTopic.find();
     res.status(200).json({ message: "All Interviews", allInterviews });
   } catch (error) {
-    res.status(500).send("Something Went Wrong Try again later");
+    res.status(500).send("Something Went Wrong Try again later" + error.message);
   }
 };
 

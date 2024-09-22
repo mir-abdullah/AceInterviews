@@ -113,7 +113,7 @@ async function evaluateAnswer(question, answer) {
       You are an expert evaluator. Please evaluate the following answer based on the given question.
       Question: ${question}
       Answer: ${answer}
-      Provide a score from 1 to 5, and include detailed feedback with your evaluation.
+      Provide a score from 1 to 5, and include detailed feedback with your evaluation.If user answer is empty mark it zero.
       Provide your evaluation in the following JSON format:
       { "type" :"object",
        "properties":{
