@@ -30,6 +30,10 @@ import AddTechScenario from "./pages/admin/AddTechScenario.jsx";
 import ReviewFeedback from "./pages/admin/ReviewFeedback.jsx";
 import ProfileAdmin from "./pages/admin/ProfileAdmin.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
+import QuestionsPage from "./pages/QuestionsPage/QuestionsPage.jsx";
+import TechnicalQuestions from './pages/QuestionsPage/TechnicalQuestions.jsx'
+import QuizAdmin from "./pages/admin/QuizAdmin.jsx";
+import QuizQuestions from "./pages/QuestionsPage/QuizQuestions.jsx";
 
 
 const router = createBrowserRouter([
@@ -60,6 +64,10 @@ const router = createBrowserRouter([
       { path: "techscenario", element: <AddTechScenario /> },
       { path: "reviewfeedback", element: <ReviewFeedback /> },
       { path: "profileadmin", element: <ProfileAdmin /> },
+      {path:'behaviour/questions',element:<QuestionsPage/>},
+      {path:"technical/questions",element:<TechnicalQuestions/>},
+      {path:'quizes',element:<QuizAdmin/>},
+      {path:'quiz/questions',element:<QuizQuestions />}
       // { path: "quizzes", element: <Quizzes /> },
       // { path: "feedback", element: <FeedbackAdmin /> },
     ],

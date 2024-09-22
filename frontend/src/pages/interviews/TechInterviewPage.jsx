@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Button, Card, Typography, TextField, IconButton, Modal } from "@mui/material";
+import { Box, Button, Card, Typography, TextField, IconButton, Modal, CircularProgress } from "@mui/material"; // Added CircularProgress
 import { useTimer } from "react-timer-hook";
 import { FaMicrophone, FaStop } from "react-icons/fa";
-import { useLocation, useNavigate,useParams } from "react-router-dom"; // Add useNavigate
-import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom"; // Add useNavigate
+import { useDispatch } from "react-redux";
 import { startInterview } from "../../redux/slices/technicalInterview/technicalInterview.slice"; // Import the startInterview action
 
 const TechInterviewPage = () => {
   const location = useLocation(); // Get location object
   const navigate = useNavigate(); // Add navigation
   const dispatch = useDispatch();
-  const {interviewId} =useParams()
+  const { interviewId } = useParams();
 
   const { questions = [], difficulty } = location.state || {}; // Retrieve questions and difficulty from state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -18,6 +18,7 @@ const TechInterviewPage = () => {
   const [transcribedText, setTranscribedText] = useState("");
   const [answers, setAnswers] = useState({}); // Store answers in the format { questionId: answer }
   const [showModal, setShowModal] = useState(false); // State for showing modal
+  const [loading, setLoading] = useState(false); // State for loading indicator
 
   const { seconds, minutes, start, pause, restart } = useTimer({
     expiryTimestamp: new Date().getTime() + 90 * 1000, // 90 seconds timer
@@ -49,7 +50,7 @@ const TechInterviewPage = () => {
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.onstart = () => setIsRecording(true);
-    recognition.onresult = (event) => setTranscribedText(transcribedText+" "+event.results[0][0].transcript);
+    recognition.onresult = (event) => setTranscribedText(transcribedText + " " + event.results[0][0].transcript);
     recognition.onend = () => setIsRecording(false);
     if (isRecording) recognition.start();
     else recognition.stop();
@@ -73,20 +74,29 @@ const TechInterviewPage = () => {
         [questions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
-  
+
     if (currentQuestionIndex === questions.length - 1) {
       // Last question - wait for answers to be updated and then call startInterview
+      setLoading(true); // Show loading indicator
       setTimeout(() => {
-        dispatch(startInterview({
-          interviewTopicId: interviewId, // Assuming topicId is passed in the location state
-          answers: { 
-            ...answers, 
-            [questions[currentQuestionIndex]?._id]: transcribedText.trim() // Include the last answer
-          },
-          difficulty
-        })).then(() => {
-          setShowModal(true); // Show completion modal
-        });
+        dispatch(
+          startInterview({
+            interviewTopicId: interviewId, // Assuming topicId is passed in the location state
+            answers: {
+              ...answers,
+              [questions[currentQuestionIndex]?._id]: transcribedText.trim(), // Include the last answer
+            },
+            difficulty,
+          })
+        )
+          .then(() => {
+            setLoading(false); // Hide loading indicator
+            setShowModal(true); // Show completion modal
+          })
+          .catch((error) => {
+            setLoading(false); // Hide loading indicator
+            console.error("Error submitting interview:", error);
+          });
       }, 0); // Slight delay to ensure state updates before dispatching
     } else {
       handleNextQuestion();
@@ -100,10 +110,21 @@ const TechInterviewPage = () => {
   };
 
   return (
-    <Box sx={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#f0f4f8', minHeight: '100vh' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mb: 4 }}>
-        <Button variant="contained" color="primary">← Back to Questions</Button>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#263238' }}>
+    <Box
+      sx={{
+        padding: "40px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor: "#f0f4f8",
+        minHeight: "100vh",
+      }}
+    >
+      <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", mb: 4 }}>
+        <Button variant="contained" color="primary">
+          ← Back to Questions
+        </Button>
+        <Typography variant="h5" sx={{ fontWeight: "bold", color: "#263238" }}>
           Question {currentQuestionIndex + 1}
         </Typography>
         <Button variant="contained" color="secondary" disabled={currentQuestionIndex >= questions.length - 1}>
@@ -111,28 +132,37 @@ const TechInterviewPage = () => {
         </Button>
       </Box>
 
-      <Card sx={{ padding: '30px', maxWidth: 700, width: '100%', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)', borderRadius: '20px', backgroundColor: '#ffffff' }}>
-        <Typography variant="h5" align="center" sx={{ mb: 3, color: '#424242', fontWeight: '500' }}>
+      <Card
+        sx={{
+          padding: "30px",
+          maxWidth: 700,
+          width: "100%",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.15)",
+          borderRadius: "20px",
+          backgroundColor: "#ffffff",
+        }}
+      >
+        <Typography variant="h5" align="center" sx={{ mb: 3, color: "#424242", fontWeight: "500" }}>
           {questions[currentQuestionIndex]?.text || "No questions available"}
         </Typography>
 
-        <Typography variant="h6" align="center" sx={{ mb: 3, color: '#0288d1' }}>
+        <Typography variant="h6" align="center" sx={{ mb: 3, color: "#0288d1" }}>
           {minutes}:{seconds < 10 ? `0${seconds}` : seconds} / 1:30
         </Typography>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
           <IconButton
             onClick={handleStartRecording}
             disabled={isRecording}
             sx={{
               fontSize: 40,
-              color: isRecording ? 'error.main' : 'primary.main',
-              backgroundColor: isRecording ? '#ffebee' : '#e3f2fd',
-              '&:hover': {
-                backgroundColor: isRecording ? '#ffcdd2' : '#bbdefb',
+              color: isRecording ? "error.main" : "primary.main",
+              backgroundColor: isRecording ? "#ffebee" : "#e3f2fd",
+              "&:hover": {
+                backgroundColor: isRecording ? "#ffcdd2" : "#bbdefb",
               },
-              padding: '12px',
-              borderRadius: '50%',
+              padding: "12px",
+              borderRadius: "50%",
             }}
           >
             {isRecording ? <FaStop /> : <FaMicrophone />}
@@ -149,14 +179,14 @@ const TechInterviewPage = () => {
             sx={{
               mt: 4,
               mb: 2,
-              borderRadius: '12px',
-              backgroundColor: '#fafafa',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: '#0288d1',
+              borderRadius: "12px",
+              backgroundColor: "#fafafa",
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#0288d1",
                 },
-                '&:hover fieldset': {
-                  borderColor: '#0277bd',
+                "&:hover fieldset": {
+                  borderColor: "#0277bd",
                 },
               },
             }}
@@ -164,33 +194,34 @@ const TechInterviewPage = () => {
           />
         </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
           <Button
             variant="contained"
             color="primary"
             onClick={handleSubmitAnswer}
+            disabled={loading} // Disable button when loading
             sx={{
-              padding: '10px 20px',
-              borderRadius: '20px',
-              backgroundColor: '#0288d1',
-              '&:hover': {
-                backgroundColor: '#0277bd',
+              padding: "10px 20px",
+              borderRadius: "20px",
+              backgroundColor: "#0288d1",
+              "&:hover": {
+                backgroundColor: "#0277bd",
               },
             }}
           >
-            {currentQuestionIndex === questions.length - 1 ? 'Submit Interview' : 'Submit Answer'}
+            {currentQuestionIndex === questions.length - 1 ? "Submit Interview" : "Submit Answer"}
           </Button>
           <Button
             variant="outlined"
             color="secondary"
             onClick={handleNextQuestion}
             sx={{
-              padding: '10px 20px',
-              borderRadius: '20px',
-              borderColor: '#ff9800',
-              color: '#ff9800',
-              '&:hover': {
-                backgroundColor: '#fff3e0',
+              padding: "10px 20px",
+              borderRadius: "20px",
+              borderColor: "#ff9800",
+              color: "#ff9800",
+              "&:hover": {
+                backgroundColor: "#fff3e0",
               },
             }}
             disabled={currentQuestionIndex >= questions.length - 1}
@@ -199,6 +230,13 @@ const TechInterviewPage = () => {
           </Button>
         </Box>
       </Card>
+
+      {/* Show loading spinner when submitting the last question */}
+      {loading && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
 
       {/* Modal for Interview Completion */}
       <Modal
@@ -209,15 +247,15 @@ const TechInterviewPage = () => {
       >
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             width: 400,
-            bgcolor: 'background.paper',
+            bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
-            borderRadius: '12px',
+            borderRadius: "12px",
           }}
         >
           <Typography id="modal-title" variant="h6" component="h2">
@@ -230,7 +268,7 @@ const TechInterviewPage = () => {
             variant="contained"
             color="primary"
             onClick={handleCloseModal}
-            sx={{ mt: 3, display: 'block', marginLeft: 'auto' }}
+            sx={{ mt: 3, display: "block", marginLeft: "auto" }}
           >
             Close & Review
           </Button>
@@ -241,3 +279,4 @@ const TechInterviewPage = () => {
 };
 
 export default TechInterviewPage;
+  

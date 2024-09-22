@@ -44,7 +44,7 @@ const Technical = () => {
         {status === 'succeeded' &&
           topics.allInterviews.map((field, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <Tilt
+              {/* <Tilt
                 glareEnable={true}
                 glareMaxOpacity={0.3}
                 scale={1.05}
@@ -52,7 +52,7 @@ const Technical = () => {
                 tiltMaxAngleX={15}
                 tiltMaxAngleY={15}
                 style={{ height: '100%' }}
-              >
+              > */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -119,7 +119,6 @@ const Technical = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
-              </Tilt>
             </Grid>
           ))}
       </Grid>

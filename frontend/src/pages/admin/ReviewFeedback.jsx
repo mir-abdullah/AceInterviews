@@ -16,20 +16,20 @@ const feedbackRatings = [
 // Static user feedback data
 const userFeedbacks = [
   {
-    username: "John Doe",
+    username: "Mir",
     comment:
       "AceInterview was amazing! It really helped me prepare for my interviews.",
     avatarUrl: "https://i.pravatar.cc/150?img=1",
     date: "2023/09/15",
   },
   {
-    username: "Jane Smith",
+    username: "Farrukh",
     comment: "Great platform, but the UI could be improved.",
     avatarUrl: "https://i.pravatar.cc/150?img=2",
     date: "2023/09/14",
   },
   {
-    username: "Mike Johnson",
+    username: "Abdullah",
     comment:
       "The questions were very helpful and prepared me well for my technical interview.",
     avatarUrl: "https://i.pravatar.cc/150?img=3",
