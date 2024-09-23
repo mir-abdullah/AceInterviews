@@ -11,6 +11,7 @@ import {
   LuMail,
   LuChevronDown,
   LuChevronUp,
+  LuBookMarked
 } from "react-icons/lu";
 
 const Sidebar = () => {
@@ -32,6 +33,8 @@ const Sidebar = () => {
     },
     { path: "/dashboard/quizes", name: "Quizes", icon: <LuMail /> },
     { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
+    { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
+
     { path: "/settings", name: "Settings", icon: <LuSettings /> },
   ];
 

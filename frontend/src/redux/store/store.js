@@ -12,6 +12,7 @@ import quizAdminReducer from '../slices/admin/quizAdmin/quizAdmin'
 import quizQuestionsReducer from '../slices/admin/quizAdmin/quizQuestions'
 import feedbackReducer from '../slices/feedback/userFeedback'
 import statsReducer from  '../slices/admin/statistics/statisctics'
+import resultsReducer from '../slices/results/results.slice'
 const store=configureStore({
     reducer:{
         auth:authReducer,
@@ -26,7 +27,9 @@ const store=configureStore({
         quizAdmin: quizAdminReducer,
         quizQuestions: quizQuestionsReducer,
         feedback: feedbackReducer,
-        stats: statsReducer
+        stats: statsReducer,
+        results: resultsReducer
+
 
 
 
