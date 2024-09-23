@@ -215,3 +215,17 @@ export const countInterviews = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+//count total overall interviews
+export const countTechnicalInterviews = async (req, res) => {
+  try{
+    const count = await Interview.countDocuments( );
+
+    // Return the count as a JSON object
+    return res.status(200).json({ count });
+  } catch (error) {
+    // Return the error message
+    return res.status(500).json({ message: error.message });
+  }
+  }
+

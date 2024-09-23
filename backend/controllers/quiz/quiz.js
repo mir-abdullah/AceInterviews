@@ -117,7 +117,7 @@ export const quizResults = async (req, res) => {
     }
   };
 
-  //count number of quiz given
+  //count number of quiz given by a user
   export const countQuizes = async (req, res) => {
     try {
       // Destructure userId from the request object
@@ -134,3 +134,15 @@ export const quizResults = async (req, res) => {
     }
   };
   
+  //count all quizes
+  export const countAllQuizes = async (req, res) => {
+    try{
+      const count = await QuizResult.countDocuments( );
+  
+      // Return the count as a JSON object
+      return res.status(200).json({ count });
+    } catch (error) {
+      // Return the error message
+      return res.status(500).json({ message: error.message });
+    }
+    }
