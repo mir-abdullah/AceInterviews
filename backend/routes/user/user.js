@@ -17,17 +17,18 @@ import {
   updateAcoount,
   uploadProfilePicController,
   verifyEmailController,
-  logoutController
+  logoutController,
+  confirmOldPasswordController,
+  sendOtpController,
+  verifyOtpController,
+  handleGoogleLogin,
+ 
+  
 } from "../../controllers/user/user.js";
 
 const router = express.Router();
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-const cloudinaryConfig = cloudinary.config({
-  cloud_name: "dft2urwa8",
-  api_key: "833392216123692",
-  api_secret: "KRiko4Xdu6OMb-EN6NAtQ33PJkY",
-});
+
 
 //signup route
 
@@ -46,7 +47,7 @@ router.patch("/upload-profile-picture", auth, uploadProfilePicController);
 router.post("/forgot-password", forgotPasswordController);
 
 // reset password route
-router.post("/reset-password", resetPasswordController);
+router.post("/reset-password",auth, resetPasswordController);
 
 //get user profile
 router.get("/profile", auth, getProfileController);
@@ -58,7 +59,23 @@ router.delete("/delete-profile", auth, deleteProfileController);
 router.put("/update-profile", auth, updateAcoount);
 
 //logout route
-router.get("/logout", auth, logoutController);
+router.post("/logout", auth, logoutController);
+
+//confirm old password
+router.post("/confirm-old-password", auth, confirmOldPasswordController);
+
+//send otp
+router.post('/send-otp',sendOtpController)
+
+//verify otp
+router.post('/verify-otp',verifyOtpController)
+
+
+
+//google login
+router.post('/google-login',handleGoogleLogin)
+
+
 
 
 export default router;
