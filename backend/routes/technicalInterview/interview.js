@@ -15,7 +15,7 @@ router.get('/results',auth,interviewResults)
 router.get('/results/:interviewId',auth,getInterviewResult)
 
 // get total number of technical interviews given of a user
-router.get('/total-interviews',auth,countInterviews)
+router.get('/count',auth,countInterviews)
 
 
 //get overall interviews

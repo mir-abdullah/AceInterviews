@@ -145,7 +145,7 @@ export const interviewResults = async (req, res) => {
       const userId = req.userId;
   
       // Fetch interviews for the specific user
-      const interviews = await behaviouralInterview.find({ user: userId });
+      const interviews = await behaviouralInterview.find({ user: userId }).populate('topic' ,'title picture');
   
       // Check if no interviews are found
       if (!interviews || interviews.length === 0) {

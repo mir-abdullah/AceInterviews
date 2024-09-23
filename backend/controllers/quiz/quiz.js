@@ -86,7 +86,7 @@ export const quizResults = async (req, res) => {
       const userId = req.userId;
   
       // Fetch interviews for the specific user
-      const quizes = await QuizResult.find({ user: userId });
+      const quizes = await QuizResult.find({ user: userId }).populate('topic' ,'title picture');
   
       // Check if no interviews are found
       if (!quizes || quizes.length === 0) {
