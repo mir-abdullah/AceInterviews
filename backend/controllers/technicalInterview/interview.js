@@ -85,6 +85,7 @@ export const startInterview = async (req, res) => {
         evaluation: {
           score: evaluation.score,
           feedback: evaluation.feedback,
+          idealAnswer:evaluation.idealAnswer
         },
       });
 
@@ -114,11 +115,13 @@ async function evaluateAnswer(question, answer) {
       Question: ${question}
       Answer: ${answer}
       Provide a score from 1 to 5, and include detailed feedback with your evaluation.If user answer is empty mark it zero.
+      provide an ideal answer also.
       Provide your evaluation in the following JSON format:
       { "type" :"object",
        "properties":{
        "score" : {"type" : "integer"},
-       "feedback" : {"type" : "string"}
+       "feedback" : {"type" : "string"},
+       "idealAnswer" : {"type" :"string"},
        }
        
       }`;
@@ -140,13 +143,16 @@ async function evaluateAnswer(question, answer) {
     const evaluation = JSON.parse(evaluationText);
     const score = evaluation.score;
     const feedback = evaluation.feedback;
-    console.log(score);
-    console.log(feedback);
+    const idealAnswer = evaluation.idealAnswer;
+    // console.log(score);
+    // console.log(feedback);
+    // console.log(idealAnswer)
 
     // Return the structured evaluation
     return {
       score,
       feedback,
+      idealAnswer
     };
   } catch (error) {
     console.error("Error evaluating answer:", error.message);
@@ -163,21 +169,23 @@ export const interviewResults = async (req, res) => {
     // Destructure userId from the request object
     const userId = req.userId;
 
-    // Fetch interviews for the specific user
-    const interviews = await Interview.find({ user: userId });
+    // Fetch interviews for the specific user and populate topicTitle and picture from the related Topic collection
+    const interviews = await Interview.find({ user: userId })
+      .populate('topic', 'title picture') // Assuming 'topic' is the reference field
 
     // Check if no interviews are found
     if (!interviews || interviews.length === 0) {
       return res.status(404).json({ message: "No interviews found." });
     }
 
-    // Return the interviews if found
+    // Return the interviews with topic details
     return res.status(200).json(interviews);
   } catch (error) {
     // Return a 500 error if something goes wrong
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 //get a single interview result
 export const getInterviewResult = async (req, res) => {
@@ -215,3 +223,17 @@ export const countInterviews = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+//count total overall interviews
+export const countTechnicalInterviews = async (req, res) => {
+  try{
+    const count = await Interview.countDocuments( );
+
+    // Return the count as a JSON object
+    return res.status(200).json({ count });
+  } catch (error) {
+    // Return the error message
+    return res.status(500).json({ message: error.message });
+  }
+  }
+

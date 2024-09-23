@@ -496,3 +496,15 @@ export const handleGoogleLogin = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+//total users
+export const calculateTotalUsers = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    return res.status(200).json({ totalUsers });
+  } catch (error) {
+    console.error("Error calculating total users:", error);
+    return res.status(500).json({ message: "Error calculating total users" });
+  }
+};
+

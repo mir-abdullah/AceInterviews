@@ -9,7 +9,8 @@ const interviewSchema = new mongoose.Schema({
       answer: String,
       evaluation: {
         score: Number,
-        feedback: String
+        feedback: String,
+        idealAnswer:String
       },
     }
   ],

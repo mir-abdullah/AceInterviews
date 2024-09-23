@@ -34,6 +34,7 @@ import QuestionsPage from "./pages/QuestionsPage/QuestionsPage.jsx";
 import TechnicalQuestions from './pages/QuestionsPage/TechnicalQuestions.jsx'
 import QuizAdmin from "./pages/admin/QuizAdmin.jsx";
 import QuizQuestions from "./pages/QuestionsPage/QuizQuestions.jsx";
+import Results from "./pages/results/ResultMain.jsx";
 
 
 const router = createBrowserRouter([
@@ -98,12 +99,15 @@ const router = createBrowserRouter([
         element: <TechInterviewPage />,
       },
       {
-        path: "feedback",
+        path:"result-details/:type/:id",
         element: <Feedback />,
       },
       {
         path: "quizes",
         element: <Quizes />,
+      },
+      {
+        path: 'results' ,element:<Results/>
       },
       {
         path: "/dashboard/quiz/:quizTopicId",
