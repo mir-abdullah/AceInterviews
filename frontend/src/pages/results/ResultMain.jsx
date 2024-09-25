@@ -133,7 +133,7 @@ const Results = () => {
     sx={{
       '& .Mui-selected': {
         backgroundColor: 'cyan', // Selected tab background
-        color: 'black', // Selected tab text color
+        color: 'blue', // Selected tab text color
       },
       '& .MuiTab-root': {
         border: '1px solid transparent', // Transparent border for unselected tabs

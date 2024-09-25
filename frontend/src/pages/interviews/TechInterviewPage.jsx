@@ -20,6 +20,15 @@ const TechInterviewPage = () => {
   const [showModal, setShowModal] = useState(false); // State for showing modal
   const [loading, setLoading] = useState(false); // State for loading indicator
 
+    // Filter questions based on the selected difficulty level
+    const filteredQuestions = questions.filter((q) => q.difficulty === difficulty);
+
+    // Log to ensure correct questions and difficulty
+    useEffect(() => {
+      console.log("Filtered Questions:", filteredQuestions);
+      console.log("Difficulty:", difficulty);
+    }, [filteredQuestions, difficulty])
+
   const { seconds, minutes, start, pause, restart } = useTimer({
     expiryTimestamp: new Date().getTime() + 90 * 1000, // 90 seconds timer
     onExpire: () => handleNextQuestion(), // Use arrow function to ensure handleNextQuestion is defined
@@ -29,20 +38,20 @@ const TechInterviewPage = () => {
     if (transcribedText.trim()) {
       setAnswers((prev) => ({
         ...prev,
-        [questions[currentQuestionIndex]?._id]: transcribedText.trim(),
+        [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
     setTranscribedText(""); // Clear text field
     setCurrentQuestionIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
-      if (nextIndex < questions.length) {
+      if (nextIndex < filteredQuestions.length) {
         restart(new Date().getTime() + 90 * 1000); // Reset timer for the next question
         return nextIndex;
       } else {
         return prevIndex;
       }
     });
-  }, [currentQuestionIndex, restart, transcribedText, questions]);
+  }, [currentQuestionIndex, restart, transcribedText, filteredQuestions]);
 
   // Handle speech recognition
   useEffect(() => {
@@ -71,11 +80,11 @@ const TechInterviewPage = () => {
     if (transcribedText.trim()) {
       setAnswers((prev) => ({
         ...prev,
-        [questions[currentQuestionIndex]?._id]: transcribedText.trim(),
+        [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
 
-    if (currentQuestionIndex === questions.length - 1) {
+    if (currentQuestionIndex === filteredQuestions.length - 1) {
       // Last question - wait for answers to be updated and then call startInterview
       setLoading(true); // Show loading indicator
       setTimeout(() => {
@@ -143,7 +152,7 @@ const TechInterviewPage = () => {
         }}
       >
         <Typography variant="h5" align="center" sx={{ mb: 3, color: "#424242", fontWeight: "500" }}>
-          {questions[currentQuestionIndex]?.text || "No questions available"}
+          {filteredQuestions[currentQuestionIndex]?.text || "No questions available"}
         </Typography>
 
         <Typography variant="h6" align="center" sx={{ mb: 3, color: "#0288d1" }}>
@@ -209,7 +218,7 @@ const TechInterviewPage = () => {
               },
             }}
           >
-            {currentQuestionIndex === questions.length - 1 ? "Submit Interview" : "Submit Answer"}
+            {currentQuestionIndex === filteredQuestions.length - 1 ? "Submit Interview" : "Submit Answer"}
           </Button>
           <Button
             variant="outlined"
@@ -224,7 +233,7 @@ const TechInterviewPage = () => {
                 backgroundColor: "#fff3e0",
               },
             }}
-            disabled={currentQuestionIndex >= questions.length - 1}
+            disabled={currentQuestionIndex >= filteredQuestions.length - 1}
           >
             Next Question
           </Button>

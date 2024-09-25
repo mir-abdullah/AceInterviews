@@ -46,19 +46,18 @@ export const getQuizTopic = createAsyncThunk(
     return response.data;
   }
 );
-
 // Async thunk for getting questions by difficulty
 export const getQuestionsByDifficulty = createAsyncThunk(
   'quiz/getQuestionsByDifficulty',
   async ({ quizTopicId, difficulty }) => {
     const response = await API.get(`/quizTopic/${quizTopicId}/difficulty`, {
-      params: { difficulty }
+     difficulty 
     });
-    return response.data;
+    console.log(response.data.questions)
+    return response.data.questions; // Adjust this based on your API response structure
   }
+)
 
-  
-);
 
 // Async thunk for evaluating the quiz
 export const evaluateQuiz = createAsyncThunk(
@@ -76,13 +75,12 @@ const quizSlice = createSlice({
       currentTopic: null,
       status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
       error: null,
-      questions: [], // Add state for questions
-      questionsStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+      questions: [], // Store questions
       questionsError: null, // Error state for questions
       evaluationStatus: 'idle', // Add state for evaluation
       evaluationResult: null, // Store the result of the evaluation
       evaluationError: null, // Store error for evaluation
-  },
+    },
   reducers: {},
   extraReducers: (builder) => {
     // Add quiz topic
@@ -141,7 +139,7 @@ const quizSlice = createSlice({
       .addCase(getAllQuizTopics.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-      });
+      })
 
     // Get a specific quiz topic
     builder
@@ -156,20 +154,21 @@ const quizSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       });
-
-    // Get questions by difficulty
-    builder
+      builder
       .addCase(getQuestionsByDifficulty.pending, (state) => {
-        state.questionsStatus = 'loading';
+        state.status = 'loading';
+        state.questionsError = null; // Reset error on new request
       })
       .addCase(getQuestionsByDifficulty.fulfilled, (state, action) => {
-        state.questionsStatus = 'succeeded';
-        state.questions = action.payload.questions; // Assuming the API returns an object with a 'questions' array
+        state.status = 'succeeded';
+        state.questions = action.payload; // Store questions
       })
       .addCase(getQuestionsByDifficulty.rejected, (state, action) => {
-        state.questionsStatus = 'failed';
-        state.questionsError = action.error.message;
+        state.status = 'failed';
+        state.questionsError = action.error.message; // Store error message
       })
+
+ 
       .addCase(evaluateQuiz.pending, (state) => {
         state.evaluationStatus = 'loading';
       })
