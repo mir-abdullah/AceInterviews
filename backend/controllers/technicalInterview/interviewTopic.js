@@ -139,43 +139,51 @@ export const deleteInterviewTopic = async (req, res) => {
 };
 
 
-//route to get interview questions by difficulty
+// Route to get interview questions by difficulty
 export const getQuestionsByDifficulty = async (req, res) => {
-    try {
-      const { interviewId } = req.params;
-      const { difficulty } = req.body; 
-  
-      // Validate interviewId
-      if (!interviewId) {
-        return res.status(400).json({ message: 'Interview ID is required' });
-      }
-  
-      const interviewTopic = await InterviewTopic.findById(interviewId).populate('questions'); 
-  
-      if (!interviewTopic) {
-        return res.status(404).json({ message: 'Interview Topic not found' });
-      }
-  
-      let questions = interviewTopic.questions;
-  
-      if (difficulty) {
-        const validDifficulties = ['Easy', 'Medium', 'Hard'];
-        if (!validDifficulties.includes(difficulty)) {
-          return res.status(400).json({ message: 'Invalid difficulty level' });
-        }
-  
-        questions = questions.filter(question => question.difficulty === difficulty);
-      }
-  
-      res.status(200).json({ 
-        message: 'Interview Topic retrieved successfully', 
-        interviewTopic,
-        questions 
-      });
-    } catch (error) {
-      console.error('Error retrieving interview topic:', error); // Improved logging for debugging
-      res.status(500).json({ message: 'Error retrieving interview topic', error: error.message });
+  try {
+    const { interviewId } = req.params;
+    const { difficulty } = req.body;
+
+    // Validate interviewId
+    if (!interviewId) {
+      return res.status(400).json({ message: 'Interview ID is required' });
     }
-  };
+
+    // Find interview topic and populate questions
+    const interviewTopic = await InterviewTopic.findById(interviewId).populate('questions');
+    if (!interviewTopic) {
+      return res.status(404).json({ message: 'Interview Topic not found' });
+    }
+
+    let questions = interviewTopic.questions;
+    console.log('All Questions:', questions); // Log all questions before filtering
+
+    // Filter by difficulty if it's provided
+    if (difficulty) {
+      console.log('Requested difficulty:', difficulty); // Log the requested difficulty
+
+      // Filter questions based on difficulty
+      questions = questions.filter((question) => {
+        return question.difficulty === difficulty; // Ensure filter returns a boolean
+      });
+
+      console.log(`Filtered Questions by difficulty (${difficulty}):`, questions); // Log filtered questions
+    }
+
+    // Respond with the filtered questions or all if no filtering
+    res.status(200).json({
+      message: 'Interview Topic retrieved successfully',
+      // interviewTopic,
+      questions,
+    });
+  } catch (error) {
+    console.error('Error retrieving interview topic:', error);
+    res.status(500).json({ message: 'Error retrieving interview topic', error: error.message });
+  }
+};
+
+
+
   
   

@@ -35,6 +35,7 @@ const Quizes = () => {
     try {
       const resultAction = await dispatch(getQuestionsByDifficulty({ quizTopicId: selectedQuizId, difficulty }));
       if (resultAction.meta.requestStatus === 'fulfilled') {
+        console.log(resultAction.payload)
         const questionsData = resultAction.payload.questions;
         setQuestions(questionsData); // Store the questions
         navigate(`/dashboard/quiz/${selectedQuizId}`, {

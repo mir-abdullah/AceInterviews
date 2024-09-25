@@ -15,7 +15,9 @@ export const fetchInterviewTopics = createAsyncThunk(
 export const fetchQuestionsByDifficulty = createAsyncThunk(
   'interviewTopics/fetchQuestionsByDifficulty',
   async ({ interviewId, difficulty }) => {
+    
     try {
+      
       const response = await API.get(`/technicalInterviewTopic/difficulty/${interviewId}`, {
         difficulty,
       });
@@ -56,7 +58,12 @@ const interviewTopicsSlice = createSlice({
     interviewStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     interviewError: null, // Error state for starting the interview
   },
-  reducers: {},
+  reducers: {
+    resetQuestions: (state) => {
+      state.questions = [];  // Reset the questions array
+      state.questionsStatus = 'idle';  // Reset the status
+    },
+  },
   extraReducers: (builder) => {
     // Fetch interview topics
     builder
@@ -101,5 +108,6 @@ const interviewTopicsSlice = createSlice({
       });
   },
 });
+export const { resetQuestions } = interviewTopicsSlice.actions;
 
 export default interviewTopicsSlice.reducer;

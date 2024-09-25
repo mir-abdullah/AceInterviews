@@ -145,7 +145,7 @@ export const interviewResults = async (req, res) => {
       const userId = req.userId;
   
       // Fetch interviews for the specific user
-      const interviews = await behaviouralInterview.find({ user: userId });
+      const interviews = await behaviouralInterview.find({ user: userId }).populate('topic' ,'title picture');
   
       // Check if no interviews are found
       if (!interviews || interviews.length === 0) {
@@ -197,6 +197,19 @@ export const countInterviews = async (req, res) => {
       return res.status(500).json({ message: error.message });
     }
   };
+
+  //count interviews overall
+  export const countBehaviouralInterviews = async (req, res) => {
+    try{
+      const count = await behaviouralInterview.countDocuments( );
+  
+      // Return the count as a JSON object
+      return res.status(200).json({ count });
+    } catch (error) {
+      // Return the error message
+      return res.status(500).json({ message: error.message });
+    }
+    }
   
 
 

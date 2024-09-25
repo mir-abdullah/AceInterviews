@@ -15,6 +15,7 @@ import BehaviouralInterviewRouter from './routes/behaviouralInterview/behavioura
 import BehaviouralQuestionRouter from './routes/behaviouralInterview/behaviourQuestion.js'
 import BehaviouralTopicRouter from './routes/behaviouralInterview/behaviourTopic.js'
 import Admin from './routes/admin/admin.js'
+import FeedbackRouter from './routes/feedback/feedback.js'
 
 
 dotenv.config()
@@ -53,6 +54,9 @@ app.use('/behaviouralTopic',BehaviouralTopicRouter)
 app.use('/quiz',quizRouter)
 app.use('/quiz-questions',quizQuestionRouter)
 app.use('/quizTopic',quizTopicRouter)
+
+//feedback
+app.use('/feedback',FeedbackRouter)
 
 app.get('/',(req,res)=>{
     res.send('Hello World')

@@ -22,6 +22,7 @@ import {
   sendOtpController,
   verifyOtpController,
   handleGoogleLogin,
+  calculateTotalUsers
  
   
 } from "../../controllers/user/user.js";
@@ -74,6 +75,9 @@ router.post('/verify-otp',verifyOtpController)
 
 //google login
 router.post('/google-login',handleGoogleLogin)
+
+//count users
+router.get('/count-users',calculateTotalUsers)
 
 
 

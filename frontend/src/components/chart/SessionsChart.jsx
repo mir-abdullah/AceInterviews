@@ -1,5 +1,6 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
+import { useDispatch, useSelector } from "react-redux";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
@@ -7,6 +8,11 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { LineChart } from "@mui/x-charts/LineChart";
 import AreaGradient from "./AreaGradient"; // Import the AreaGradient component
+import {
+  fetchTotalQuizzes,
+  fetchTechnicalInterviews,
+  fetchBehavioralInterviews,
+} from "../../redux/slices/admin/statistics/statisctics"; // Import your thunks
 
 // Helper function to get the days in a month
 function getDaysInMonth(month, year) {
@@ -24,7 +30,28 @@ function getDaysInMonth(month, year) {
 
 export default function SessionsChart() {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const {
+    totalQuizzes,
+    technicalInterviews,
+    behavioralInterviews,
+    loading,
+  } = useSelector((state) => state.stats); // Access stats from Redux
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    dispatch(fetchTotalQuizzes());
+    dispatch(fetchTechnicalInterviews());
+    dispatch(fetchBehavioralInterviews());
+  }, [dispatch]);
+
+  // Days in the month for the x-axis
   const data = getDaysInMonth(4, 2024); // Adjust for the month and year
+
+  // Dummy data for illustration (adjust with real data if needed)
+  const quizzesData = Array(30).fill(totalQuizzes); // Simulating quiz data over 30 days
+  const technicalInterviewsData = Array(30).fill(technicalInterviews); // Simulating tech interview data
+  const behavioralInterviewsData = Array(30).fill(behavioralInterviews); // Simulating behavioral interview data
 
   const colorPalette = [
     theme.palette.primary.light,
@@ -48,12 +75,12 @@ export default function SessionsChart() {
             }}
           >
             <Typography variant="h4" component="p">
-              13,277
+              {totalQuizzes + technicalInterviews + behavioralInterviews || "0"}
             </Typography>
             <Chip size="small" color="success" label="+35%" />
           </Stack>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            Sessions per day for the last 30 days
+            Quizzes and Interviews for the last 30 days
           </Typography>
         </Stack>
 
@@ -68,45 +95,33 @@ export default function SessionsChart() {
           ]}
           series={[
             {
-              id: "direct",
-              label: "Direct",
+              id: "quizzes",
+              label: "Quizzes",
               showMark: false,
               curve: "linear",
               stack: "total",
               area: true,
               stackOrder: "ascending",
-              data: [
-                300, 900, 600, 1200, 1500, 1800, 2400, 2100, 2700, 3000, 1800,
-                3300, 3600, 3900, 4200, 4500, 3900, 4800, 5100, 5400, 4800,
-                5700, 6000, 6300, 6600, 6900, 7200, 7500, 7800, 8100,
-              ],
+              data: quizzesData,
             },
             {
-              id: "referral",
-              label: "Referral",
+              id: "technicalInterviews",
+              label: "Technical Interviews",
               showMark: false,
               curve: "linear",
               stack: "total",
               area: true,
               stackOrder: "ascending",
-              data: [
-                500, 900, 700, 1400, 1100, 1700, 2300, 2000, 2600, 2900, 2300,
-                3200, 3500, 3800, 4100, 4400, 2900, 4700, 5000, 5300, 5600,
-                5900, 6200, 6500, 5600, 6800, 7100, 7400, 7700, 8000,
-              ],
+              data: technicalInterviewsData,
             },
             {
-              id: "organic",
-              label: "Organic",
+              id: "behavioralInterviews",
+              label: "Behavioral Interviews",
               showMark: false,
               curve: "linear",
               stack: "total",
               stackOrder: "ascending",
-              data: [
-                1000, 1500, 1200, 1700, 1300, 2000, 2400, 2200, 2600, 2800,
-                2500, 3000, 3400, 3700, 3200, 3900, 4100, 3500, 4300, 4500,
-                4000, 4700, 5000, 5200, 4800, 5400, 5600, 5900, 6100, 6300,
-              ],
+              data: behavioralInterviewsData,
               area: true,
             },
           ]}
@@ -114,14 +129,14 @@ export default function SessionsChart() {
           margin={{ left: 50, right: 20, top: 20, bottom: 20 }}
           grid={{ horizontal: true }}
           sx={{
-            "& .MuiAreaElement-series-organic": {
-              fill: "url('#organic')",
+            "& .MuiAreaElement-series-behavioralInterviews": {
+              fill: "url('#behavioral')",
             },
-            "& .MuiAreaElement-series-referral": {
-              fill: "url('#referral')",
+            "& .MuiAreaElement-series-technicalInterviews": {
+              fill: "url('#technical')",
             },
-            "& .MuiAreaElement-series-direct": {
-              fill: "url('#direct')",
+            "& .MuiAreaElement-series-quizzes": {
+              fill: "url('#quizzes')",
             },
           }}
           slotProps={{
@@ -130,9 +145,9 @@ export default function SessionsChart() {
             },
           }}
         >
-          <AreaGradient color={theme.palette.primary.dark} id="organic" />
-          <AreaGradient color={theme.palette.primary.main} id="referral" />
-          <AreaGradient color={theme.palette.primary.light} id="direct" />
+          <AreaGradient color={theme.palette.primary.dark} id="behavioral" />
+          <AreaGradient color={theme.palette.primary.main} id="technical" />
+          <AreaGradient color={theme.palette.primary.light} id="quizzes" />
         </LineChart>
       </CardContent>
     </Card>
