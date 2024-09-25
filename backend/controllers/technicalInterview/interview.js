@@ -43,21 +43,25 @@ export const startInterview = async (req, res) => {
     const interviewTopic = await InterviewTopic.findById(
       interviewTopicId
     ).populate("questions");
+
     if (!interviewTopic) {
       return res.status(404).json({ message: "Interview Topic not found" });
     }
 
-    // Filter questions based on the selected difficulty level
-    const filteredQuestions = interviewTopic.questions.filter(
-      (question) => question.difficulty === difficulty
-    );
+    // Retrieve the questions from the interview topic
+    let questions = interviewTopic.questions;
 
-    if (filteredQuestions.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message: "No questions found for the selected difficulty level",
-        });
+    // Filter questions based on the selected difficulty level
+    if (difficulty) {
+      questions = questions.filter((question) => {
+        return question.difficulty === difficulty; // Filter questions by difficulty
+      });
+
+      if (questions.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No questions found for the selected difficulty level" });
+      }
     }
 
     // Create a new interview document
@@ -69,14 +73,11 @@ export const startInterview = async (req, res) => {
     });
 
     // Iterate over the filtered questions and evaluate the answers
-    for (let question of filteredQuestions) {
+    for (let question of questions) {
       const userAnswer = answers[question._id]; // Retrieve user's answer for this question
 
-      // Evaluate the answer using the Gemini API
-      const evaluation = await evaluateAnswer(
-        question.text,
-        userAnswer
-      );
+      // Evaluate the answer using the Gemini API (this should be a function you have implemented elsewhere)
+      const evaluation = await evaluateAnswer(question.text, userAnswer);
 
       // Add the question, user's answer, and evaluation to the interview responses
       interview.responses.push({
@@ -85,7 +86,7 @@ export const startInterview = async (req, res) => {
         evaluation: {
           score: evaluation.score,
           feedback: evaluation.feedback,
-          idealAnswer:evaluation.idealAnswer
+          idealAnswer: evaluation.idealAnswer,
         },
       });
 
@@ -96,15 +97,14 @@ export const startInterview = async (req, res) => {
     // Save the interview to the database
     await interview.save();
 
-    res
-      .status(200)
-      .json({ message: "Interview completed successfully", interview });
+    res.status(200).json({ message: "Interview completed successfully", interview });
   } catch (error) {
     res
       .status(500)
       .json({ message: "Error starting interview", error: error.message });
   }
 };
+
 
 // Evaluation function
 async function evaluateAnswer(question, answer) {

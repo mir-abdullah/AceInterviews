@@ -140,21 +140,23 @@ export const getQuestionsByDifficulty = async (req, res) => {
     if (!quizTopic) {
       return res.status(404).json({ message: "Quiz Topic not found" });
     }
-    console.log(quizTopic.questions)
+    
 
     let questions = quizTopic.questions;
 
  
 
-    if (difficulty) {
-      const validDifficulties = ["Easy", "Medium", "Hard"];
-      if (!validDifficulties.includes(difficulty)) {
-        return res.status(400).json({ message: "Invalid difficulty level" });
-      }
+    // if (difficulty) {
+    //   const validDifficulties = ["Easy", "Medium", "Hard"];
+    //   if (!validDifficulties.includes(difficulty)) {
+    //     return res.status(400).json({ message: "Invalid difficulty level" });
+    //   }
 
-      questions = questions.filter((question) => question.difficulty === difficulty);
-
-    }
+// Filter questions based on difficulty
+questions = questions.filter((question) => {
+  return question.difficulty === difficulty; // Ensure filter returns a boolean
+});
+    console.log(questions)
 
     res.status(200).json({
       message: "Quiz Topic retrieved successfully",
