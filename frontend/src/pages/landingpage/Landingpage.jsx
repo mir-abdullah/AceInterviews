@@ -6,6 +6,8 @@ import Product from "./Product";
 import Blog from "./Blog";
 import Newsletter from "./Newsletter";
 import Footer from "./Footer";
+import FAQ from "./FAQ";
+import Services from "./Services";
 export default function Landingpage() {
   return (
     <div>
@@ -14,7 +16,9 @@ export default function Landingpage() {
       <About />
       <Product />
       <Blog />
+      <Services />
       <Newsletter />
+      <FAQ />
       <Footer />
     </div>
   );
