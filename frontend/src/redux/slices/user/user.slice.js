@@ -78,6 +78,46 @@ export const logoutUser = createAsyncThunk('user/logout', async (_, thunkAPI) =>
     return thunkAPI.rejectWithValue(error.response?.data || 'Failed to logout');
   }
 });
+// Thunks for OTP and Password Reset
+
+// Send OTP action
+export const sendOtp = createAsyncThunk(
+  'user/sendOtp',
+  async (email, thunkAPI) => {
+    try {
+      const response = await API.post('/api/user/send-otp', { email }); // Adjust the endpoint
+      return response.data; // Return the response from the API
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// Verify OTP action
+export const verifyOtp = createAsyncThunk(
+  'user/verifyOtp',
+  async ({ email, otp }, thunkAPI) => {
+    try {
+      const response = await API.post('/api/user/verify-otp', { email, otp }); // Adjust the endpoint
+      return response.data; // Return the response from the API
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// Forgot Password action
+export const forgotPassword = createAsyncThunk(
+  'user/forgotPassword',
+  async ({ email, newPassword }, thunkAPI) => {
+    try {
+      const response = await API.post('/api/user/forgot-password', { email, newPassword }); // Adjust the endpoint
+      return response.data; // Return the response from the API
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 
 const userSlice = createSlice({
@@ -86,10 +126,11 @@ const userSlice = createSlice({
     user: null,
     status: "idle",
     error: null,
-    passwordConfirmed: false,
-    passwordConfirmError: null,
-    profileUpdateStatus: "idle",
-    profileUpdateError: null,
+    otpSent: false,
+    otpError: null,
+    otpVerified: false,
+    resetPasswordStatus: "idle",
+    resetPasswordError: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -179,6 +220,49 @@ const userSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.logoutStatus = "failed";
         state.logoutError = action.payload || 'Failed to logout';
+      })
+      builder
+      // Send OTP Reducers
+      .addCase(sendOtp.pending, (state) => {
+        state.status = "loading";
+        state.otpSent = false;
+        state.otpError = null;
+      })
+      .addCase(sendOtp.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.otpSent = true;
+        state.otpError=null // OTP sent successfully
+      })
+      .addCase(sendOtp.rejected, (state, action) => {
+        state.status = "failed";
+        state.otpError = action.payload; // Handle the error for OTP sending
+      })
+
+      // Verify OTP Reducers
+      .addCase(verifyOtp.pending, (state) => {
+        state.status = "loading";
+        state.otpVerified = false;
+      })
+      .addCase(verifyOtp.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.otpVerified = true; // OTP verified successfully
+      })
+      .addCase(verifyOtp.rejected, (state, action) => {
+        state.status = "failed";
+        state.otpError = action.payload; // Handle the error for OTP verification
+      })
+
+      // Forgot Password Reducers
+      .addCase(forgotPassword.pending, (state) => {
+        state.resetPasswordStatus = "loading";
+        state.resetPasswordError = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.resetPasswordStatus = "succeeded"; // Password reset successfully
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.resetPasswordStatus = "failed";
+        state.resetPasswordError = action.payload; // Handle the error for password reset
       });
   },
 });

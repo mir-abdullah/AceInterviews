@@ -5,7 +5,7 @@ import Tilt from 'react-parallax-tilt';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DifficultyModal from '../../components/modals/DifficultyModal';
-import { getAllQuizTopics, getQuestionsByDifficulty } from '../../redux/slices/quiz/quiz.slice';
+import { getAllQuizTopics, getQuestionsByDifficulty,addClick } from '../../redux/slices/quiz/quiz.slice';
 
 const Quizes = () => {
   const dispatch = useDispatch();
@@ -24,7 +24,9 @@ const Quizes = () => {
   }, [dispatch, status]);
 
   const handleStartQuiz = (quizId) => {
+   
     setSelectedQuizId(quizId);
+    dispatch(addClick(quizId))
     setOpenModal(true);
   };
 
@@ -33,10 +35,12 @@ const Quizes = () => {
     setOpenModal(false);
 
     try {
+      console.log(selectedDifficulty)
+      console.log(difficulty)
       const resultAction = await dispatch(getQuestionsByDifficulty({ quizTopicId: selectedQuizId, difficulty }));
       if (resultAction.meta.requestStatus === 'fulfilled') {
         console.log(resultAction.payload)
-        const questionsData = resultAction.payload.questions;
+        const questionsData = resultAction.payload.quizTopic.questions
         setQuestions(questionsData); // Store the questions
         navigate(`/dashboard/quiz/${selectedQuizId}`, {
           state: { difficulty, questions: questionsData }
@@ -142,7 +146,8 @@ const Quizes = () => {
                             backgroundColor: '#388E3C',
                           },
                         }}
-                        onClick={() => handleStartQuiz(quiz._id)}
+                        onClick={() => {
+                          handleStartQuiz(quiz._id)}}
                       >
                         Start Quiz
                       </Button>

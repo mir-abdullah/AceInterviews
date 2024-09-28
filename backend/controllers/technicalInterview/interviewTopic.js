@@ -139,43 +139,43 @@ export const deleteInterviewTopic = async (req, res) => {
 };
 
 
-//route to get interview questions by difficulty
+// Route to get interview questions by difficulty
 export const getQuestionsByDifficulty = async (req, res) => {
   try {
     const { interviewId } = req.params;
-    const { difficulty } = req.body; 
+    const { difficulty } = req.body;
 
     // Validate interviewId
     if (!interviewId) {
       return res.status(400).json({ message: 'Interview ID is required' });
     }
 
-    const interviewTopic = await InterviewTopic.findById(interviewId).populate('questions'); 
-
+    // Find interview topic and populate questions
+    const interviewTopic = await InterviewTopic.findById(interviewId).populate('questions');
     if (!interviewTopic) {
       return res.status(404).json({ message: 'Interview Topic not found' });
     }
 
     let questions = interviewTopic.questions;
-
     console.log('All Questions:', questions); // Log all questions before filtering
 
+    // Filter by difficulty if it's provided
     if (difficulty) {
       console.log('Requested difficulty:', difficulty); // Log the requested difficulty
 
-      const validDifficulties = ['Easy', 'Medium', 'Hard'];
-      if (!validDifficulties.includes(difficulty)) {
-        return res.status(400).json({ message: 'Invalid difficulty level' });
-      }
+      // Filter questions based on difficulty
+      questions = questions.filter((question) => {
+        return question.difficulty === difficulty; // Ensure filter returns a boolean
+      });
 
-      questions = questions.filter(question => question.difficulty === difficulty);
       console.log(`Filtered Questions by difficulty (${difficulty}):`, questions); // Log filtered questions
     }
 
-    res.status(200).json({ 
-      message: 'Interview Topic retrieved successfully', 
-      interviewTopic,
-      questions 
+    // Respond with the filtered questions or all if no filtering
+    res.status(200).json({
+      message: 'Interview Topic retrieved successfully',
+      // interviewTopic,
+      questions,
     });
   } catch (error) {
     console.error('Error retrieving interview topic:', error);
@@ -183,6 +183,36 @@ export const getQuestionsByDifficulty = async (req, res) => {
   }
 };
 
+//controller to find most clicked interview
+export const getMostClickedInterview = async (req, res) => {
+  try {
+    const interviews = await InterviewTopic.find().sort({ clicks: -1 }).limit(1);
+    res.status(200).json(interviews);
+    } catch (error) {
+      console.error('Error retrieving most clicked interview:', error);
+      res.status(500).json({ message: 'Error retrieving most clicked interview', error: error
+        })
+      }
+    }
+      
+
+
+
+
+//controller for adding to clicks
+export const addClick = async (req, res) => {
+  try {
+    const { interviewId } = req.params;
+    const topic = await InterviewTopic.findById(interviewId);
+    topic.clicks += 1;
+    await topic.save();
+    res.status(200).json({ message: "Click added successfully" });
+  }
+  catch(error){
+    console.error("Error adding click:", error);
+    res.status(500).json({ message: "Error adding click", error: error.message });
+  }
+}
 
   
   

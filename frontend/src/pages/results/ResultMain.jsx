@@ -9,9 +9,8 @@ import {
   fetchBehavioralInterviewResults,
   fetchTechnicalInterviewResults,
   fetchQuizResults,
-} from "../../redux/slices/results/results.slice"; // Assuming the slice is in store folder
+} from "../../redux/slices/results/results.slice"; // Assuming the slice is in the store folder
 import { MdArrowForward } from 'react-icons/md';
-
 
 // Render result cards with arrow button for details
 const renderResults = (data, type, navigate) => {
@@ -31,31 +30,39 @@ const renderResults = (data, type, navigate) => {
     <div className="flex flex-col gap-4">
       {sortedData.map((item) => (
         <motion.div
-          key={`${type}-${item.id}`}
+          key={`${type}-${item._id}`} // Changed to _id for unique key
           className="flex items-center justify-between p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ scale: 1.02 }}
         >
           <div className="flex items-center space-x-4">
-            <img
-              src={item.topic.picture}
-              alt={item.title}
-              className="w-16 h-16 rounded-full object-cover shadow-md"
-            />
+            {/* Conditional rendering based on type */}
+            { (
+              <img
+                src={item.topic.picture}
+                alt={item.topic.title}
+                className="w-16 h-16 rounded-full object-cover shadow-md"
+              />
+            ) }
+
             <div className="flex flex-col">
               <Typography variant="h6" className="text-gray-900 font-bold truncate">
                 {item.topic.title}
               </Typography>
               <Typography variant="body2" className="text-neutralGrey truncate">
-                {type === "behavioral" ? "Behavioral Interviews" : "Technical Interviews"}
+                {type === "behavioral"
+                  ? "Behavioral Interviews"
+                  : type === "technical"
+                  ? "Technical Interviews"
+                  : "Quizzes"}
               </Typography>
             </div>
           </div>
 
           <div className="flex flex-col items-end space-y-2">
             <button
-              onClick={() => navigate(`/dashboard/result-details/${type}/${item._id}`, { state: { item } })}
+              onClick={() => navigate(`/dashboard/result-details/${type}/${item._id}`, { state: { item ,type} })}
               className="bg-transparent text-cyan-500 hover:text-green-600 transition-colors"
             >
               View Results <FaArrowRight className="inline" />
@@ -76,11 +83,6 @@ const renderResults = (data, type, navigate) => {
   );
 };
 
-
-
-
-
-
 const Results = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const navigate = useNavigate();
@@ -90,7 +92,6 @@ const Results = () => {
   const { behavioralInterviews, technicalInterviews, quizzes, loading } = useSelector(
     (state) => state.results
   );
-  console.log(technicalInterviews)
 
   useEffect(() => {
     dispatch(fetchBehavioralInterviewResults());
@@ -110,66 +111,63 @@ const Results = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <h1  className=" text-black font-bold text-4xl mb-5 "
-        >
+        <h1 className="text-black font-bold text-4xl mb-5">
           Interview Results
         </h1>
         <Typography variant="h6" className="text-neutralGrey">
-        <div className="flex flex-col">
-  <span className="text-5xl font-bold">
-    {behavioralInterviews.length + technicalInterviews.length + quizzes.length}
-  </span>
-  <span className="text-md text-gray-600">
-    Interviews Taken
-  </span>
-</div>        </Typography>
+          <div className="flex flex-col">
+            <span className="text-5xl font-bold">
+              {behavioralInterviews.length + technicalInterviews.length + quizzes.length}
+            </span>
+            <span className="text-md text-gray-600">Interviews Taken</span>
+          </div>
+        </Typography>
       </motion.div>
 
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-  <Tabs
-    value={selectedTab}
-    onChange={handleChange}
-    centered
-    sx={{
-      '& .Mui-selected': {
-        backgroundColor: 'cyan', // Selected tab background
-        color: 'black', // Selected tab text color
-      },
-      '& .MuiTab-root': {
-        border: '1px solid transparent', // Transparent border for unselected tabs
-      },
-      '& .MuiTab-root:not(.Mui-selected)': {
-        borderColor: 'cyan', // Cyan border for unselected tabs
-      },
-    }}
-  >
-    <Tab
-      label={
-        <div className="flex items-center space-x-2">
-          <FaUserTie className="text-xl" />
-          <span>Behavioral</span>
-        </div>
-      }
-    />
-    <Tab
-      label={
-        <div className="flex items-center space-x-2">
-          <FaLaptopCode className="text-xl" />
-          <span>Technical</span>
-        </div>
-      }
-    />
-    <Tab
-      label={
-        <div className="flex items-center space-x-2">
-          <FaQuestionCircle className="text-xl" />
-          <span>Quizzes</span>
-        </div>
-      }
-    />
-  </Tabs>
-</Box>
-
+        <Tabs
+          value={selectedTab}
+          onChange={handleChange}
+          centered
+          sx={{
+            '& .Mui-selected': {
+              backgroundColor: 'cyan', // Selected tab background
+              color: 'blue', // Selected tab text color
+            },
+            '& .MuiTab-root': {
+              border: '1px solid transparent', // Transparent border for unselected tabs
+            },
+            '& .MuiTab-root:not(.Mui-selected)': {
+              borderColor: 'cyan', // Cyan border for unselected tabs
+            },
+          }}
+        >
+          <Tab
+            label={
+              <div className="flex items-center space-x-2">
+                <FaUserTie className="text-xl" />
+                <span>Behavioral</span>
+              </div>
+            }
+          />
+          <Tab
+            label={
+              <div className="flex items-center space-x-2">
+                <FaLaptopCode className="text-xl" />
+                <span>Technical</span>
+              </div>
+            }
+          />
+          <Tab
+            label={
+              <div className="flex items-center space-x-2">
+                <FaQuestionCircle className="text-xl" />
+                <span>Quizzes</span>
+              </div>
+            }
+          />
+        </Tabs>
+      </Box>
 
       <div className="w-full max-w-4xl">
         {loading && <Typography>Loading...</Typography>}

@@ -13,6 +13,11 @@ import quizQuestionsReducer from '../slices/admin/quizAdmin/quizQuestions'
 import feedbackReducer from '../slices/feedback/userFeedback'
 import statsReducer from  '../slices/admin/statistics/statisctics'
 import resultsReducer from '../slices/results/results.slice'
+import behaviouralInterviewReducer from '../slices/behaviouralInterview/behaviouralInterview.slice'
+
+
+
+
 const store=configureStore({
     reducer:{
         auth:authReducer,
@@ -28,7 +33,8 @@ const store=configureStore({
         quizQuestions: quizQuestionsReducer,
         feedback: feedbackReducer,
         stats: statsReducer,
-        results: resultsReducer
+        results: resultsReducer,
+        behaviouralInterview: behaviouralInterviewReducer
 
 
 
