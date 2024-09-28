@@ -183,7 +183,36 @@ export const getQuestionsByDifficulty = async (req, res) => {
   }
 };
 
+//controller to find most clicked interview
+export const getMostClickedInterview = async (req, res) => {
+  try {
+    const interviews = await InterviewTopic.find().sort({ clicks: -1 }).limit(1);
+    res.status(200).json(interviews);
+    } catch (error) {
+      console.error('Error retrieving most clicked interview:', error);
+      res.status(500).json({ message: 'Error retrieving most clicked interview', error: error
+        })
+      }
+    }
+      
 
+
+
+
+//controller for adding to clicks
+export const addClick = async (req, res) => {
+  try {
+    const { interviewId } = req.params;
+    const topic = await InterviewTopic.findById(interviewId);
+    topic.clicks += 1;
+    await topic.save();
+    res.status(200).json({ message: "Click added successfully" });
+  }
+  catch(error){
+    console.error("Error adding click:", error);
+    res.status(500).json({ message: "Error adding click", error: error.message });
+  }
+}
 
   
   

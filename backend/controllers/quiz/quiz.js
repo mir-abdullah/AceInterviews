@@ -6,16 +6,18 @@ import mongoose from "mongoose";
 export const submitAndEvaluateQuiz = async (req, res) => {
   try {
     const { quizTopicId } = req.params;
-    const { answers } = req.body; // Expecting answers to be an object
+    const { answers, difficulty } = req.body; // Expecting answers to be an object
 
     // Log the request body for debugging
     console.log(req.body);
+    console.log(difficulty);
 
     // Ensure the answers object is valid
     if (typeof answers !== 'object' || Array.isArray(answers)) {
       return res.status(400).json({ message: "Invalid format for answers. It should be an object." });
     }
 
+  
     // Find the quiz topic and populate questions
     const quizTopic = await QuizTopic.findById(quizTopicId).populate('questions');
 
@@ -51,21 +53,21 @@ export const submitAndEvaluateQuiz = async (req, res) => {
       }
 
       // Compare selected option with correct option value
-      const isCorrect = selectedOption === correctOption.value;
+      const isCorrect = selectedOption === correctOption.text; // Assuming `text` holds the answer
       if (isCorrect) score++;
 
       answerResults.push({
         question: question.questionText,
         selectedOption,
-        correctOption: correctOption.value,
+        correctOption: correctOption.text, // Save the correct answer's text
         isCorrect,
       });
     }
 
     // Store the result in QuizResult
     const quizResult = await QuizResult.create({
-      userId: req.user._id, // Assuming user is authenticated
-      quizTopic: quizTopicId,
+      user: req.userId, // Assuming user is authenticated
+      topic: quizTopicId,
       answers: answerResults,
       score,
     });
@@ -75,6 +77,7 @@ export const submitAndEvaluateQuiz = async (req, res) => {
     res.status(500).json({ message: "Error submitting quiz", error: error.message });
   }
 };
+
 
 
 
@@ -90,7 +93,7 @@ export const quizResults = async (req, res) => {
   
       // Check if no interviews are found
       if (!quizes || quizes.length === 0) {
-        return res.status(404).json({ message: "No interviews found." });
+        return res.status(404).json({ message: "No quiz found." });
       }
   
       // Return the interviews if found
@@ -107,6 +110,7 @@ export const quizResults = async (req, res) => {
       const { quizId } = req.params;
       const userId = req.userId;
       const quiz = await QuizResult.find({ user: userId, _id: quizId });
+
       if (!quiz || quiz.length === 0) {
         return res.status(404).json({ message: "No quiz found." });
       }
