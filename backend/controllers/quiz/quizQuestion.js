@@ -13,6 +13,8 @@ export const addQuestion = async (req, res) => {
 
         const { questionText, options, difficulty } = req.body;
         if (!questionText || !options || !difficulty) {
+            console.log(questionText)
+            console.log(difficulty)
             return res.status(400).json({ message: 'Please fill all fields' });
         }
 
@@ -60,21 +62,40 @@ export const deleteQuestion = async (req, res) => {
 //route to update question
 export const updateQuestion = async (req, res) => {
     try {
-        const { quizId, questionId } = req.params;
-        const { questionText, options, difficulty } = req.body;
-
-        const question = await QuizQuestion.findByIdAndUpdate(
-            questionId,
-            { questionText, options, difficulty },
-            { new: true, runValidators: true }
-        );
-        if (!question) {
-            return res.status(404).json({ message: 'Question not found' });
-        }
-
-
-        res.status(200).json({ message: 'Question updated in the quiz topic', question });
+      const { quizId, questionId } = req.params;
+      const { questionText, options, difficulty } = req.body;
+      console.log(quizId)
+      console.log(questionId)
+      console.log(questionText)
+      console.log(difficulty)
+      console.log(options)
+  
+      // Check if the quiz exists
+      const quiz = await QuizTopic.findById(quizId);
+      if (!quiz) {
+        return res.status(404).json({ message: 'Quiz not found' });
+      }
+  
+      // Find and update the question
+      const question = await QuizQuestion.findByIdAndUpdate(
+        questionId,
+        { questionText, options, difficulty },
+        { new: true, runValidators: true }
+      );
+  
+      // Check if the question exists
+      if (!question) {
+        return res.status(404).json({ message: 'Question not found' });
+      }
+  
+      // Optionally, ensure that the question belongs to the quiz (if necessary in your data model)
+      if (!quiz.questions.includes(questionId)) {
+        return res.status(400).json({ message: 'Question does not belong to the specified quiz' });
+      }
+  
+      res.status(200).json({ message: 'Question updated successfully', question });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating question in quiz topic', error: error.message });
+      res.status(500).json({ message: 'Error updating question', error: error.message });
     }
-};
+  };
+  

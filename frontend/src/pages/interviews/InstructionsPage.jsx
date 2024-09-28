@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchQuestionsByDifficulty } from '../../redux/slices/technicalInterview/technicalInterview.slice';
+import { fetchQuestionsByDifficulty, resetQuestions } from '../../redux/slices/technicalInterview/technicalInterview.slice';
 
 const difficultyLevels = ['Easy', 'Medium', 'Hard'];
 
 const InstructionsPage = () => {
-  const [selectedDifficulty, setSelectedDifficulty] = useState('Easy');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { interviewId } = useParams();
@@ -15,10 +15,16 @@ const InstructionsPage = () => {
 
   const handleStartInterview = () => {
     if (selectedDifficulty && interviewId) {
+      // Reset the questions state before fetching new questions
+      dispatch(resetQuestions());
+
       dispatch(fetchQuestionsByDifficulty({ interviewId, difficulty: selectedDifficulty }))
         .then((resultAction) => {
           if (resultAction.meta.requestStatus === 'fulfilled') {
-            navigate(`/dashboard/techinterviewpage/${interviewId}`, { state: { difficulty: selectedDifficulty, questions: resultAction.payload.questions } });
+            // Navigate to TechnicalInterviewPage and pass the questions in state
+            navigate(`/dashboard/techinterviewpage/${interviewId}`, {
+              state: { difficulty: selectedDifficulty, questions: resultAction.payload.questions },
+            });
           } else {
             alert('Failed to fetch questions. Please try again.');
           }
@@ -31,22 +37,21 @@ const InstructionsPage = () => {
   return (
     <Box
       sx={{
-        padding: '40px 20px', // Increased padding for better layout
+        padding: '40px 20px',
         minHeight: '100vh',
         backgroundColor: '#f0f4f8',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        // Gradient background
       }}
       className="bg-gradient-to-t from-lime-100 to-cyan-100"
     >
       <Box
         sx={{
           maxWidth: '700px',
-          backgroundColor: '#ffffff', // White background for the card
-          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)', // Shadow for depth
+          backgroundColor: '#ffffff',
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
           borderRadius: '20px',
           padding: '40px',
           textAlign: 'center',

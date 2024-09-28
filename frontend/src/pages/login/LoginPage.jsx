@@ -5,6 +5,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import Cookies from 'js-cookie';
 import { GoogleLogin } from '@react-oauth/google';
+import ForgotPasswordModal from '../../components/modals/ForgotPasswordModal';
+import login from '../../assets/login.avif'
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -13,6 +15,16 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
+  const [isForgotPasswordModalOpen, setForgotPasswordModalOpen] = useState(false);
+ 
+
+  const openForgotPasswordModal = () => {
+    setForgotPasswordModalOpen(true);
+  };
+
+  const closeForgotPasswordModal = () => {
+    setForgotPasswordModalOpen(false);
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -25,17 +37,15 @@ export default function LoginPage() {
     e.preventDefault();
     setShowError(false);
     setError(null);
-  
+
     try {
       const result = await dispatch(loginUser(formData));
 
-  
       if (loginUser.fulfilled.match(result)) {
         const token = result.payload.token;
         Cookies.set('token', token, { expires: 1 });
         navigate('/dashboard/overview');
       } else if (loginUser.rejected.match(result)) {
-        // Extract error message from the server response
         const errorMessage = result.payload || "Invalid Email or Password Entered";
         setError(errorMessage);
         setShowError(true);
@@ -43,12 +53,10 @@ export default function LoginPage() {
         setTimeout(() => setShowError(false), 3000);
       }
     } catch (error) {
-      // Display a generic error message in case of unexpected errors
       setError("An unexpected error occurred");
       setShowError(true);
     }
   };
-  
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
@@ -57,7 +65,7 @@ export default function LoginPage() {
 
       if (googleLogin.fulfilled.match(result)) {
         const token = result.payload.token;
-        Cookies.set('token', token, { expires: 7 }); 
+        Cookies.set('token', token, { expires: 1 });
         navigate('/dashboard/overview');
       } else if (googleLogin.rejected.match(result)) {
         setError("Google Login failed. Please try again.");
@@ -67,71 +75,93 @@ export default function LoginPage() {
       setError("An error occurred during Google Login. Please try again.");
     }
   };
-
+//bg-gradient-to-r from-purple-300 via-blue-200 to-green-300
   return (
-    <div className="flex justify-center gap-2 pt-10">
-      <div className="max-w-md relative flex flex-col p-4 rounded-md text-black bg-white">
-        <div className="text-2xl font-bold mb-2 text-[#1e0e4b] text-center">
-          Welcome back to <span className="text-gradient">AceInterview</span>
+    <div className="min-h-screen flex items-center justify-center bg-cyan-100">
+      <div className="bg-white shadow-lg rounded-lg flex max-w-4xl mx-auto p-6">
+        {/* Left Section (Optional) */}
+        <div className="hidden lg:flex w-1/2 items-center justify-center">
+          <img src={login} alt="Login Illustration" className="w-full h-auto" />
         </div>
-        <div className="text-sm font-normal mb-4 text-center text-[#1e0e4b]">
-          Log in to your account
-        </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <div className="block relative">
-            <label className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2" required>
-              Email
-            </label>
-            <input
-              type="text"
-              id="email"
-              value={formData.email}
-              className={`rounded border ${
-                showError ? 'border-red-500' : 'border-gray-200'
-              } text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2 ring-gray-900 outline-0`}
-              onChange={handleChange}
-            />
+
+        {/* Right Section (Form) */}
+        <div className="w-full lg:w-1/2 p-8">
+          {/* Title */}
+          <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Welcome back to <span className="text-gradient">AceInterview</span></h2>
+          <div className="text-sm font-normal mb-4 text-center text-gray-700">
+            Log in to your account
           </div>
-          <div className="block relative">
-            <label className="block text-gray-600 cursor-text text-sm leading-[140%] font-normal mb-2" required>
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={formData.password}
-              className={`rounded border ${
-                showError ? 'border-red-500' : 'border-gray-200'
-              } text-sm w-full font-normal leading-[18px] text-black tracking-[0px] appearance-none block h-11 m-0 p-[11px] focus:ring-2 ring-offset-2 ring-gray-900 outline-0`}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <a className="text-sm text-[#7747ff]" href="#">
-              Forgot your password?
-            </a>
-          </div>
-          <button
-            disabled={loading}
-            type="submit"
-            className="flex items-center justify-center py-2 px-4 md:px-20 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-blue-600 hover:to-red-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 focus:ring-offset-gray-900 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none rounded-lg"
-          >
-            {loading ? <CircularProgress /> : 'Login'}
-          </button>
-        </form>
-        <div className="text-sm text-center mt-[1.6rem]">
-          Don’t have an account yet?{' '}
-          <Link to="/signup">
-            <span className="text-sm text-[#7747ff]">Sign up for free!</span>
-          </Link>
+
+          {/* Form */}
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Email Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="text"
+                id="email"
+                value={formData.email}
+                className={`w-full px-4 py-3 rounded-lg border ${showError ? 'border-red-500' : 'border-gray-300'} shadow-sm focus:ring-purple-500 focus:border-purple-500`}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                type="password"
+                id="password"
+                value={formData.password}
+                className={`w-full px-4 py-3 rounded-lg border ${showError ? 'border-red-500' : 'border-gray-300'} shadow-sm focus:ring-purple-500 focus:border-purple-500`}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            {/* Forgot Password Link */}
+            <div className="text-center">
+              <a className="text-sm text-purple-500 hover:underline cursor-pointer" onClick={openForgotPasswordModal}>
+                Forgot your password?
+              </a>
+            </div>
+            <ForgotPasswordModal isOpen={isForgotPasswordModalOpen} onClose={closeForgotPasswordModal} />
+
+            {/* Error Message */}
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+            {/* Login Button */}
+            <div>
+              <button
+                disabled={loading}
+                type="submit"
+                className={`w-full py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {loading ? <CircularProgress /> : 'Login'}
+              </button>
+            </div>
+
+            {/* Google Login Section */}
+            <div className="text-center mt-4">
+              <hr className="my-4 border-gray-300" />
+              <span className="text-sm text-gray-500">or</span>
+              <hr className="my-4 border-gray-300" />
+              <GoogleLogin
+                onSuccess={handleGoogleLogin}
+                onError={() => console.log('Google Login Failed')}
+              />
+            </div>
+
+            {/* Sign Up Link */}
+            <div className="text-sm text-center mt-4">
+              Don’t have an account yet?{' '}
+              <Link to="/signup">
+                <span className="text-purple-500 hover:underline">Sign up for free!</span>
+              </Link>
+            </div>
+          </form>
         </div>
-        <div className="text-center mt-4">
-          <GoogleLogin
-            onSuccess={handleGoogleLogin}
-            onError={() => console.log('Google Login Failed')}
-          />
-        </div>
-        {error && <p className="text-red-500 mt-5">{error}</p>}
       </div>
     </div>
   );

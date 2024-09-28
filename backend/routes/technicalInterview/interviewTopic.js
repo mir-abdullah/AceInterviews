@@ -6,6 +6,8 @@ import {
   editInterviewTopic,
   deleteInterviewTopic,
   getQuestionsByDifficulty,
+  getMostClickedInterview,
+  addClick
 } from "../../controllers/technicalInterview/interviewTopic.js";
 
 const router = express.Router();
@@ -28,4 +30,9 @@ router.delete("/:interviewId", deleteInterviewTopic);
 //get interview by difficulty
 router.get("/difficulty/:interviewId", getQuestionsByDifficulty);
 
+//route for counting number of times clicked
+router.get("/most-clicked", getMostClickedInterview)
+
+//route to add click
+router.post("/addclick/:interviewId", addClick)
 export default router;

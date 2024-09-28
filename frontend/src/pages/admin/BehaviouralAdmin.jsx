@@ -1,170 +1,349 @@
-import React, { useState } from "react";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import { Modal, TextField, Button, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField ,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { motion } from "framer-motion";
-
-// Initial questions
-const initialQuestions = [
-  {
-    id: 1,
-    text: "Tell me about a time you had to work under pressure to meet a tight deadline in a previous kitchen environment.",
-  },
-  {
-    id: 2,
-    text: "Describe a situation where you had to deal with a difficult coworker.",
-  },
-  {
-    id: 3,
-    text: "Give me an example of a time you demonstrated leadership skills.",
-  },
-  {
-    id: 4,
-    text: "Tell me about a time you had to make a difficult decision at work.",
-  },
-  {
-    id: 5,
-    text: "Describe a scenario where you had to adapt to significant changes at work.",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllInterviews, addInterviewTopic ,deleteInterviewTopic,editInterviewTopic,fetchInterviewWithQuestions} from "../../redux/slices/admin/behaviouralAdmin/behaviouralAdmin.slice";
+import { FaPlus,FaTrash } from "react-icons/fa";
+import BackButton from "../../components/BackButton";
+import { useNavigate } from "react-router-dom";
 
 const BehavioralAdmin = () => {
-  const [questions, setQuestions] = useState(initialQuestions);
+  const dispatch = useDispatch();
+  const { interviews, selectedInterview,loading, error } = useSelector((state) => state.interviews);
   const [openModal, setOpenModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState("");
-  const [currentId, setCurrentId] = useState(null);
+  const [currentInterview, setCurrentInterview] = useState({ title: "", description: "", picture: "" });
+  const [imagePreview, setImagePreview] = useState(null); // For image preview
+  const [open, setOpen] = useState(false); // To control the modal visibility
+  const [selectedInterviewId, setSelectedInterviewId] = useState(null);
+  const navigate =useNavigate()
 
-  // Open modal for editing
-  const handleEdit = (id, text) => {
-    setCurrentQuestion(text);
-    setCurrentId(id);
-    setIsEditing(true);
-    setOpenModal(true);
-  };
+  useEffect(() => {
+    dispatch(fetchAllInterviews());
+  }, [dispatch]);
 
-  // Open modal for adding
+  //fetchInterview
+  const handleFetchInterview = async (id) => {
+    navigate('/admin/behaviour/questions',{state:id});
+
+  
+  }
+
+  // Open modal for adding a new interview
   const handleAdd = () => {
-    setCurrentQuestion("");
-    setIsEditing(false);
+    setCurrentInterview({ title: "", description: "", picture: "" });
+    setImagePreview(null); // Reset image preview
     setOpenModal(true);
   };
 
-  // Save question (either editing or adding)
+  // Open modal for editing an existing interview
+  const handleEdit = (interview) => {
+    setCurrentInterview(interview);
+    setImagePreview(interview.picture); // Set the current image for preview
+    setOpenModal(true);
+  };
+
+  // Save interview (dispatch add/update action)
   const handleSave = () => {
-    if (isEditing) {
-      // Update existing question
-      setQuestions(
-        questions.map((q) =>
-          q.id === currentId ? { ...q, text: currentQuestion } : q
-        )
-      );
+    if (currentInterview._id) {
+        dispatch(editInterviewTopic({interviewId:currentInterview._id ,interviewData:currentInterview}));
+      // Logic to update the existing interview could go here
+      // For now, just closing the modal
+      setOpenModal(false);
     } else {
-      // Add new question
-      const newQuestion = { id: questions.length + 1, text: currentQuestion };
-      setQuestions([...questions, newQuestion]);
+      // Dispatch addInterviewTopic when creating a new interview
+      dispatch(addInterviewTopic(currentInterview));
+      setOpenModal(false); // Close the modal after saving
     }
-    setOpenModal(false);
   };
 
-  // Delete question
-  const handleDelete = (id) => {
-    setQuestions(questions.filter((q) => q.id !== id));
-  };
-
-  // Modal close
+  // Close modal
   const handleCloseModal = () => {
     setOpenModal(false);
   };
 
+  // Handle image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result); // Set image preview
+        setCurrentInterview({ ...currentInterview, picture: reader.result }); // Update current interview with the image
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleOpenDeleteModal = (id) => {
+    setSelectedInterviewId(id);
+    setOpen(true);
+  };
+
+  // Close the modal
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // Function to confirm the delete action
+  const handleDeleteConfirm = () => {
+    dispatch(deleteInterviewTopic(selectedInterviewId)); // Dispatch the delete action
+    setOpen(false); // Close the modal after deletion
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  console.log(selectedInterview)
+
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      {/* Add Question Button */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Behavioral Interview Questions
-        </h2>
+    <Box
+      sx={{
+        padding: "20px",
+        minHeight: "100vh",
+        backgroundColor: "#f5f7fa",
+        borderRadius: '20px',
+      }}
+      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+    >
+      {/* <BackButton/>  */}
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        sx={{ fontWeight: 'bold', color: '#263238', mb: 4 }}
+      >
+        Manage Behavioral Interviews
+      </Typography>
+
+      {/* Add Interview Button */}
+      <div className="flex justify-end mb-6">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleAdd}
           className="bg-indigo-600 text-white px-4 py-2 rounded-md flex items-center gap-2"
         >
-          <FaPlus />
-          Add Question
+          <FaPlus /> Add Interview
         </motion.button>
       </div>
 
-      {/* List of Questions */}
-      <div className="space-y-4">
-        {questions.map((question) => (
-          <motion.div
-            key={question.id}
-            className="p-4 bg-white rounded-md shadow-md flex justify-between items-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: question.id * 0.1 }}
+      <Grid container spacing={3} justifyContent="center">
+        {interviews && interviews.length > 0 ? (
+          interviews.map((interview) => (
+            <Grid item xs={12} sm={6} md={4} key={interview._id}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card
+                  sx={{
+                    boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '15px',
+                    textAlign: 'center',
+                    backgroundColor: '#ffffff',
+                  }}
+                >
+                  {interview.picture && (
+                    <CardMedia
+                      component="img"
+                      height="60"
+                      image={interview.picture}
+                      alt={`${interview.title} image`}
+                      sx={{
+                        objectFit: 'contain',
+                        margin: '10px auto',
+                        width: '60%',
+                      }}
+                    />
+                  )}
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF4F', mb: 0.5 }}>
+                      {interview.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {interview.description}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: '#4CAF4F',
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        borderRadius: '20px',
+                        '&:hover': { backgroundColor: '#388E3C' },
+                      }}
+                      onClick={() => handleEdit(interview)}
+                    >
+                      Edit Interview
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: '#4CAF4F',
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        borderRadius: '20px',
+                        '&:hover': { backgroundColor: '#388E3C' },
+                      }}
+                      onClick={() => handleFetchInterview(interview._id)}
+                    >
+                      View Questions
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{mt: 2, backgroundColor: '#FF5252', color: '#ffffff', fontWeight: 'bold', borderRadius: '20px', '&:hover': { backgroundColor: '#E53935' } }}
+                        onClick={() => handleOpenDeleteModal(interview._id)}
+                      >
+                        <FaTrash /> Delete
+                      </Button>
+                      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="delete-confirmation-dialog"
+        aria-describedby="confirm-delete-interview"
+      >
+        <DialogTitle id="delete-confirmation-dialog">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-delete-interview">
+            Are you sure you want to delete this interview? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} sx={{ color: '#999' }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            sx={{
+              backgroundColor: '#FF5252',
+              color: '#fff',
+              '&:hover': { backgroundColor: '#E53935' },
+            }}
           >
-            <span className="text-lg font-medium text-gray-700">
-              {question.text}
-            </span>
-            <div className="flex gap-4">
-              {/* Edit Button */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                onClick={() => handleEdit(question.id, question.text)}
-                className="text-indigo-600 hover:text-indigo-800 p-4"
-              >
-                <FaEdit />
-              </motion.button>
-              {/* Delete Button */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                onClick={() => handleDelete(question.id)}
-                className="text-red-600 hover:text-red-800"
-              >
-                <FaTrash />
-              </motion.button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            Confirm Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Grid>
+          ))
+        ) : (
+          <Typography>No interviews found.</Typography>
+        )}
+      </Grid>
 
-      {/* Modal for Adding/Editing Questions */}
+      {/* Modal for Adding/Editing Interviews */}
       <Modal open={openModal} onClose={handleCloseModal}>
         <Box
-          className="bg-white p-6 rounded-lg max-w-lg mx-auto my-20 shadow-lg"
-          component={motion.div}
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          sx={{
+            p: 4,
+            borderRadius: '15px',
+            boxShadow: 24,
+            bgcolor: 'background.paper',
+            maxWidth: '800px',
+            maxHeight: '80vh',
+            margin: 'auto',
+            mt: '10%',
+            display: 'flex',
+            alignItems: 'flex-start',
+            overflowY: 'auto',
+          }}
         >
-          <h3 className="text-xl font-bold mb-4">
-            {isEditing ? "Edit Question" : "Add Question"}
-          </h3>
-          <TextField
-            fullWidth
-            label="Question"
-            variant="outlined"
-            value={currentQuestion}
-            onChange={(e) => setCurrentQuestion(e.target.value)}
-            multiline
-            rows={3}
-            className="mb-4"
-          />
-          <div className="flex justify-end gap-4 p-4">
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Save
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleCloseModal}
+          {/* Left Side: Image Upload */}
+          <Box sx={{ flex: '1', mr: 2 }}>
+            <Typography variant="h5" align="center" sx={{ mb: 2, fontWeight: 'bold', color: '#4CAF4F' }}>
+              {currentInterview._id ? "Edit Interview" : "Add Interview"}
+            </Typography>
+            <Card
+              sx={{
+                height: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '10px',
+                border: '1px dashed #ccc',
+              }}
             >
-              Cancel
-            </Button>
-          </div>
+              {imagePreview ? (
+                <CardMedia
+                  component="img"
+                  image={imagePreview}
+                  alt="Preview"
+                  sx={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                />
+              ) : (
+                <Typography variant="body2" color="text.secondary">No image uploaded</Typography>
+              )}
+            </Card>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{
+                display: 'block',
+                margin: '20px auto 0',
+                padding: '10px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+              }}
+            />
+          </Box>
+
+          {/* Right Side: Title and Description */}
+          <Box sx={{ flex: '2', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="mt-12">
+            <TextField
+              fullWidth
+              label="Title"
+              variant="outlined"
+              value={currentInterview.title}
+              onChange={(e) => setCurrentInterview({ ...currentInterview, title: e.target.value })}
+              className="mb-4"
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: '10px',
+                },
+              }}
+            />
+            
+            <TextField
+              fullWidth
+              label="Description"
+              variant="outlined"
+              value={currentInterview.description}
+              onChange={(e) => setCurrentInterview({ ...currentInterview, description: e.target.value })}
+              multiline
+              rows={4}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: '10px',
+                },
+              }}
+            />
+
+            <Box sx={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                sx={{ mr: 1, backgroundColor: '#4CAF4F', '&:hover': { backgroundColor: '#388E3C' } }}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{ color: '#4CAF4F', borderColor: '#4CAF4F' }}
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Box>
         </Box>
       </Modal>
-    </div>
+    </Box>
   );
 };
 

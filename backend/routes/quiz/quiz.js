@@ -1,6 +1,6 @@
 import express from 'express'
 import { auth } from '../../middleware/auth.js';
-import { submitAndEvaluateQuiz,getQuizResult,quizResults,countQuizes } from '../../controllers/quiz/quiz.js';
+import { submitAndEvaluateQuiz,getQuizResult,quizResults,countQuizes, countAllQuizes } from '../../controllers/quiz/quiz.js';
 const router =express.Router();
 
 
@@ -13,7 +13,10 @@ router.get('/results',auth,quizResults)
 //route to get single quiz result
 router.get('/results/:quizId',auth,getQuizResult)
 
-//count number of quiz given
+//count number of quiz given of a user
 router.get('/count',auth,countQuizes)
+
+//count total quizes
+router.get('/total',countAllQuizes)
 
 export default router

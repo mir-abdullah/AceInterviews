@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -10,18 +10,21 @@ import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { areaElementClasses } from "@mui/x-charts/LineChart";
 import { motion } from "framer-motion";
 import { FaUserAlt, FaChartLine, FaDollarSign, FaTasks } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchTotalUsers,
+  fetchTotalQuizzes,
+  fetchTechnicalInterviews,
+  fetchBehavioralInterviews,
+} from "../../redux/slices/admin/statistics/statisctics";
 
 function getDaysInMonth(month, year) {
   const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString("en-US", {
-    month: "short",
-  });
+  const monthName = date.toLocaleDateString("en-US", { month: "short" });
   const daysInMonth = date.getDate();
   const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
+  for (let i = 1; i <= daysInMonth; i++) {
     days.push(`${monthName} ${i}`);
-    i += 1;
   }
   return days;
 }
@@ -39,53 +42,54 @@ function AreaGradient({ color, id }) {
 
 const StatCard = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+
+  // Fetch stats data on mount
+  useEffect(() => {
+    dispatch(fetchTotalUsers());
+    dispatch(fetchTotalQuizzes());
+    dispatch(fetchTechnicalInterviews());
+    dispatch(fetchBehavioralInterviews());
+  }, [dispatch]);
+
+  // Get stats from Redux store
+  const { totalUsers, totalQuizzes, technicalInterviews, behavioralInterviews, loading, error } =
+    useSelector((state) => state.stats);
+
   const daysInWeek = getDaysInMonth(4, 2024);
 
-  // Mock data for StatCard with additional fields
-  const mockData = [
+  const data = [
     {
-      title: "Users",
-      value: "14k",
+      title: "Total Users",
+      value: totalUsers || "N/A",
       interval: "Last 30 days",
       trend: "up",
       icon: <FaUserAlt />,
-      data: [
-        1000, 1200, 1100, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200,
-        2400, 2600, 2800, 3000,
-      ],
+      data: [1000, 1200, 1100, 1300, 1400, 1500, 1600, 1700],
     },
     {
-      title: "Conversions",
-      value: "325",
-      interval: "Last 30 days",
-      trend: "down",
-      icon: <FaTasks />,
-      data: [
-        500, 450, 400, 350, 325, 300, 290, 280, 270, 260, 250, 240, 230, 220,
-        210, 200,
-      ],
-    },
-    {
-      title: "Sessions",
-      value: "120k",
+      title: "Quizzes Conducted",
+      value: totalQuizzes || "N/A",
       interval: "Last 30 days",
       trend: "neutral",
-      icon: <FaChartLine />,
-      data: [
-        5000, 5200, 5400, 5600, 5800, 6000, 6200, 6400, 6600, 6800, 7000, 7200,
-        7400, 7600, 7800, 8000,
-      ],
+      icon: <FaTasks />,
+      data: [200, 220, 230, 250, 260, 270, 280, 300],
     },
     {
-      title: "Revenue",
-      value: "$34k",
+      title: "Technical Interviews",
+      value: technicalInterviews || "N/A",
+      interval: "Last 30 days",
+      trend: "down",
+      icon: <FaChartLine />,
+      data: [300, 320, 330, 340, 350, 360, 370, 400],
+    },
+    {
+      title: "Behavioral Interviews",
+      value: behavioralInterviews || "N/A",
       interval: "Last 30 days",
       trend: "up",
       icon: <FaDollarSign />,
-      data: [
-        3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800, 5000, 5200,
-        5400, 5600, 5800, 6000,
-      ],
+      data: [150, 160, 170, 180, 190, 200, 220, 240],
     },
   ];
 
@@ -114,7 +118,7 @@ const StatCard = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8">
-      {mockData.map((item, index) => {
+      {data.map((item, index) => {
         const color = labelColors[item.trend];
         const chartColor = trendColors[item.trend];
 

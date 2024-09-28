@@ -13,6 +13,11 @@ const behaviouralInterviewTopic =mongoose.Schema({
         type:String,
 
     },
+    clicks:{
+        type:Number,
+        default:0
+
+    },
     questions:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'BehaviourQuestion'
