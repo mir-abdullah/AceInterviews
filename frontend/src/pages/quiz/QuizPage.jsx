@@ -20,7 +20,7 @@ const QuizPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { quizTopicId } = useParams();  // Correctly extracting quizTopicId from route
+  const { quizTopicId } = useParams();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -28,55 +28,65 @@ const QuizPage = () => {
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
 
-  const quizData = state ? { ...state } : { questions: [] };
+  const { questions, difficulty } = state;
+
+  // Filter questions based on the selected difficulty
+  const filteredQuestions = questions.filter(
+    (question) => question.difficulty === difficulty
+  );
 
   const handleAnswerChange = (event) => {
     setSelectedAnswer(event.target.value);
   };
 
   const handleNextQuestion = () => {
-    // Add the selected answer to the answers object
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [quizData.questions[currentQuestionIndex]._id]: selectedAnswer,
-    }));
-  
-    const currentQuestion = quizData.questions[currentQuestionIndex];
-    const correctAnswer = currentQuestion.options.find(
-      (option) => option.text === selectedAnswer
-    );
-    if (correctAnswer && correctAnswer.isCorrect) {
-      setScore(score + 1);
-    }
-  
-    // If on the last question, submit the quiz
-    if (currentQuestionIndex === quizData.questions.length - 1) {
-      const finalAnswers = {
-        answers: {
-          ...answers, // Spread previous answers
-          [currentQuestion._id]: selectedAnswer, // Add current answer
-        },
-        difficulty: quizData.difficulty || "Easy", // Assuming difficulty is part of quizData
+    if (selectedAnswer) {
+      const currentQuestion = filteredQuestions[currentQuestionIndex];
+
+      // Update answers with the current question ID and selected answer
+      const updatedAnswers = {
+        ...answers,
+        [currentQuestion._id]: selectedAnswer, // Store selected answer with question's ID as the key
       };
-  
-      dispatch(evaluateQuiz({ quizTopicId, answers: finalAnswers }))
-        .unwrap()
-        .then(() => {
-          setShowResult(true);
-        })
-        .catch((error) => {
-          console.error("Error evaluating quiz:", error);
-        });
-    } else {
-      // Proceed to next question
-      setSelectedAnswer("");
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+
+      // Check if the selected answer is correct
+      const correctAnswer = currentQuestion.options.find(
+        (option) => option.text === selectedAnswer
+      );
+
+      // Increment score if the answer is correct
+      if (correctAnswer && correctAnswer.isCorrect) {
+        setScore((prevScore) => prevScore + 1);
+      }
+
+      // If on the last question, submit the quiz
+      if (currentQuestionIndex === filteredQuestions.length - 1) {
+        // Prepare the final submission data
+        const finalSubmission = {
+          answers: updatedAnswers, // Use the updated answers object
+          difficulty, // Include difficulty level
+        };
+
+        // Dispatch the quiz evaluation action with the quizTopicId, answers, and difficulty
+        dispatch(evaluateQuiz({ quizTopicId, ...finalSubmission }))
+          .unwrap()
+          .then(() => {
+            setShowResult(true); // Show results after successful submission
+          })
+          .catch((error) => {
+            console.error("Error evaluating quiz:", error); // Handle error
+          });
+      } else {
+        // Proceed to next question
+        setAnswers(updatedAnswers); // Update the state with the new answers
+        setSelectedAnswer(""); // Clear selected answer for the next question
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Move to the next question
+      }
     }
   };
-  
 
-  if (!quizData.questions.length) {
-    return <Typography>Loading...</Typography>;
+  if (!filteredQuestions.length) {
+    return <Typography>No questions available for this difficulty.</Typography>;
   }
 
   return (
@@ -117,7 +127,7 @@ const QuizPage = () => {
                 Quiz Completed!
               </Typography>
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Your Score: {score}/{quizData.questions.length}
+                Your Score: {score}/{filteredQuestions.length}
               </Typography>
               <Button
                 variant="contained"
@@ -160,10 +170,10 @@ const QuizPage = () => {
                 variant="h6"
                 sx={{ fontWeight: "bold", color: "#4CAF4F", mb: 2 }}
               >
-                {quizData.title}
+                {filteredQuestions.title}
               </Typography>
               <Typography variant="h5" sx={{ mb: 2 }}>
-                {quizData.questions[currentQuestionIndex].questionText}
+                {filteredQuestions[currentQuestionIndex].questionText}
               </Typography>
               <FormControl component="fieldset">
                 <RadioGroup
@@ -172,7 +182,7 @@ const QuizPage = () => {
                   value={selectedAnswer}
                   onChange={handleAnswerChange}
                 >
-                  {quizData.questions[currentQuestionIndex].options.map(
+                  {filteredQuestions[currentQuestionIndex].options.map(
                     (option) => (
                       <FormControlLabel
                         key={option._id}
@@ -188,7 +198,9 @@ const QuizPage = () => {
                           />
                         }
                         label={
-                          <Typography sx={{ color: "#263238", fontWeight: "500" }}>
+                          <Typography
+                            sx={{ color: "#263238", fontWeight: "500" }}
+                          >
                             {option.text}
                           </Typography>
                         }
@@ -206,8 +218,12 @@ const QuizPage = () => {
               <Box sx={{ mt: 2 }}>
                 <LinearProgress
                   variant="determinate"
-                  value={(currentQuestionIndex / quizData.questions.length) * 100}
-                  sx={{ height: 8, borderRadius: 5, backgroundColor: "#e0e0e0" }}
+                  value={(currentQuestionIndex / filteredQuestions.length) * 100}
+                  sx={{
+                    height: 8,
+                    borderRadius: 5,
+                    backgroundColor: "#e0e0e0",
+                  }}
                 />
               </Box>
               <Button
@@ -223,7 +239,7 @@ const QuizPage = () => {
                 onClick={handleNextQuestion}
                 disabled={!selectedAnswer}
               >
-                {currentQuestionIndex < quizData.questions.length - 1
+                {currentQuestionIndex < filteredQuestions.length - 1
                   ? "Next Question"
                   : "Submit Quiz"}
               </Button>

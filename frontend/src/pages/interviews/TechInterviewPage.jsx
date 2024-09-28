@@ -115,7 +115,7 @@ const TechInterviewPage = () => {
   // Close modal and navigate to review page
   const handleCloseModal = () => {
     setShowModal(false);
-    navigate("/dashboard/technical", { state: { answers, difficulty } }); // Navigate to review page
+    navigate("/dashboard/results", { state: { answers, difficulty } }); // Navigate to review page
   };
 
   return (

@@ -50,20 +50,31 @@ export const getQuizTopic = createAsyncThunk(
 export const getQuestionsByDifficulty = createAsyncThunk(
   'quiz/getQuestionsByDifficulty',
   async ({ quizTopicId, difficulty }) => {
-    const response = await API.get(`/quizTopic/${quizTopicId}/difficulty`, {
-     difficulty 
-    });
-    console.log(response.data.questions)
-    return response.data.questions; // Adjust this based on your API response structure
+    console.log({difficulty})
+
+    const response = await API.get(`/quizTopic/${quizTopicId}/difficulty`, 
+    {difficulty}
+    );
+    console.log(response.data)
+    return response.data; // Adjust this based on your API response structure
   }
 )
+// Async thunk for adding a click to a quiz topic
+export const addClick = createAsyncThunk(
+  'quiz/addClick',
+  async (quizTopicId) => {
+    const response = await API.post(`/quizTopic/addClick/${quizTopicId}`);
+    return response.data; // Adjust this based on your API response structure
+  }
+);
+
 
 
 // Async thunk for evaluating the quiz
 export const evaluateQuiz = createAsyncThunk(
     'quiz/evaluateQuiz',
-    async ({ quizTopicId, answers }) => {
-      const response = await API.post(`/quiz/evaluate/${quizTopicId}`, { answers });
+    async ({ quizTopicId, answers ,difficulty }) => {
+      const response = await API.post(`/quiz/evaluate/${quizTopicId}`, { answers ,difficulty });
       return response.data; // Return the quiz result data
     }
   );
@@ -179,7 +190,21 @@ const quizSlice = createSlice({
       .addCase(evaluateQuiz.rejected, (state, action) => {
         state.evaluationStatus = 'failed';
         state.evaluationError = action.error.message; // Store the error message
-      });
+      })
+
+       // Add click to quiz topic
+    builder
+    .addCase(addClick.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(addClick.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      // You might want to handle any specific updates related to clicks if needed
+    })
+    .addCase(addClick.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
+    });
   },
 });
 

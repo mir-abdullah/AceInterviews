@@ -27,7 +27,7 @@ const Sidebar = () => {
       name: "Interview",
       icon: <LuUser2 />,
       submenu: [
-        { path: "/dashboard/behavioral", name: "Behavioral" },
+        { path: "/dashboard/behavioral-interviews", name: "Behavioral" },
         { path: "/dashboard/technical", name: "Technical" },
       ],
     },
