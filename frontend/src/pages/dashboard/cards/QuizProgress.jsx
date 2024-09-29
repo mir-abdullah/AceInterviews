@@ -14,26 +14,29 @@ import {
 import { Card, CardContent, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTechnicalInterviewResults } from "../../../redux/slices/results/results.slice"; // Update the path based on your project structure
+import { fetchQuizResults } from "../../../redux/slices/results/results.slice"; // Update the path based on your project structure
 
-const ProgressCard = () => {
+const QuizProgressCard = () => {
   const dispatch = useDispatch();
 
-  // Fetch the technical interview results from the Redux store
-  const { technicalInterviews, loading } = useSelector((state) => state.results);
+  // Fetch the quiz results from the Redux store
+  const { quizzes, loading } = useSelector((state) => state.results);
 
   useEffect(() => {
-    // Fetch the technical interview results when the component mounts
-    dispatch(fetchTechnicalInterviewResults());
+    // Fetch the quiz results when the component mounts
+    dispatch(fetchQuizResults());
   }, [dispatch]);
 
   // Get the last 5 results (reverse to ensure the most recent ones)
-  const lastFiveResults = technicalInterviews
-    ? [...technicalInterviews].slice(-5).map((result, index) => ({
-        name: `Interview ${technicalInterviews.length - 4 + index}`, // Adjust interview name dynamically
-        score: result.totalScore, // Assuming the score is already out of 40
-        total: 40, // Updated total marks to 40
-      }))
+  const lastFiveResults = quizzes
+    ? [...quizzes]
+        .slice(-5)
+        .reverse() // Reverse to display the most recent quizzes first
+        .map((result, index) => ({
+          name: `Quiz ${quizzes.length - index}`, // Adjust quiz name dynamically
+          score: result.score, // Use score property from each quiz
+          total: 10, // Assuming the total possible score is 10
+        }))
     : [];
 
   return (
@@ -53,7 +56,7 @@ const ProgressCard = () => {
             component="div"
             className="text-center font-bold mb-4 text-neutralBlack"
           >
-            Technical Interview Progress
+            Quiz Progress
           </Typography>
 
           {/* Loading or Error State */}
@@ -75,17 +78,17 @@ const ProgressCard = () => {
                 >
                   <CartesianGrid stroke="#f5f5f5" />
                   <XAxis dataKey="name" />
-                  <YAxis domain={[0, 40]} /> {/* Set max value to 40 */}
+                  <YAxis domain={[0, 10]} /> {/* Set max value to 10 */}
                   <Tooltip />
                   <Legend />
                   <Area
                     type="monotone"
                     dataKey="total"
-                    fill="#A8E6CF"
-                    stroke="#A8E6CF"
+                    fill="#A0D3E8" // Light blue fill color for Area
+                    stroke="#A0D3E8" // Light blue stroke color for Area
                   />
-                  <Bar dataKey="score" barSize={20} fill="#4CAF50" />
-                  <Line type="monotone" dataKey="score" stroke="#2E7D32" />
+                  <Bar dataKey="score" barSize={20} fill="#81D4FA" /> {/* Light blue for Bar */}
+                  <Line type="monotone" dataKey="score" stroke="#0288D1" /> {/* Darker blue for Line */}
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -115,10 +118,10 @@ const ProgressCard = () => {
                   className="text-center mt-4"
                   sx={{ fontSize: "0.875rem" }} // Decreased font size further if necessary
                 >
-                  This chart displays your performance in recent technical
-                  interviews. Each bar represents your score, and the line
-                  indicates your progress across multiple interviews. The total
-                  possible marks are 40 for each interview.
+                  This chart displays your performance in recent quizzes. Each
+                  bar represents your score, and the line indicates your
+                  progress across multiple quizzes. The total possible marks are
+                  10 for each quiz.
                 </Typography>
               </CardContent>
             </Card>
@@ -129,4 +132,4 @@ const ProgressCard = () => {
   );
 };
 
-export default ProgressCard;
+export default QuizProgressCard;
