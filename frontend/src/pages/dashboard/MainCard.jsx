@@ -3,14 +3,21 @@ import React from "react";
 import { AiOutlineClockCircle, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { IoIosThumbsUp } from "react-icons/io";
 import { FaGlobeAmericas } from "react-icons/fa";
+// Motion
+import { motion } from "framer-motion";
 
 const MainCard = () => {
   return (
-    <div className="p-5 bg-white rounded-xl shadow-lg transition-shadow hover:shadow-xl">
-      <h1 className="text-2xl font-bold text-gray-700 mb-4">
+    <motion.div
+      className="p-8 bg-white rounded-xl shadow-lg transition-shadow hover:shadow-2xl"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <h1 className="text-3xl font-bold text-neutralDGrey mb-6">
         Interview Insights
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PlatformStatistic
           count={158}
           icon={<AiOutlineUsergroupAdd />}
@@ -32,21 +39,31 @@ const MainCard = () => {
           metric="Accessibility"
         />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
+// Statistic card with animations
 // eslint-disable-next-line react/prop-types
 const PlatformStatistic = ({ count, icon, metric }) => (
-  <div className="space-y-2 text-gray-500">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
-        <span className="text-3xl">{icon}</span>
-        <span className="text-xl font-semibold">{metric}</span>
-      </div>
-      <h1 className="text-3xl font-bold">{count}</h1>
+  <motion.div
+    className="bg-neutralSilver p-5 rounded-lg flex items-center justify-between hover:bg-brandPrimary transition-all duration-300 shadow-sm hover:shadow-lg"
+    whileHover={{ scale: 1.05 }}
+    transition={{ duration: 0.3 }}
+  >
+    <div className="flex items-center space-x-4">
+      <span className="text-4xl text-brandPrimary">{icon}</span>
+      <span className="text-lg font-semibold text-neutralGrey">{metric}</span>
     </div>
-  </div>
+    <motion.h1
+      className="text-4xl font-bold text-neutralBlack"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      {count}
+    </motion.h1>
+  </motion.div>
 );
 
 export default MainCard;
