@@ -175,14 +175,12 @@ export const getMostClickedQuiz = async (req, res) => {
     console.log("Received request for most clicked quiz"); // Debug log
     const quizzes = await QuizTopic.find()
       .sort({ clicks: -1 })
-      .limit(1)
-      .exec();
-
+      
     if (quizzes.length === 0) {
       return res.status(404).json({ message: 'No quizzes found.' });
     }
 
-    res.status(200).json(quizzes[0]);
+    res.status(200).json(quizzes);
   } catch (error) {
     console.error('Error retrieving most clicked quiz:', error);
     res.status(500).json({

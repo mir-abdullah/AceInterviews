@@ -186,7 +186,7 @@ export const getQuestionsByDifficulty = async (req, res) => {
 //controller to find most clicked interview
 export const getMostClickedInterview = async (req, res) => {
   try {
-    const interviews = await InterviewTopic.find().sort({ clicks: -1 }).limit(1);
+    const interviews = await InterviewTopic.find().sort({ clicks: -1 });
     res.status(200).json(interviews);
     } catch (error) {
       console.error('Error retrieving most clicked interview:', error);
