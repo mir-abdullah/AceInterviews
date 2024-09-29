@@ -15,11 +15,9 @@ export const fetchInterviewTopics = createAsyncThunk(
 export const fetchQuestionsByDifficulty = createAsyncThunk(
   'interviewTopics/fetchQuestionsByDifficulty',
   async ({ interviewId, difficulty }) => {
-    
     try {
-      
       const response = await API.get(`/technicalInterviewTopic/difficulty/${interviewId}`, {
-        difficulty,
+        params: { difficulty }, // Ensure to send parameters correctly
       });
       return response.data;
     } catch (error) {
@@ -39,8 +37,20 @@ export const startInterview = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      // Use rejectWithValue to return error details
       return rejectWithValue(error.response?.data?.message || 'Error starting the interview');
+    }
+  }
+);
+
+// Async thunk for adding a click
+export const addClick = createAsyncThunk(
+  'interviewTopics/addClick',
+  async (interviewId, { rejectWithValue }) => {
+    try {
+      const response = await API.post(`/technicalInterviewTopic/addClick/${interviewId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error adding click');
     }
   }
 );
@@ -49,19 +59,21 @@ const interviewTopicsSlice = createSlice({
   name: 'interviewTopics',
   initialState: {
     topics: [],
-    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    status: 'idle',
     error: null,
-    questions: [], // Add state for questions
-    questionsStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    questionsError: null, // Error state for questions
-    interview: null, // Store the interview result
-    interviewStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    interviewError: null, // Error state for starting the interview
+    questions: [],
+    questionsStatus: 'idle',
+    questionsError: null,
+    interview: null,
+    interviewStatus: 'idle',
+    interviewError: null,
+    addClickStatus: 'idle', // Add status for addClick
+    addClickError: null, // Error state for adding click
   },
   reducers: {
     resetQuestions: (state) => {
-      state.questions = [];  // Reset the questions array
-      state.questionsStatus = 'idle';  // Reset the status
+      state.questions = [];
+      state.questionsStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -86,7 +98,7 @@ const interviewTopicsSlice = createSlice({
       })
       .addCase(fetchQuestionsByDifficulty.fulfilled, (state, action) => {
         state.questionsStatus = 'succeeded';
-        state.questions = action.payload.questions; // Assuming the API returns an object with a 'questions' array
+        state.questions = action.payload.questions;
       })
       .addCase(fetchQuestionsByDifficulty.rejected, (state, action) => {
         state.questionsStatus = 'failed';
@@ -100,14 +112,29 @@ const interviewTopicsSlice = createSlice({
       })
       .addCase(startInterview.fulfilled, (state, action) => {
         state.interviewStatus = 'succeeded';
-        state.interview = action.payload; // Store the interview result
+        state.interview = action.payload;
       })
       .addCase(startInterview.rejected, (state, action) => {
         state.interviewStatus = 'failed';
-        state.interviewError = action.payload; // Use rejectWithValue for detailed error
+        state.interviewError = action.payload;
+      });
+
+    // Add click
+    builder
+      .addCase(addClick.pending, (state) => {
+        state.addClickStatus = 'loading';
+      })
+      .addCase(addClick.fulfilled, (state, action) => {
+        state.addClickStatus = 'succeeded';
+        state.addClickError = null; // Clear any previous errors
+      })
+      .addCase(addClick.rejected, (state, action) => {
+        state.addClickStatus = 'failed';
+        state.addClickError = action.payload; // Capture error
       });
   },
 });
+
 export const { resetQuestions } = interviewTopicsSlice.actions;
 
 export default interviewTopicsSlice.reducer;

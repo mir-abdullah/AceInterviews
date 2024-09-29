@@ -230,7 +230,8 @@ const userSlice = createSlice({
       })
       .addCase(sendOtp.fulfilled, (state) => {
         state.status = "succeeded";
-        state.otpSent = true; // OTP sent successfully
+        state.otpSent = true;
+        state.otpError=null // OTP sent successfully
       })
       .addCase(sendOtp.rejected, (state, action) => {
         state.status = "failed";

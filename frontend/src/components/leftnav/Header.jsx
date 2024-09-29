@@ -54,12 +54,12 @@ const Header = () => {
     navigate('/')
     // Close profile menu after logout
   };
-
+//bg-gradient-to-tl from-green-900 to-teal-400
   return (
-    <div className="w-full bg-gradient-to-tl from-green-900 to-teal-400 shadow-lg p-4 flex justify-between items-center">
+    <div className="w-full bg-white shadow-lg p-4 flex justify-between items-center">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-white">Welcome</h1>
-        <p className="ml-3 text-xl font-semibold text-white">
+        <h1 className="text-2xl font-bold text-black">Welcome</h1>
+        <p className="ml-3 text-xl font-semibold text-black">
           {loading ? 'Loading...' : user ? user.name +" 👋, Let's Practice 🚀" : ''} 
         </p>
       </div>
@@ -71,7 +71,7 @@ const Header = () => {
           {/* Notification Icon */}
           <IconButton onClick={handleNotificationMenuClick}>
             <Badge badgeContent={notifications.length} color="error">
-              <GoBell size={28} color='white'/>
+              <GoBell size={28} color='black'/>
             </Badge>
           </IconButton>
 
@@ -113,7 +113,7 @@ const Header = () => {
 
           {/* Profile Image */}
           <img
-            className="w-10 h-10 rounded-full border-4 border-white cursor-pointer"
+            className="w-10 h-10 rounded-full border-4 border-black cursor-pointer"
             // src="https://randomuser.me/api/portraits/women/50.jpg"
             src={user?.profilePic}
             alt="User Profile"

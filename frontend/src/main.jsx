@@ -35,7 +35,7 @@ import TechnicalQuestions from './pages/QuestionsPage/TechnicalQuestions.jsx'
 import QuizAdmin from "./pages/admin/QuizAdmin.jsx";
 import QuizQuestions from "./pages/QuestionsPage/QuizQuestions.jsx";
 import Results from "./pages/results/ResultMain.jsx";
-
+import BehaviouralInterview from "./pages/interviews/BehaviouralInterview.jsx";
 
 const router = createBrowserRouter([
   {
@@ -83,8 +83,12 @@ const router = createBrowserRouter([
         element: <Overview />,
       },
       {
-        path: "behavioral",
+        path: "behavioural/:interviewId",
         element: <Behavioral />,
+      },
+      {
+        path:"behavioral-interviews",
+        element:<BehaviouralInterview/>
       },
       {
         path: "technical",
@@ -109,6 +113,7 @@ const router = createBrowserRouter([
       {
         path: 'results' ,element:<Results/>
       },
+      
       {
         path: "/dashboard/quiz/:quizTopicId",
         element: <QuizPage />,

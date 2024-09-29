@@ -128,6 +128,7 @@ export const getQuestionsByDifficulty = async (req, res) => {
   try {
     const { quizTopicId } = req.params;
     const { difficulty } = req.body;
+    console.log(difficulty)
 
     // Validate quizTopicId
     if (!quizTopicId) {
@@ -156,7 +157,7 @@ export const getQuestionsByDifficulty = async (req, res) => {
 questions = questions.filter((question) => {
   return question.difficulty === difficulty; // Ensure filter returns a boolean
 });
-    console.log(questions)
+    // console.log(questions)
 
     res.status(200).json({
       message: "Quiz Topic retrieved successfully",
@@ -168,4 +169,47 @@ questions = questions.filter((question) => {
     res.status(500).json({ message: "Error retrieving quiz topic", error: error.message });
   }
 };
-;
+
+export const getMostClickedQuiz = async (req, res) => {
+  try {
+    console.log("Received request for most clicked quiz"); // Debug log
+    const quizzes = await QuizTopic.find()
+      .sort({ clicks: -1 })
+      .limit(1)
+      .exec();
+
+    if (quizzes.length === 0) {
+      return res.status(404).json({ message: 'No quizzes found.' });
+    }
+
+    res.status(200).json(quizzes[0]);
+  } catch (error) {
+    console.error('Error retrieving most clicked quiz:', error);
+    res.status(500).json({
+      message: 'Error retrieving most clicked quiz',
+      error: error.message,
+    });
+  }
+};
+      
+
+//controller for adding to clicks
+export const addClick = async (req, res) => {
+  try {
+    const { quizTopicId } = req.params;
+    const quiz = await QuizTopic.findById(quizTopicId);
+    quiz.clicks += 1;
+    await quiz.save();
+    res.status(200).json({ message: "Click added successfully" });
+  }
+  catch(error){
+    console.error("Error adding click:", error);
+    res.status(500).json({ message: "Error adding click", error: error.message });
+  }
+}
+
+
+
+
+
+

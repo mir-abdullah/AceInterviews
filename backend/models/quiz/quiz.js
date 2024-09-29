@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
 const quizResultSchema = mongoose.Schema({
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  quizTopic: {
+  topic: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'QuizTopic',
     required: true
@@ -33,7 +33,7 @@ const quizResultSchema = mongoose.Schema({
     type: Number,
     required: true
   },
-  attemptedAt: {
+  createdAt: {
     type: Date,
     default: Date.now
   }

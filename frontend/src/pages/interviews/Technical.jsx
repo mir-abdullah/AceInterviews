@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Tilt from 'react-parallax-tilt';
-import { fetchInterviewTopics } from '../../redux/slices/technicalInterview/technicalInterview.slice';
+import { fetchInterviewTopics,addClick } from '../../redux/slices/technicalInterview/technicalInterview.slice';
 
 const Technical = () => {
   const navigate = useNavigate();
@@ -33,8 +33,8 @@ const Technical = () => {
         variant="h4"
         align="center"
         gutterBottom
-        sx={{ fontWeight: 'bold', color: '#263238', mb: 4 , font:'cursive '}
-    }
+        sx={{ fontWeight: 'bold', color: '#263238', mb: 4, fontFamily: 'cursive' }}
+
       >
         Start Your Technical Interview Adventure  
       </Typography>
@@ -112,7 +112,9 @@ const Technical = () => {
                             backgroundColor: '#388E3C',
                           },
                         }}
-                        onClick={() => navigate(`/dashboard/instructions/${field._id}`)}
+                        onClick={() =>{
+                          dispatch(addClick(field._id))
+                           navigate(`/dashboard/instructions/${field._id}`)}}
                       >
                         Start Interview
                       </Button>

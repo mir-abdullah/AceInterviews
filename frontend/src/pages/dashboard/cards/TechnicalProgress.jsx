@@ -1,3 +1,6 @@
+
+// eslint-disable-next-line no-unused-vars
+
 import React from "react";
 import {
   Radar,
@@ -9,6 +12,47 @@ import {
 } from "recharts";
 import { Card, CardContent, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+
+
+const TechnicalProgress = () => {
+  const data = [
+    {
+      field: "Problem-Solving",
+      QAJob: 120,
+      UXJob: 98,
+      DevJob: 86,
+      fullMark: 150,
+    },
+    {
+      field: "System Design",
+      QAJob: 110,
+      UXJob: 130,
+      DevJob: 130,
+      fullMark: 150,
+    },
+    {
+      field: "Coding Skills",
+      QAJob: 99,
+      UXJob: 100,
+      DevJob: 130,
+      fullMark: 150,
+    },
+    {
+      field: "Communication",
+      QAJob: 85,
+      UXJob: 90,
+      DevJob: 100,
+      fullMark: 150,
+    },
+    {
+      field: "Technical Knowledge",
+      QAJob: 65,
+      UXJob: 85,
+      DevJob: 90,
+      fullMark: 150,
+    },
+  ];
+
 
 const data = [
   {
@@ -49,6 +93,7 @@ const data = [
 ];
 
 const TechnicalProgress = () => {
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -74,9 +119,18 @@ const TechnicalProgress = () => {
             </Typography>
 
             {/* Radar Chart */}
+
+            <div
+              style={{ width: "100%", height: 400 }}
+              className="flex justify-center items-center"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
+
             <div style={{ width: "100%", height: 500 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="60%" cy="60%" outerRadius="90%" data={data}>
+
                   <PolarGrid />
                   <PolarAngleAxis dataKey="field" />
                   <PolarRadiusAxis angle={30} domain={[0, 150]} />
@@ -106,6 +160,9 @@ const TechnicalProgress = () => {
               </ResponsiveContainer>
             </div>
           </CardContent>
+
+
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,6 +194,7 @@ const TechnicalProgress = () => {
           </motion.div>
         </Card>
       </motion.div>
+
 
       {/* Explanation Card */}
     </motion.div>

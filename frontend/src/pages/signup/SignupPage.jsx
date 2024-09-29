@@ -53,7 +53,7 @@ export default function SignupPage() {
       } else if (googleLogin.rejected.match(result)) {
         setError("Google Sign-Up failed. Please try again.");
       }
-    } catch (error) {
+    } catch (error) { 
       console.error('Google Sign-Up Error:', error);
       setError("An error occurred during Google Sign-Up. Please try again.");
     }
