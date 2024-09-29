@@ -135,17 +135,17 @@ export const deleteInterviewTopic = async (req, res) => {
   }
 };
 
-//controller to find most clicked interview
-export const getMostClickedInterview = async (req, res) => {
-  try {
-    const interviews = await BehaviourInterviewTopic.find().sort({ clicks: -1 }).limit(1);
-    res.status(200).json(interviews);
-    } catch (error) {
-      console.error('Error retrieving most clicked interview:', error);
-      res.status(500).json({ message: 'Error retrieving most clicked interview', error: error
-        })
+  //controller to find most clicked interview
+  export const getMostClickedBehaviouralInterview = async (req, res) => {
+    try {
+      const interviews = await BehaviourInterviewTopic.find().sort({ clicks: -1 });
+      res.status(200).json(interviews);
+      } catch (error) {
+        console.error('Error retrieving most clicked interview:', error);
+        res.status(500).json({ message: 'Error retrieving most clicked interview', error: error
+          })
+        }
       }
-    }
       
 //controller for adding to clicks
 export const addClick = async (req, res) => {

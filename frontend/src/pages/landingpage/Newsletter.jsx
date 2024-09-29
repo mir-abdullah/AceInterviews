@@ -5,8 +5,9 @@ import React from "react";
 import { motion } from "framer-motion";
 // variants
 import { fadeIn } from "../../variants";
-
+import { useNavigate } from "react-router-dom";
 const Newsletter = () => {
+  const navigate = useNavigate();
   return (
     <div className="px-4 lg:px-14 max-w-screen-2xl mx-auto bg-neutralSilver py-16">
       <motion.div
@@ -26,7 +27,10 @@ const Newsletter = () => {
             transform your interview performance!
           </p>
           <div className="flex gap-8 items-center justify-center">
-            <button className="btn-primary bg-brandPrimary text-white px-7 py-3 rounded hover:bg-neutralDGrey transition-all duration-300">
+            <button
+              className="btn-primary bg-brandPrimary text-white px-7 py-3 rounded hover:bg-neutralDGrey transition-all duration-300"
+              onClick={() => navigate("/signup")}
+            >
               Get a Demo
               <svg
                 xmlns="http://www.w3.org/2000/svg"

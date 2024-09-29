@@ -5,7 +5,7 @@ import {
   getInterview,
   editInterviewTopic,
   deleteInterviewTopic,
-  getMostClickedInterview,
+  getMostClickedBehaviouralInterview,
   addClick
   
 } from "../../controllers/behaviouralInterview/behaviourTopic.js";
@@ -14,6 +14,9 @@ const router = express.Router();
 
 //route to add interview topic
 router.post("/add", addInterviewTopic);
+
+//route for counting number of times clicked
+router.get("/most-clicked", getMostClickedBehaviouralInterview)
 
 //route to get a specific interview
 router.get("/:interviewId", getInterview);
@@ -27,8 +30,6 @@ router.patch("/:interviewId", editInterviewTopic);
 //route to delete an interview
 router.delete("/:interviewId", deleteInterviewTopic);
 
-//route for counting number of times clicked
-router.get("/most-clicked", getMostClickedInterview)
 
 //route to add click
 router.post("/addclick/:interviewId", addClick)
