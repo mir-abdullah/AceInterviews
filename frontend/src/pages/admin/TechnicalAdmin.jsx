@@ -98,7 +98,7 @@ const TechnicalAdmin = () => {
         backgroundColor: "#f5f7fa",
         borderRadius: '20px',
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+      className="bg-white"
     >
       {/* <BackButton/>  */}
       <Typography

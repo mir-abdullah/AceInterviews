@@ -14,7 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
-import { FaCamera,FaKey,FaSave,FaTrashAlt } from "react-icons/fa";
+import { FaCamera, FaKey, FaSave, FaTrashAlt } from "react-icons/fa";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -112,13 +112,13 @@ const Profile = () => {
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       setPasswordChangeError("New password and confirmation do not match");
-      toast.error("New password and confirmation do not match"); // Toast for mismatched passwords
+      toast.error("New password and confirmation do not match");
       return;
     }
 
     if (newPassword === "") {
       setPasswordChangeError("New password cannot be empty");
-      toast.error("New password cannot be empty"); // Toast for empty password
+      toast.error("New password cannot be empty");
       return;
     }
 
@@ -128,22 +128,22 @@ const Profile = () => {
       const response = await dispatch(changePassword({ newPassword })).unwrap();
 
       if (response.msg === "Password updated successfully") {
-        toast.success("Password changed successfully!"); // Success toast
+        toast.success("Password changed successfully!");
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        setIsOldPasswordCorrect(false); // Reset after successful change
-        setPasswordChangeError(""); // Clear any previous errors
+        setIsOldPasswordCorrect(false);
+        setPasswordChangeError("");
         setExpanded(false);
       } else {
         setPasswordChangeError(response.msg || "Error changing password");
-        toast.error(response.msg || "Error changing password"); // Error toast
+        toast.error(response.msg || "Error changing password");
       }
     } catch (error) {
       setPasswordChangeError(
         "Error changing password: " + (error.message || "")
       );
-      toast.error("Error changing password: " + (error.message || "")); // Error toast
+      toast.error("Error changing password: " + (error.message || ""));
     } finally {
       setIsPasswordChanging(false);
     }
@@ -210,24 +210,24 @@ const Profile = () => {
     }
   };
 
-  // Effect to handle profile update success or error
   useEffect(() => {
     if (profileUpdateStatus === "succeeded") {
-      // Refresh user profile after successful update
       dispatch(fetchUserProfile());
     }
   }, [profileUpdateStatus, dispatch]);
 
   return (
-<Box
+    <Box
       sx={{
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
-        background: "linear-gradient(135deg, #4A90E2, #A3E4DB, #F5D76E)",
+        // background: "linear-gradient(135deg, #4A90E2, #A3E4DB, #F5D76E)",
+        
       }}
+      className="bg-gray-50"
     >
       <Paper
         elevation={3}
@@ -330,7 +330,11 @@ const Profile = () => {
             </AccordionSummary>
             <AccordionDetails sx={{ paddingTop: 0 }}>
               {isPasswordChanging ? (
-                <Box display="flex" justifyContent="center" sx={{ marginBottom: "20px" }}>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  sx={{ marginBottom: "20px" }}
+                >
                   <CircularProgress />
                 </Box>
               ) : (
@@ -351,7 +355,9 @@ const Profile = () => {
                           borderColor: "red",
                         },
                         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: isOldPasswordCorrect ? "green" : undefined,
+                          borderColor: isOldPasswordCorrect
+                            ? "green"
+                            : undefined,
                         },
                       },
                     }}
@@ -443,7 +449,9 @@ const Profile = () => {
                 disabled={profileUpdateStatus === "loading"}
                 startIcon={<FaSave />}
               >
-                {profileUpdateStatus === "loading" ? "Updating..." : "Update Profile"}
+                {profileUpdateStatus === "loading"
+                  ? "Updating..."
+                  : "Update Profile"}
               </Button>
             </motion.div>
 
@@ -459,7 +467,9 @@ const Profile = () => {
                 disabled={deleteProfileStatus === "loading"}
                 startIcon={<FaTrashAlt />}
               >
-                {deleteProfileStatus === "loading" ? "Deleting..." : "Delete Profile"}
+                {deleteProfileStatus === "loading"
+                  ? "Deleting..."
+                  : "Delete Account"}
               </Button>
             </motion.div>
           </Box>
@@ -478,8 +488,6 @@ const Profile = () => {
         </Box>
       </Paper>
     </Box>
-
-
   );
 };
 

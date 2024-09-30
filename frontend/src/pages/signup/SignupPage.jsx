@@ -78,7 +78,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cyan-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white shadow-lg rounded-lg flex max-w-4xl mx-auto p-6">
         {/* Left Section (Illustrative Image) */}
         <div className="hidden lg:flex w-1/2 items-center justify-center">
@@ -196,7 +196,7 @@ export default function SignupPage() {
             <GoogleLogin
               onSuccess={handleGoogleSignUp}
               onError={() => console.log('Google Sign-Up Failed')}
-            />
+            className="justify-center text-center "/>
           </div>
 
           {/* Sign In Link */}

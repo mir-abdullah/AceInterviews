@@ -31,7 +31,6 @@ const AdminLeftNav = () => {
       ],
     },
     { path: "/admin/quizes", name: "Quizes", icon: <LuMail /> },
-    { path: "/admin/profile", name: "Profile", icon: <LuBarChart4 /> },
     { path: "/admin/reviewfeedback", name: "Feedback", icon: <LuBarChart4 /> },
     { path: "/admin/profileadmin", name: "Profile", icon: <LuSettings /> },
   ];

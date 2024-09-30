@@ -77,7 +77,7 @@ export default function LoginPage() {
   };
 //bg-gradient-to-r from-purple-300 via-blue-200 to-green-300
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cyan-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white shadow-lg rounded-lg flex max-w-4xl mx-auto p-6">
         {/* Left Section (Optional) */}
         <div className="hidden lg:flex w-1/2 items-center justify-center">
