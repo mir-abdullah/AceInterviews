@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { API } from '../../../../utils/api';
 
 // Async thunk to fetch all interviews
@@ -60,7 +59,7 @@ export const fetchInterviewWithQuestions = createAsyncThunk(
     async (interviewId, { rejectWithValue }) => {
       try {
         const response = await API.get(`/behaviouralTopic/${interviewId}`);
-        return response.data.interview;  // Return the specific interview with questions
+        return response.data.interview;  
       } catch (error) {
         return rejectWithValue(error.response?.data || 'Failed to fetch the interview');
       }
@@ -72,7 +71,7 @@ const interviewsSlice = createSlice({
   name: 'interviews',
   initialState: {
     interviews: [],
-    selectedInterview: null, // Add this to store the specific interview
+    selectedInterview: null, 
     loading: false,
     error: null,
   },
@@ -101,7 +100,7 @@ const interviewsSlice = createSlice({
       })
       .addCase(fetchInterviewWithQuestions.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedInterview = action.payload;  // Set the specific interview
+        state.selectedInterview = action.payload; 
       })
       .addCase(fetchInterviewWithQuestions.rejected, (state, action) => {
         state.loading = false;
@@ -159,5 +158,4 @@ const interviewsSlice = createSlice({
   },
 });
 
-// Export the reducer to be used in the store
 export default interviewsSlice.reducer;

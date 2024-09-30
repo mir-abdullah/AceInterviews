@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 import {
   Radar,
@@ -10,51 +11,51 @@ import {
 import { Card, CardContent, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
-const data = [
-  {
-    field: "Problem-Solving",
-    QAJob: 120,
-    UXJob: 98,
-    DevJob: 86,
-    fullMark: 150,
-  },
-  {
-    field: "System Design",
-    QAJob: 110,
-    UXJob: 130,
-    DevJob: 130,
-    fullMark: 150,
-  },
-  {
-    field: "Coding Skills",
-    QAJob: 99,
-    UXJob: 100,
-    DevJob: 130,
-    fullMark: 150,
-  },
-  {
-    field: "Communication",
-    QAJob: 85,
-    UXJob: 90,
-    DevJob: 100,
-    fullMark: 150,
-  },
-  {
-    field: "Technical Knowledge",
-    QAJob: 65,
-    UXJob: 85,
-    DevJob: 90,
-    fullMark: 150,
-  },
-];
-
 const TechnicalProgress = () => {
+  const data = [
+    {
+      field: "Problem-Solving",
+      QAJob: 120,
+      UXJob: 98,
+      DevJob: 86,
+      fullMark: 150,
+    },
+    {
+      field: "System Design",
+      QAJob: 110,
+      UXJob: 130,
+      DevJob: 130,
+      fullMark: 150,
+    },
+    {
+      field: "Coding Skills",
+      QAJob: 99,
+      UXJob: 100,
+      DevJob: 130,
+      fullMark: 150,
+    },
+    {
+      field: "Communication",
+      QAJob: 85,
+      UXJob: 90,
+      DevJob: 100,
+      fullMark: 150,
+    },
+    {
+      field: "Technical Knowledge",
+      QAJob: 65,
+      UXJob: 85,
+      DevJob: 90,
+      fullMark: 150,
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="flex justify-center items-center flex-col gap-6 space-y-8"
+      className=" justify-center items-center  gap-6 space-y-8 "
     >
       {/* Card with the RadarChart */}
       <motion.div
@@ -70,13 +71,16 @@ const TechnicalProgress = () => {
               component="div"
               className="text-center font-bold mb-4 text-neutralBlack"
             >
-              Technical Interview Progress
+              Behavioural Interview Progress
             </Typography>
 
             {/* Radar Chart */}
-            <div style={{ width: "100%", height: 500 }}>
+            <div
+              style={{ width: "100%", height: 400 }}
+              className="flex justify-center items-center"
+            >
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="60%" cy="60%" outerRadius="90%" data={data}>
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
                   <PolarGrid />
                   <PolarAngleAxis dataKey="field" />
                   <PolarRadiusAxis angle={30} domain={[0, 150]} />
@@ -106,6 +110,8 @@ const TechnicalProgress = () => {
               </ResponsiveContainer>
             </div>
           </CardContent>
+
+          {/* Explanation Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,8 +143,6 @@ const TechnicalProgress = () => {
           </motion.div>
         </Card>
       </motion.div>
-
-      {/* Explanation Card */}
     </motion.div>
   );
 };

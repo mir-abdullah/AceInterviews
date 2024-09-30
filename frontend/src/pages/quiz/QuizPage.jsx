@@ -12,9 +12,11 @@ import {
   Card,
   CardContent,
   LinearProgress,
+  Fade,
+  CircularProgress,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { evaluateQuiz } from "../../redux/slices/quiz/quiz.slice"; // Adjust the import path accordingly
+import { evaluateQuiz } from "../../redux/slices/quiz/quiz.slice"; 
 
 const QuizPage = () => {
   const { state } = useLocation();
@@ -27,6 +29,7 @@ const QuizPage = () => {
   const [answers, setAnswers] = useState({});
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
+  const [loading, setLoading] = useState(false); // Loading state
 
   const { questions, difficulty } = state;
 
@@ -46,7 +49,7 @@ const QuizPage = () => {
       // Update answers with the current question ID and selected answer
       const updatedAnswers = {
         ...answers,
-        [currentQuestion._id]: selectedAnswer, // Store selected answer with question's ID as the key
+        [currentQuestion._id]: selectedAnswer,
       };
 
       // Check if the selected answer is correct
@@ -61,26 +64,27 @@ const QuizPage = () => {
 
       // If on the last question, submit the quiz
       if (currentQuestionIndex === filteredQuestions.length - 1) {
-        // Prepare the final submission data
+        setLoading(true); // Set loading to true when submitting
         const finalSubmission = {
-          answers: updatedAnswers, // Use the updated answers object
-          difficulty, // Include difficulty level
+          answers: updatedAnswers,
+          difficulty,
         };
 
-        // Dispatch the quiz evaluation action with the quizTopicId, answers, and difficulty
         dispatch(evaluateQuiz({ quizTopicId, ...finalSubmission }))
           .unwrap()
           .then(() => {
-            setShowResult(true); // Show results after successful submission
+            setShowResult(true);
           })
           .catch((error) => {
-            console.error("Error evaluating quiz:", error); // Handle error
+            console.error("Error evaluating quiz:", error);
+          })
+          .finally(() => {
+            setLoading(false); // Reset loading when done
           });
       } else {
-        // Proceed to next question
-        setAnswers(updatedAnswers); // Update the state with the new answers
-        setSelectedAnswer(""); // Clear selected answer for the next question
-        setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Move to the next question
+        setAnswers(updatedAnswers);
+        setSelectedAnswer("");
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       }
     }
   };
@@ -94,10 +98,11 @@ const QuizPage = () => {
       sx={{
         padding: "20px",
         minHeight: "100vh",
-        backgroundColor: "#f5f7fa",
+        backgroundColor: "#e8f0fe",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {showResult ? (
@@ -109,7 +114,7 @@ const QuizPage = () => {
         >
           <Card
             sx={{
-              padding: "20px",
+              padding: "30px",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               borderRadius: "15px",
               textAlign: "center",
@@ -148,14 +153,16 @@ const QuizPage = () => {
         </motion.div>
       ) : (
         <motion.div
+          key={currentQuestionIndex} // Use key to trigger reanimation on question change
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }} // Exit animation for the question
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
+          className="w-full max-w-lg" // Increased width
         >
           <Card
             sx={{
-              padding: "20px",
+              padding: "30px", // Increased padding
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               borderRadius: "15px",
               textAlign: "center",
@@ -170,7 +177,7 @@ const QuizPage = () => {
                 variant="h6"
                 sx={{ fontWeight: "bold", color: "#4CAF4F", mb: 2 }}
               >
-                {filteredQuestions.title}
+                {filteredQuestions[currentQuestionIndex].title}
               </Typography>
               <Typography variant="h5" sx={{ mb: 2 }}>
                 {filteredQuestions[currentQuestionIndex].questionText}
@@ -199,13 +206,17 @@ const QuizPage = () => {
                         }
                         label={
                           <Typography
-                            sx={{ color: "#263238", fontWeight: "500" }}
+                            sx={{
+                              color: "#263238",
+                              fontWeight: "500",
+                              fontSize: "1.2rem", // Increased font size for options
+                            }}
                           >
                             {option.text}
                           </Typography>
                         }
                         sx={{
-                          marginBottom: "10px",
+                          marginBottom: "15px", // Increased margin bottom
                           "& .MuiFormControlLabel-label": {
                             fontSize: "1rem",
                           },
@@ -239,9 +250,13 @@ const QuizPage = () => {
                 onClick={handleNextQuestion}
                 disabled={!selectedAnswer}
               >
-                {currentQuestionIndex < filteredQuestions.length - 1
-                  ? "Next Question"
-                  : "Submit Quiz"}
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: "#ffffff", mr: 1 }} />
+                ) : (
+                  (currentQuestionIndex < filteredQuestions.length - 1
+                    ? "Next Question"
+                    : "Submit Quiz")
+                )}
               </Button>
             </CardContent>
           </Card>

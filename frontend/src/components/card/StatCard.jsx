@@ -17,6 +17,8 @@ import {
   fetchTechnicalInterviews,
   fetchBehavioralInterviews,
 } from "../../redux/slices/admin/statistics/statisctics";
+import { TfiAgenda } from "react-icons/tfi";
+
 
 function getDaysInMonth(month, year) {
   const date = new Date(year, month, 0);
@@ -88,7 +90,7 @@ const StatCard = () => {
       value: behavioralInterviews || "N/A",
       interval: "Last 30 days",
       trend: "up",
-      icon: <FaDollarSign />,
+      icon: <TfiAgenda />,
       data: [150, 160, 170, 180, 190, 200, 220, 240],
     },
   ];

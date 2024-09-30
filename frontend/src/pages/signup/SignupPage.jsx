@@ -6,7 +6,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import Modal from '@mui/material/Modal';
 import { Box, Typography, Button, CircularProgress, Avatar, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
-import signup from '../../assets/signup.avif'; // Ensure you have an appropriate signup image
+import signup from '../../assets/signup.avif';
 
 const style = {
   position: 'absolute',
@@ -30,7 +30,7 @@ export default function SignupPage() {
     password: '',
   });
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -45,7 +45,7 @@ export default function SignupPage() {
     const result = await dispatch(signupUser(formData));
 
     if (signupUser.fulfilled.match(result)) {
-      setIsModalOpen(true); // Show modal on success
+      setIsModalOpen(true); 
     } else if (signupUser.rejected.match(result)) {
       if (result.payload && result.payload.msg) {
         setError("This email is already registered. Please use another email.");
@@ -74,11 +74,11 @@ export default function SignupPage() {
   // Close modal handler
   const closeModal = () => {
     setIsModalOpen(false);
-    navigate('/login'); // Redirect to login page after closing the modal
+    navigate('/login'); 
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cyan-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white shadow-lg rounded-lg flex max-w-4xl mx-auto p-6">
         {/* Left Section (Illustrative Image) */}
         <div className="hidden lg:flex w-1/2 items-center justify-center">
@@ -196,7 +196,7 @@ export default function SignupPage() {
             <GoogleLogin
               onSuccess={handleGoogleSignUp}
               onError={() => console.log('Google Sign-Up Failed')}
-            />
+            className="justify-center text-center "/>
           </div>
 
           {/* Sign In Link */}

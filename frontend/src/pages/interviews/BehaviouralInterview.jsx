@@ -23,7 +23,7 @@ const BehaviouralInterview = () => {
         backgroundColor: '#f5f7fa',
         borderRadius: '20px',
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100 "
+      className="bg-white"
     >
       <Typography
         variant="h4"
@@ -96,7 +96,8 @@ const BehaviouralInterview = () => {
                       }}
                       onClick={() => {
                         dispatch(addClick(interview._id))
-                        navigate(`/dashboard/behavioural/${interview._id}`)}
+                        navigate(`/dashboard/behavioural/${interview._id}`, { state: { interviewId: interview._id } });
+}
                     }
                     >
                       Start Interview

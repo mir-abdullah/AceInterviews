@@ -14,7 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
-import { FaCamera } from "react-icons/fa";
+import { FaCamera, FaKey, FaSave, FaTrashAlt } from "react-icons/fa";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -112,13 +112,13 @@ const Profile = () => {
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       setPasswordChangeError("New password and confirmation do not match");
-      toast.error("New password and confirmation do not match"); // Toast for mismatched passwords
+      toast.error("New password and confirmation do not match");
       return;
     }
 
     if (newPassword === "") {
       setPasswordChangeError("New password cannot be empty");
-      toast.error("New password cannot be empty"); // Toast for empty password
+      toast.error("New password cannot be empty");
       return;
     }
 
@@ -128,22 +128,22 @@ const Profile = () => {
       const response = await dispatch(changePassword({ newPassword })).unwrap();
 
       if (response.msg === "Password updated successfully") {
-        toast.success("Password changed successfully!"); // Success toast
+        toast.success("Password changed successfully!");
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        setIsOldPasswordCorrect(false); // Reset after successful change
-        setPasswordChangeError(""); // Clear any previous errors
+        setIsOldPasswordCorrect(false);
+        setPasswordChangeError("");
         setExpanded(false);
       } else {
         setPasswordChangeError(response.msg || "Error changing password");
-        toast.error(response.msg || "Error changing password"); // Error toast
+        toast.error(response.msg || "Error changing password");
       }
     } catch (error) {
       setPasswordChangeError(
         "Error changing password: " + (error.message || "")
       );
-      toast.error("Error changing password: " + (error.message || "")); // Error toast
+      toast.error("Error changing password: " + (error.message || ""));
     } finally {
       setIsPasswordChanging(false);
     }
@@ -210,10 +210,8 @@ const Profile = () => {
     }
   };
 
-  // Effect to handle profile update success or error
   useEffect(() => {
     if (profileUpdateStatus === "succeeded") {
-      // Refresh user profile after successful update
       dispatch(fetchUserProfile());
     }
   }, [profileUpdateStatus, dispatch]);
@@ -221,235 +219,273 @@ const Profile = () => {
   return (
     <Box
       sx={{
-        padding: "20px",
         minHeight: "100vh",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+        // background: "linear-gradient(135deg, #4A90E2, #A3E4DB, #F5D76E)",
+        
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+      className="bg-gray-50"
     >
       <Paper
         elevation={3}
         sx={{
           width: "100%",
-          maxWidth: "600px",
-          padding: "30px",
-          borderRadius: "15px",
-          backgroundColor: "#ffffff",
+          maxWidth: "800px",
+          padding: "40px",
+          borderRadius: "20px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "30px",
+          backgroundColor: "#fff",
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
         }}
       >
-        {loading ? (
-          <Box display="flex" justifyContent="center">
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <Typography
-              variant="h4"
-              align="center"
-              gutterBottom
-              sx={{ fontWeight: "bold", color: "#263238" }}
-            >
-              Profile Settings
-            </Typography>
-
-            <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
-              <Avatar
-                alt="Profile Picture"
-                src={image || "https://via.placeholder.com/150"}
-                sx={{
-                  width: 120,
-                  height: 120,
-                  margin: "0 auto",
-                  marginBottom: "10px",
-                }}
-              />
-              <input
-                style={{ display: "none" }}
-                id="upload-profile-pic"
-                type="file"
-                onChange={handleImage}
-              />
-              <label htmlFor="upload-profile-pic">
-                <IconButton component="span">
-                  <FaCamera size={20} color="#4CAF4F" />
-                </IconButton>
-              </label>
-            </Box>
-
-            <TextField
-              fullWidth
-              label="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              variant="outlined"
-              margin="normal"
-            />
-
-            <TextField
-              fullWidth
-              label="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              variant="outlined"
-              margin="normal"
-            />
-
-            <Accordion
-              expanded={expanded}
-              onChange={() => setExpanded(!expanded)}
-              sx={{
-                marginTop: "20px",
-                boxShadow: "none",
-                border: "1px solid #e0e0e0",
-                borderRadius: "8px",
-              }}
-            >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography
-                  variant="h6"
-                  sx={{ fontWeight: "bold", color: "#4CAF4F" }}
-                >
-                  Change Password
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ paddingTop: 0 }}>
-                {isPasswordChanging ? (
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    sx={{ marginBottom: "20px" }}
-                  >
-                    <CircularProgress />
-                  </Box>
-                ) : (
-                  <>
-                    <TextField
-                      fullWidth
-                      label="Old Password"
-                      type="password"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      variant="outlined"
-                      margin="normal"
-                      error={!!oldPasswordError}
-                      helperText={oldPasswordError}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderColor: isOldPasswordCorrect ? "green" : "",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: isOldPasswordCorrect ? "green" : "",
-                        },
-                      }}
-                    />
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor: "#4CAF4F",
-                        color: "#ffffff",
-                        "&:hover": {
-                          backgroundColor: "#388E3C",
-                        },
-                        marginBottom: "20px",
-                      }}
-                      onClick={handleCheckOldPassword}
-                    >
-                      Confirm Old Password
-                    </Button>
-                    <TextField
-                      fullWidth
-                      label="New Password"
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      variant="outlined"
-                      margin="normal"
-                      disabled={!isOldPasswordCorrect}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Confirm New Password"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      variant="outlined"
-                      margin="normal"
-                      disabled={!isOldPasswordCorrect}
-                    />
-                    {passwordChangeError && (
-                      <Typography color="error" sx={{ marginTop: "10px" }}>
-                        {passwordChangeError}
-                      </Typography>
-                    )}
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor: "#4CAF4F",
-                        color: "#ffffff",
-                        "&:hover": {
-                          backgroundColor: "#388E3C",
-                        },
-                        marginTop: "20px",
-                      }}
-                      disabled={newPassword !== confirmPassword || !newPassword}
-                      onClick={handleChangePassword}
-                    >
-                      Change Password
-                    </Button>
-                  </>
-                )}
-              </AccordionDetails>
-            </Accordion>
-
-            <Button
-              variant="contained"
-              sx={{
-                marginTop: "20px",
-                backgroundColor: "#4CAF4F",
-                color: "#ffffff",
-                "&:hover": {
-                  backgroundColor: "#388E3C",
-                },
-              }}
-              onClick={handleUpdateProfile}
-              disabled={profileUpdateStatus === "loading"}
-            >
-              {profileUpdateStatus === "loading"
-                ? "Updating..."
-                : "Update Profile"}
-            </Button>
-
-            {profileUpdateError && (
-              <Typography color="error" sx={{ marginTop: "20px" }}>
-                Error updating profile: {profileUpdateError}
-              </Typography>
-            )}
-          </>
-        )}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.3 }}
+        {/* Header and Profile Picture */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            alignItems: "center",
+          }}
         >
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleDeleteProfile}
-            disabled={deleteProfileStatus === "loading"}
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              color: "#263238",
+              marginBottom: "20px",
+            }}
           >
-            {deleteProfileStatus === "loading"
-              ? "Deleting..."
-              : "Delete Profile"}
-          </Button>
+            Profile Settings
+          </Typography>
+          <Box sx={{ textAlign: "center" }}>
+            <Avatar
+              alt="Profile Picture"
+              src={image || "https://via.placeholder.com/150"}
+              sx={{
+                width: 120,
+                height: 120,
+                marginBottom: "10px",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
+            />
+            <input
+              style={{ display: "none" }}
+              id="upload-profile-pic"
+              type="file"
+              onChange={handleImage}
+            />
+            <label htmlFor="upload-profile-pic">
+              <Button component="span" sx={{ color: "#4CAF4F" }}>
+                <FaCamera size={20} />
+              </Button>
+            </label>
+          </Box>
+        </Box>
+
+        {/* Profile Form */}
+        <Box sx={{ width: "100%" }}>
+          <TextField
+            fullWidth
+            label="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            variant="outlined"
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Email Address"
+            value={email}
+            variant="outlined"
+            margin="normal"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+
+          {/* Change Password Section */}
+          <Accordion
+            expanded={expanded}
+            onChange={() => setExpanded(!expanded)}
+            sx={{
+              marginTop: "20px",
+              boxShadow: "none",
+              border: "1px solid #e0e0e0",
+              borderRadius: "8px",
+            }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "bold", color: "#4CAF4F" }}
+              >
+                Change Password
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ paddingTop: 0 }}>
+              {isPasswordChanging ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  sx={{ marginBottom: "20px" }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <>
+                  <TextField
+                    fullWidth
+                    label="Old Password"
+                    type="password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    variant="outlined"
+                    margin="normal"
+                    error={!!oldPasswordError}
+                    helperText={oldPasswordError}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "red",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: isOldPasswordCorrect
+                            ? "green"
+                            : undefined,
+                        },
+                      },
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#4CAF4F",
+                      color: "#ffffff",
+                      "&:hover": {
+                        backgroundColor: "#388E3C",
+                      },
+                      marginBottom: "20px",
+                    }}
+                    onClick={handleCheckOldPassword}
+                    startIcon={<FaKey />}
+                  >
+                    Confirm Old Password
+                  </Button>
+                  <TextField
+                    fullWidth
+                    label="New Password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    variant="outlined"
+                    margin="normal"
+                    disabled={!isOldPasswordCorrect}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Confirm New Password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    variant="outlined"
+                    margin="normal"
+                    disabled={!isOldPasswordCorrect}
+                  />
+                  {passwordChangeError && (
+                    <Typography color="error" sx={{ marginTop: "10px" }}>
+                      {passwordChangeError}
+                    </Typography>
+                  )}
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#4CAF4F",
+                      color: "#ffffff",
+                      "&:hover": {
+                        backgroundColor: "#388E3C",
+                      },
+                      marginTop: "20px",
+                    }}
+                    disabled={newPassword !== confirmPassword || !newPassword}
+                    onClick={handleChangePassword}
+                    startIcon={<FaKey />}
+                  >
+                    Change Password
+                  </Button>
+                </>
+              )}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Update and Delete Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "30px",
+            }}
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#4CAF4F",
+                  color: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#388E3C",
+                  },
+                }}
+                onClick={handleUpdateProfile}
+                disabled={profileUpdateStatus === "loading"}
+                startIcon={<FaSave />}
+              >
+                {profileUpdateStatus === "loading"
+                  ? "Updating..."
+                  : "Update Profile"}
+              </Button>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleDeleteProfile}
+                disabled={deleteProfileStatus === "loading"}
+                startIcon={<FaTrashAlt />}
+              >
+                {deleteProfileStatus === "loading"
+                  ? "Deleting..."
+                  : "Delete Account"}
+              </Button>
+            </motion.div>
+          </Box>
+
+          {profileUpdateError && (
+            <Typography color="error" sx={{ marginTop: "20px" }}>
+              Error updating profile: {profileUpdateError}
+            </Typography>
+          )}
 
           {deleteProfileError && (
-            <Typography color="error">
+            <Typography color="error" sx={{ marginTop: "10px" }}>
               Error deleting profile: {deleteProfileError}
             </Typography>
           )}
-        </motion.div>
+        </Box>
       </Paper>
     </Box>
   );

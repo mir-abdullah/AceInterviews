@@ -35,7 +35,6 @@ const Sidebar = () => {
     { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
 
-    { path: "/settings", name: "Settings", icon: <LuSettings /> },
   ];
 
   return (
@@ -61,7 +60,7 @@ const Sidebar = () => {
             alt="AceInterview Logo"
             className="w-5 h-6 mr-3" // Adjust size and margin as needed
           /> */}
-          <motion.h1 className="text-xl leading-none font-cursive">
+          <motion.h1 className="text-xl leading-none font-bold">
             AceInterview
           </motion.h1>
         </motion.div>

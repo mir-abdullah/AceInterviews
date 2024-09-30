@@ -1,10 +1,4 @@
-import User from "../../models/user/user.js";
 import express from "express";
-import cloudinary from "cloudinary";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import crypto from "crypto";
-import transporter from "../../utils/nodeMailer.js";
 import { auth } from "../../middleware/auth.js";
 import multer from "multer";
 import {
@@ -15,21 +9,17 @@ import {
   resetPasswordController,
   signupController,
   updateAcoount,
-  uploadProfilePicController,
+  // uploadProfilePicController,
   verifyEmailController,
   logoutController,
   confirmOldPasswordController,
   sendOtpController,
   verifyOtpController,
   handleGoogleLogin,
-  calculateTotalUsers
- 
-  
+  calculateTotalUsers,
 } from "../../controllers/user/user.js";
 
 const router = express.Router();
-const storage = multer.memoryStorage();
-
 
 //signup route
 
@@ -42,13 +32,13 @@ router.get("/verify-email", verifyEmailController);
 router.post("/login", loginController);
 
 //route to upload profile picture
-router.patch("/upload-profile-picture", auth, uploadProfilePicController);
+// router.patch("/upload-profile-picture", auth, uploadProfilePicController);
 
 // forgot password route
 router.post("/forgot-password", forgotPasswordController);
 
 // reset password route
-router.post("/reset-password",auth, resetPasswordController);
+router.post("/reset-password", auth, resetPasswordController);
 
 //get user profile
 router.get("/profile", auth, getProfileController);
@@ -66,20 +56,15 @@ router.post("/logout", auth, logoutController);
 router.post("/confirm-old-password", auth, confirmOldPasswordController);
 
 //send otp
-router.post('/send-otp',sendOtpController)
+router.post("/send-otp", sendOtpController);
 
 //verify otp
-router.post('/verify-otp',verifyOtpController)
-
-
+router.post("/verify-otp", verifyOtpController);
 
 //google login
-router.post('/google-login',handleGoogleLogin)
+router.post("/google-login", handleGoogleLogin);
 
 //count users
-router.get('/count-users',calculateTotalUsers)
-
-
-
+router.get("/count-users", calculateTotalUsers);
 
 export default router;

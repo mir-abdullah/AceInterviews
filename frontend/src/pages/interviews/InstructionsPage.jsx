@@ -15,13 +15,11 @@ const InstructionsPage = () => {
 
   const handleStartInterview = () => {
     if (selectedDifficulty && interviewId) {
-      // Reset the questions state before fetching new questions
       dispatch(resetQuestions());
 
       dispatch(fetchQuestionsByDifficulty({ interviewId, difficulty: selectedDifficulty }))
         .then((resultAction) => {
           if (resultAction.meta.requestStatus === 'fulfilled') {
-            // Navigate to TechnicalInterviewPage and pass the questions in state
             navigate(`/dashboard/techinterviewpage/${interviewId}`, {
               state: { difficulty: selectedDifficulty, questions: resultAction.payload.questions },
             });

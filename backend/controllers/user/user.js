@@ -1,5 +1,4 @@
 import User from "../../models/user/user.js";
-import express from "express";
 import cloudinary from "../../utils/cloudinaryConfig.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -129,7 +128,7 @@ export const verifyEmailController = async (req, res) => {
 export const resetPasswordController = async (req, res) => {
   try {
     const { newPassword } = req.body;
-    const userId = req.userId; // Ensure this is set correctly by authentication middlewareclg
+    const userId = req.userId;
     console.log(typeof newPassword);
 
     if (!newPassword) {
@@ -145,12 +144,12 @@ export const resetPasswordController = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     user.password = hashedPassword;
-    user.resetToken = ""; // Ensure this field exists in your schema and is used appropriately
+    user.resetToken = "";
     await user.save();
 
     return res.status(200).json({ msg: "Password updated successfully" });
   } catch (error) {
-    console.error("Error updating password:", error); // Improved error logging
+    console.error("Error updating password:", error);
     return res.status(500).json({ msg: "Internal server error" });
   }
 };
@@ -195,17 +194,14 @@ export const updateAcoount = async (req, res) => {
 
     const { name, email, profilePic } = req.body;
 
-    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return res.status(400).json({ msg: "User not found" });
     }
 
-    // Update user fields if they are provided
     if (name) user.name = name;
     if (email) user.email = email;
 
-    // Handle profile picture update
     if (profilePic) {
       // Upload to Cloudinary
       const result = await cloudinary.uploader.upload(profilePic, {
@@ -214,7 +210,6 @@ export const updateAcoount = async (req, res) => {
       user.profilePic = result.secure_url;
     }
 
-    // Save the updated user
     await user.save();
 
     // Send updated user data in the response
@@ -230,43 +225,6 @@ export const updateAcoount = async (req, res) => {
   } catch (err) {
     console.error("Error updating profile:", err);
     res.status(500).json({ msg: "Error updating profile" });
-  }
-};
-
-//update profile pic
-export const uploadProfilePicController = async (req, res) => {
-  try {
-    const userId = req.userId;
-    const { image } = req.body;
-
-    // Find the user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ msg: "User not found" });
-    }
-
-    // Check if a file is provided
-    if (!image) {
-      return res.status(400).json({ msg: "No image file provided" });
-    }
-
-    // Upload the image to Cloudinary
-    const result = await cloudinary.uploader.upload(image, {
-      folder: "profile_pictures",
-    });
-
-    // Update user profile picture URL
-    user.profilePic = result.secure_url;
-    await user.save();
-
-    // Respond with success
-    return res.status(200).json({
-      msg: "Profile picture uploaded successfully",
-      profilePic: result.secure_url,
-    });
-  } catch (err) {
-    console.error("Error uploading profile picture:", err);
-    return res.status(500).json({ msg: "Error uploading profile picture" });
   }
 };
 
@@ -378,13 +336,11 @@ export const verifyOtpController = async (req, res) => {
       return res.status(400).json({ msg: "Please provide email and OTP" });
     }
 
-    // Find user and check if OTP matches and is not expired
     const user = await User.findOne({ email });
     if (!user || user.resetOtp !== otp || user.resetOtpExpiry < Date.now()) {
       return res.status(400).json({ msg: "Invalid or expired OTP" });
     }
 
-    // OTP is valid; proceed to reset password
     return res.status(200).json({
       msg: "OTP verified successfully. You can now reset your password.",
     });
@@ -409,41 +365,6 @@ export const forgotPasswordController = async (req, res) => {
   res.send("Password has been reset successfully");
 };
 
-// export const handleGoogleSignup = async (req, res) => {
-//   const { token } = req.body;
-
-//   try {
-//     // Verify the Google token and get user info
-//     const userInfo = await verifyGoogleToken(token);
-//     const { email, name, googleId, picture } = userInfo;
-
-//     // Check if the user already exists in your database
-//     let user = await User.findOne({ email });
-
-//     if (user) {
-//       // If the user exists, proceed with login
-      
-//     } else {
-//       // Create a new Google user if not found
-//       user = new User({
-//         name,
-//         email,
-//         googleId,
-//         profilePic: picture,
-//         authMethod: "google",
-//         isVerified: true,
-//       });
-//       await user.save();
-//     }
-   
-//     // Return the user or session token to the frontend
-//     res.status(200).json({ success: true, msg:"Signup Successfull" });
-//   } catch (error) {
-//     console.error("Error during Google authentication:", error);
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// };
-
 export const handleGoogleLogin = async (req, res) => {
   const { token } = req.body;
 
@@ -457,12 +378,9 @@ export const handleGoogleLogin = async (req, res) => {
     if (user) {
       // If the user exists and is authenticated with Google
       if (user.authMethod !== "google") {
-        return res
-          .status(400)
-          .json({
-            message:
-              "This email is already registered with a different method.",
-          });
+        return res.status(400).json({
+          message: "This email is already registered with a different method.",
+        });
       }
       // User exists and is logged in with Google
       const token = jwt.sign({ id: user._id }, process.env.SECRET);
@@ -507,4 +425,3 @@ export const calculateTotalUsers = async (req, res) => {
     return res.status(500).json({ message: "Error calculating total users" });
   }
 };
-

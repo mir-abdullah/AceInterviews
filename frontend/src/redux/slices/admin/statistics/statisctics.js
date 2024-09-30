@@ -1,6 +1,6 @@
-    // src/redux/slices/statsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { API } from "../../../../utils/api";
+
 // Async thunk to fetch total users
 export const fetchTotalUsers = createAsyncThunk("stats/fetchTotalUsers", async () => {
   const response = await API.get("/api/user/count-users");
@@ -62,7 +62,7 @@ export const fetchMostClickedTechnicalInterview = createAsyncThunk(
       totalQuizzes: 0,
       technicalInterviews: 0,
       behavioralInterviews: 0,
-      mostClickedTechnicalInterview: null, // Update to represent the actual data structure you expect
+      mostClickedTechnicalInterview: null,
       mostClickedBehavioralInterview: null,
       mostClickedQuiz: null,
       loading: false,
@@ -131,7 +131,7 @@ export const fetchMostClickedTechnicalInterview = createAsyncThunk(
         })
         .addCase(fetchMostClickedTechnicalInterview.fulfilled, (state, action) => {
           state.loading = false;
-          state.mostClickedTechnicalInterview = action.payload; // Update to correct property
+          state.mostClickedTechnicalInterview = action.payload; 
         })
         .addCase(fetchMostClickedTechnicalInterview.rejected, (state, action) => {
           state.loading = false;
@@ -143,7 +143,7 @@ export const fetchMostClickedTechnicalInterview = createAsyncThunk(
         })
         .addCase(fetchMostClickedBehavioralInterview.fulfilled, (state, action) => {
           state.loading = false;
-          state.mostClickedBehavioralInterview = action.payload; // Update to correct property
+          state.mostClickedBehavioralInterview = action.payload; 
         })
         .addCase(fetchMostClickedBehavioralInterview.rejected, (state, action) => {
           state.loading = false;
@@ -155,7 +155,7 @@ export const fetchMostClickedTechnicalInterview = createAsyncThunk(
         })
         .addCase(fetchMostClickedQuiz.fulfilled, (state, action) => {
           state.loading = false;
-          state.mostClickedQuiz = action.payload; // Update to correct property
+          state.mostClickedQuiz = action.payload; 
         })
         .addCase(fetchMostClickedQuiz.rejected, (state, action) => {
           state.loading = false;

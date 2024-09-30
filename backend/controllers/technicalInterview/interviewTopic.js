@@ -1,15 +1,12 @@
-import express from "express";
-import User from "../../models/user/user.js";
-import InterviewTopic from '../../models/technicalInterview/interviewTopic.js'
+import InterviewTopic from "../../models/technicalInterview/interviewTopic.js";
 import cloudinary from "../../utils/cloudinaryConfig.js";
 
-const router = express.Router();
 
 //route to add a topic
 export const addInterviewTopic = async (req, res) => {
   try {
     const { title, description, picture } = req.body;
-    
+
     if (!title || !description) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
@@ -17,40 +14,39 @@ export const addInterviewTopic = async (req, res) => {
     let pictureUrl = null;
 
     if (picture) {
-      // Upload picture to Cloudinary and get the URL
       const result = await cloudinary.uploader.upload(picture, {
         folder: "interview_pictures",
       });
       pictureUrl = result.secure_url;
     }
 
-    // Create a new InterviewTopic with the provided data
+    // Create a new InterviewTopic
     const newInterviewTopic = await InterviewTopic.create({
       title,
       description,
-      picture: pictureUrl, // Use the URL obtained from Cloudinary
+      picture: pictureUrl,
     });
 
-    res.status(201).json({ message: "Topic added successfully", newInterviewTopic });
+    res
+      .status(201)
+      .json({ message: "Topic added successfully", newInterviewTopic });
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.log(error);
     res.status(500).send("Something went wrong, try again later");
   }
 };
 
 //route to get all topics
-export const getAllInterviewTopics =async (req, res) => {
-
+export const getAllInterviewTopics = async (req, res) => {
   try {
     const allInterviews = await InterviewTopic.find({});
     res.status(200).json({ message: "All Interviews", allInterviews });
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong. Try again later.", error });
+    res
+      .status(500)
+      .json({ message: "Something went wrong. Try again later.", error });
   }
 };
-
-
-
 
 //route to get a specific interview with questions
 export const getInterview = async (req, res) => {
@@ -77,7 +73,7 @@ export const getInterview = async (req, res) => {
 export const editInterviewTopic = async (req, res) => {
   try {
     const { interviewId } = req.params;
-    const { title, description ,picture } = req.body;
+    const { title, description, picture } = req.body;
     let pictureUrl = null;
 
     if (picture) {
@@ -89,7 +85,7 @@ export const editInterviewTopic = async (req, res) => {
     }
     const updatedInterviewTopic = await InterviewTopic.findByIdAndUpdate(
       interviewId,
-      { title, description,picture:pictureUrl },
+      { title, description, picture: pictureUrl },
       {
         new: true,
         runValidators: true,
@@ -138,48 +134,49 @@ export const deleteInterviewTopic = async (req, res) => {
   }
 };
 
-
 // Route to get interview questions by difficulty
 export const getQuestionsByDifficulty = async (req, res) => {
   try {
     const { interviewId } = req.params;
     const { difficulty } = req.body;
 
-    // Validate interviewId
     if (!interviewId) {
-      return res.status(400).json({ message: 'Interview ID is required' });
+      return res.status(400).json({ message: "Interview ID is required" });
     }
 
     // Find interview topic and populate questions
-    const interviewTopic = await InterviewTopic.findById(interviewId).populate('questions');
+    const interviewTopic = await InterviewTopic.findById(interviewId).populate(
+      "questions"
+    );
     if (!interviewTopic) {
-      return res.status(404).json({ message: 'Interview Topic not found' });
+      return res.status(404).json({ message: "Interview Topic not found" });
     }
 
     let questions = interviewTopic.questions;
-    console.log('All Questions:', questions); // Log all questions before filtering
+    console.log(" Questions:", questions);
 
     // Filter by difficulty if it's provided
     if (difficulty) {
-      console.log('Requested difficulty:', difficulty); // Log the requested difficulty
+      y;
 
-      // Filter questions based on difficulty
       questions = questions.filter((question) => {
-        return question.difficulty === difficulty; // Ensure filter returns a boolean
+        return question.difficulty === difficulty;
       });
-
-      console.log(`Filtered Questions by difficulty (${difficulty}):`, questions); // Log filtered questions
     }
 
-    // Respond with the filtered questions or all if no filtering
     res.status(200).json({
-      message: 'Interview Topic retrieved successfully',
+      message: "Interview Topic retrieved successfully",
       // interviewTopic,
       questions,
     });
   } catch (error) {
-    console.error('Error retrieving interview topic:', error);
-    res.status(500).json({ message: 'Error retrieving interview topic', error: error.message });
+    console.error("Error retrieving interview topic:", error);
+    res
+      .status(500)
+      .json({
+        message: "Error retrieving interview topic",
+        error: error.message,
+      });
   }
 };
 
@@ -188,16 +185,16 @@ export const getMostClickedInterview = async (req, res) => {
   try {
     const interviews = await InterviewTopic.find().sort({ clicks: -1 });
     res.status(200).json(interviews);
-    } catch (error) {
-      console.error('Error retrieving most clicked interview:', error);
-      res.status(500).json({ message: 'Error retrieving most clicked interview', error: error
-        })
-      }
-    }
-      
-
-
-
+  } catch (error) {
+    console.error("Error retrieving most clicked interview:", error);
+    res
+      .status(500)
+      .json({
+        message: "Error retrieving most clicked interview",
+        error: error,
+      });
+  }
+};
 
 //controller for adding to clicks
 export const addClick = async (req, res) => {
@@ -207,12 +204,10 @@ export const addClick = async (req, res) => {
     topic.clicks += 1;
     await topic.save();
     res.status(200).json({ message: "Click added successfully" });
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error adding click:", error);
-    res.status(500).json({ message: "Error adding click", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error adding click", error: error.message });
   }
-}
-
-  
-  
+};
