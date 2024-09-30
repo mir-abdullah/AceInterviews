@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField ,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import {  getAllInterviewTopics,addInterviewTopic ,deleteInterviewTopic,editInterviewTopic,} from "../../redux/slices/admin/technicalAdmin/technicalAdmin.slice";
-import { FaPlus,FaTrash } from "react-icons/fa";
+import { getAllInterviewTopics, addInterviewTopic, deleteInterviewTopic, editInterviewTopic } from "../../redux/slices/admin/technicalAdmin/technicalAdmin.slice";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const TechnicalAdmin = () => {
@@ -14,18 +14,16 @@ const TechnicalAdmin = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [open, setOpen] = useState(false); 
   const [selectedInterviewId, setSelectedInterviewId] = useState(null);
-  const navigate =useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getAllInterviewTopics());
   }, [dispatch]);
 
-  //fetchInterview
+  // Fetch Interview
   const handleFetchInterview = async (id) => {
-    navigate('/admin/technical/questions',{state:id});
-
-  
-  }
+    navigate('/admin/technical/questions', { state: id });
+  };
 
   // Open modal for adding a new interview
   const handleAdd = () => {
@@ -51,7 +49,7 @@ const TechnicalAdmin = () => {
       dispatch(addInterviewTopic(currentInterview));
     }
     setOpenModal(false); 
-  
+  }; // <-- Added closing brace here
 
   // Close modal
   const handleCloseModal = () => {
@@ -70,27 +68,27 @@ const TechnicalAdmin = () => {
       reader.readAsDataURL(file);
     }
   };
+
   const handleOpenDeleteModal = (id) => {
     setSelectedInterviewId(id);
     setOpen(true);
   };
 
-  // Close the modal
+  // Close the delete confirmation modal
   const handleClose = () => {
     setOpen(false);
   };
 
-  // Function to confirm the delete action
+  // Confirm delete action
   const handleDeleteConfirm = () => {
     dispatch(deleteInterviewTopic(selectedInterviewId));
     setOpen(false); 
   };
-  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-  console.log(currentInterview)
-}
+
+  console.log(currentInterview);
 
   return (
     <Box
@@ -189,40 +187,47 @@ const TechnicalAdmin = () => {
                       View Questions
                     </Button>
                     <Button
-                        variant="contained"
-                        sx={{mt: 2, backgroundColor: '#FF5252', color: '#ffffff', fontWeight: 'bold', borderRadius: '20px', '&:hover': { backgroundColor: '#E53935' } }}
-                        onClick={() => handleOpenDeleteModal(interview._id)}
-                      >
-                        <FaTrash /> Delete
-                      </Button>
-                      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="delete-confirmation-dialog"
-        aria-describedby="confirm-delete-interview"
-      >
-        <DialogTitle id="delete-confirmation-dialog">Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="confirm-delete-interview">
-            Are you sure you want to delete this interview? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} sx={{ color: '#999' }}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            sx={{
-              backgroundColor: '#FF5252',
-              color: '#fff',
-              '&:hover': { backgroundColor: '#E53935' },
-            }}
-          >
-            Confirm Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: '#FF5252',
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        borderRadius: '20px',
+                        '&:hover': { backgroundColor: '#E53935' },
+                      }}
+                      onClick={() => handleOpenDeleteModal(interview._id)}
+                    >
+                      <FaTrash /> Delete
+                    </Button>
+                    <Dialog
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="delete-confirmation-dialog"
+                      aria-describedby="confirm-delete-interview"
+                    >
+                      <DialogTitle id="delete-confirmation-dialog">Confirm Delete</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="confirm-delete-interview">
+                          Are you sure you want to delete this interview? This action cannot be undone.
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleClose} sx={{ color: '#999' }}>
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleDeleteConfirm}
+                          sx={{
+                            backgroundColor: '#FF5252',
+                            color: '#fff',
+                            '&:hover': { backgroundColor: '#E53935' },
+                          }}
+                        >
+                          Confirm Delete
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
                   </CardContent>
                 </Card>
               </motion.div>

@@ -47,7 +47,7 @@ export default function SessionsChart() {
   }, [dispatch]);
 
   // Days in the month for the x-axis
-  const data = getDaysInMonth(4, 2024); // Adjust for the month and year
+  const data = getDaysInMonth(9, 2024); 
 
   // Dummy data for illustration (adjust with real data if needed)
   const quizzesData = Array(30).fill(totalQuizzes); // Simulating quiz data over 30 days

@@ -104,7 +104,7 @@ const Results = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center rounded min-h-screen p-8 space-y-6 bg-gradient-to-t from-lime-100 to-cyan-100">
+    <div className="flex flex-col items-center justify-center rounded min-h-screen p-8 space-y-6 bg-gray-50">
    
       <motion.div
         className="text-center"
@@ -129,63 +129,69 @@ const Results = () => {
 
       {/* Tabs Section */}
       <Box
-        sx={{
-          borderBottom: 2,
-          borderColor: "divider",
-          width: "100%",
-          maxWidth: 900,
-        }}
-      >
-        <Tabs
-          value={selectedTab}
-          onChange={handleChange}
-          centered
-          sx={{
-            "& .Mui-selected": {
-              background: "linear-gradient(to right, #4CAF50, #81C784)", // Gradient for selected tab
-              color: "#fff",
-              borderRadius: "10px",
-            },
-            "& .MuiTab-root": {
-              color: "rgba(0, 0, 0, 0.7)",
-              fontWeight: "bold",
-              fontSize: "1rem",
-              textTransform: "none",
-              borderRadius: "10px",
-              margin: "0 10px",
-              transition: "all 0.3s ease-in-out",
-              "&:hover": {
-                background: "rgba(76, 175, 80, 0.2)", 
-              },
-            },
-          }}
-        >
-          <Tab
-            label={
-              <div className="flex items-center space-x-2">
-                <FaUserTie className="text-xl" />
-                <span>Behavioral</span>
-              </div>
-            }
-          />
-          <Tab
-            label={
-              <div className="flex items-center space-x-2">
-                <FaLaptopCode className="text-xl" />
-                <span>Technical</span>
-              </div>
-            }
-          />
-          <Tab
-            label={
-              <div className="flex items-center space-x-2">
-                <FaQuestionCircle className="text-xl" />
-                <span>Quizzes</span>
-              </div>
-            }
-          />
-        </Tabs>
-      </Box>
+  sx={{
+    borderBottom: 2,
+    borderColor: "divider",
+    width: "100%",
+    maxWidth: 900,
+  }}
+>
+  <Tabs
+    value={selectedTab}
+    onChange={handleChange}
+    centered
+    sx={{
+      "& .Mui-selected": {
+        background: "#4CAF50", // Green background for selected tab
+        color: "#fff", // White text inside selected tab
+        borderRadius: "10px",
+        border: "2px solid #4CAF50", // Green border for selected tab
+      },
+      "& .MuiTab-root": {
+        color: "#4CAF50", // Green text for non-selected tabs
+        fontWeight: "bold",
+        fontSize: "1rem",
+        textTransform: "none",
+        borderRadius: "10px",
+        border: "2px solid #4CAF50", // Green border on all tabs
+        margin: "0 10px",
+        transition: "all 0.3s ease-in-out",
+        backgroundColor: "#fff", // White background for non-selected tabs
+        "&:hover": {
+          backgroundColor: "rgba(76, 175, 80, 0.2)", // Light green hover effect for non-selected tabs
+        },
+      },
+    }}
+  >
+    <Tab
+      label={
+        <div className="flex items-center space-x-2">
+          <FaUserTie className="text-xl" />
+          <span>Behavioral</span>
+        </div>
+      }
+    />
+    <Tab
+      label={
+        <div className="flex items-center space-x-2">
+          <FaLaptopCode className="text-xl" />
+          <span>Technical</span>
+        </div>
+      }
+    />
+    <Tab
+      label={
+        <div className="flex items-center space-x-2">
+          <FaQuestionCircle className="text-xl" />
+          <span>Quizzes</span>
+        </div>
+      }
+    />
+  </Tabs>
+</Box>
+
+
+
 
       {/* Results Display Section */}
       <motion.div

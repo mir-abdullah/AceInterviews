@@ -54,7 +54,7 @@ const InterviewsChart = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="clicks" fill="#8884d8" />
+            <Bar dataKey="clicks" fill="gray" />
           </BarChart>
         </div>
 
@@ -66,7 +66,7 @@ const InterviewsChart = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="clicks" fill="#82ca9d" />
+            <Bar dataKey="clicks" fill="gray" />
           </BarChart>
         </div>
       </div>
@@ -80,7 +80,7 @@ const InterviewsChart = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="clicks" fill="#ffc658" />
+            <Bar dataKey="clicks" fill="gray" />
           </BarChart>
         </div>
       </div>
