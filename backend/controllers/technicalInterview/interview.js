@@ -92,7 +92,8 @@ async function evaluateAnswer(question, answer) {
       Question: ${question}
       Answer: ${answer}
       Provide a score from 1 to 5, and include detailed feedback with your evaluation.If user answer is empty mark it zero.
-      provide an ideal answer also.
+      provide an ideal answer also and make sure the ideal answer is how a user should respond to a question during an interview.
+      Show some leniency while scoring the candidate.
       Provide your evaluation in the following JSON format:
       { "type" :"object",
        "properties":{
@@ -105,13 +106,13 @@ async function evaluateAnswer(question, answer) {
 
     const result = await model.generateContent(prompt);
 
-    // if (
-    //   !result ||
-    //   !result.response ||
-    //   typeof result.response.text !== "function"
-    // ) {
-    //   throw new Error("Invalid response from the AI model.");
-    // }
+    if (
+      !result ||
+      !result.response ||
+      typeof result.response.text !== "function"
+    ) {
+      throw new Error("Invalid response from the AI model.");
+    }
 
     // Get the evaluation text from the model response
     const evaluationText = await result.response.text();
