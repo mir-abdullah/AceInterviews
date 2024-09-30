@@ -152,6 +152,7 @@ const Behavioral = () => {
 
   useEffect(() => {
     return () => {
+      // Clear the interval when the component is unmounted
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
       }
@@ -279,11 +280,11 @@ const Behavioral = () => {
           transition={{ duration: 0.5 }}
           className="rounded-lg overflow-hidden shadow-lg mb-4"
           style={{
-            borderRadius: "8px",
+            borderRadius: "8px", // Rounded corners for a box shape
             overflow: "hidden",
-            width: "100%", 
-            maxWidth: "600px",
-            aspectRatio: "4/3", 
+            width: "100%", // You can control the dimensions here
+            maxWidth: "600px", // Limits the max width of the box
+            aspectRatio: "4/3", // Keeps the aspect ratio
           }}
         >
           <Webcam
@@ -351,7 +352,7 @@ const Behavioral = () => {
         {/* Analysis Results */}
         {!error && (
           <Box className="mt-4" sx={{ textAlign: "center", marginTop: 2 }}>
-            <Typography variant="h6">Status: {status || "N/A"}</Typography>
+            <Typography variant="h6">Status: {status || "Attentive"}</Typography>
             <Typography variant="h6">Gaze: {gaze || "N/A"}</Typography>
           </Box>
         )}

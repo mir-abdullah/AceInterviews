@@ -55,7 +55,7 @@ const TechnicalProgress = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="flex justify-center items-center flex-col gap-6 space-y-8"
+      className=" justify-center items-center  gap-6 space-y-8 "
     >
       {/* Card with the RadarChart */}
       <motion.div
@@ -71,7 +71,7 @@ const TechnicalProgress = () => {
               component="div"
               className="text-center font-bold mb-4 text-neutralBlack"
             >
-              Technical Interview Progress
+              Behavioural Interview Progress
             </Typography>
 
             {/* Radar Chart */}
