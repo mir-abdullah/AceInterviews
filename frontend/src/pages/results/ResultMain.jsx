@@ -9,7 +9,7 @@ import {
   fetchBehavioralInterviewResults,
   fetchTechnicalInterviewResults,
   fetchQuizResults,
-} from "../../redux/slices/results/results.slice"; // Assuming the slice is in the store folder
+} from "../../redux/slices/results/results.slice"; 
 import { MdArrowForward } from 'react-icons/md';
 
 // Render result cards with arrow button for details
@@ -30,7 +30,7 @@ const renderResults = (data, type, navigate) => {
     <div className="flex flex-col gap-4">
       {sortedData.map((item) => (
         <motion.div
-          key={`${type}-${item._id}`} // Changed to _id for unique key
+          key={`${type}-${item._id}`} 
           className="flex items-center justify-between p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -105,7 +105,7 @@ const Results = () => {
 
   return (
     <div className="flex flex-col items-center justify-center rounded min-h-screen p-8 space-y-6 bg-gradient-to-t from-lime-100 to-cyan-100">
-      {/* Animated Heading Section */}
+   
       <motion.div
         className="text-center"
         initial={{ opacity: 0, y: -50 }}
@@ -155,7 +155,7 @@ const Results = () => {
               margin: "0 10px",
               transition: "all 0.3s ease-in-out",
               "&:hover": {
-                background: "rgba(76, 175, 80, 0.2)", // Light green on hover
+                background: "rgba(76, 175, 80, 0.2)", 
               },
             },
           }}
@@ -221,8 +221,8 @@ const Results = () => {
             borderRadius: "8px",
             textTransform: "none",
           }}
-          // eslint-disable-next-line react/jsx-no-undef
-          startIcon={<FaArrowLeft />} // Using react-icons for the back arrow icon
+          
+          startIcon={<FaArrowLeft />} 
           className="mt-6"
           onClick={() => navigate("/dashboard/overview")}
         >

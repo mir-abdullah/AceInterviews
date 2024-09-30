@@ -43,7 +43,7 @@ const QuizQuestions = () => {
   const handleEdit = (id, text, difficulty, options) => {
     setCurrentQuestion(text);
     setCurrentDifficulty(difficulty);
-    setCurrentOptions(options.map(option => ({ ...option }))); // Make a copy of the options
+    setCurrentOptions(options.map(option => ({ ...option })));
     setCurrentId(id);
     setIsEditing(true);
     setOpenModal(true);
@@ -92,7 +92,7 @@ const QuizQuestions = () => {
   const handleCorrectOptionChange = (index) => {
     const newOptions = currentOptions.map((option, i) => ({
       ...option,
-      isCorrect: i === index, // Only one option can be correct
+      isCorrect: i === index, 
     }));
     setCurrentOptions(newOptions);
   };
@@ -196,11 +196,11 @@ const QuizQuestions = () => {
     component={motion.div}
     initial={{ scale: 0.8, opacity: 0 }}
     animate={{ scale: 1, opacity: 1 }}
-    sx={{ maxWidth: '70%', margin: 'auto' }} // Set max-width to 80% of screen for responsiveness
+    sx={{ maxWidth: '70%', margin: 'auto' }} 
   >
     <h3 className="text-xl font-bold mb-3">{isEditing ? "Edit Question" : "Add Question"}</h3>
 
-    <div className="space-y-2"> {/* Adds space between all elements */}
+    <div className="space-y-2"> 
       {/* Question Input */}
       <TextField
         fullWidth
@@ -209,7 +209,7 @@ const QuizQuestions = () => {
         value={currentQuestion}
         onChange={(e) => setCurrentQuestion(e.target.value)}
         multiline
-        rows={2} // Reduced the rows to decrease height
+        rows={2} 
         className="mb-2"
       />
 

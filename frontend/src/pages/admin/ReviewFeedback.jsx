@@ -10,23 +10,19 @@ import user from '../../assets/user.png';
 const FeedbackPage = () => {
   const dispatch = useDispatch();
 
-  // Access state from Redux store
   const { feedbacks, ratingsCount, loading, error, successMessage } = useSelector(
     (state) => state.feedback
   );
 
   useEffect(() => {
-    // Fetch feedbacks and ratings when component mounts
     dispatch(getAllFeedback());
     dispatch(getRatingsCount());
 
-    // Cleanup state when unmounting or before new data is fetched
     return () => {
       dispatch(clearFeedbackState());
     };
   }, [dispatch]);
 
-  // Prepare data for the pie chart
   const pieChartData = ratingsCount.map((rating) => ({
     value: rating.count,
     label: `Rating ${rating._id}`,
@@ -34,7 +30,7 @@ const FeedbackPage = () => {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      {/* Page Title */}
+     
       <Typography
         variant="h4"
         className="text-center font-bold mb-8 text-gray-700"
@@ -42,7 +38,7 @@ const FeedbackPage = () => {
         User Feedback Overview
       </Typography>
 
-      {/* Display loading/error messages */}
+     
       {loading && <Typography>Loading...</Typography>}
       {error && <Typography color="error">{error}</Typography>}
       {successMessage && <Typography color="primary">{successMessage}</Typography>}
@@ -68,7 +64,6 @@ const FeedbackPage = () => {
       >
         {!loading &&
           feedbacks.map((feedback, index) => (
-            // Check if the comment is not an empty string before rendering
             feedback.comment && feedback.comment.trim() !== "" && (
               <motion.div
                 key={index}

@@ -57,10 +57,10 @@ const Sidebar = () => {
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
     // { path: "/settings", name: "Settings", icon: <LuSettings /> },
   ];
-
+// bg-gradient-to-tl from-teal-400 to-green-900
   return (
 <motion.div
-  className="bg-gradient-to-tl from-teal-400 to-green-900 text-white h-screen flex flex-col relative"
+  className="bg-gradient-to-tl from-teal-400 to-green-800 text-white h-screen flex flex-col relative"
   animate={{ width: isOpen ? "250px" : "45px" }}
   transition={{ duration: 0.5, type: "spring", damping: 10 }}
 >

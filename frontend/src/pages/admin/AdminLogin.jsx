@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAdmin } from '../../redux/slices/admin/admin.slice'; // Assuming adminSlice is in redux folder
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import logo from '../../assets/logo.png';
+import { loginAdmin } from '../../redux/slices/admin/admin.slice'; 
+import { useNavigate } from 'react-router-dom';
 import adminPage from '../../assets/adminPage.jpg';
+import logo from '../../assets/logo.png'
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -11,11 +11,11 @@ const AdminLogin = () => {
   
   const dispatch = useDispatch();
   const { loading, error, admin } = useSelector((state) => state.admin);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     if (admin) {
-      navigate('/admin/overview'); // Redirect to admin dashboard on successful login
+      navigate('/admin/overview'); 
     }
   }, [admin, navigate]);
 
@@ -23,9 +23,9 @@ const AdminLogin = () => {
     e.preventDefault();
     dispatch(loginAdmin({ email, password }));
   };
-
+//bg-gradient-to-r from-purple-300 via-blue-200 to-green-300
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-300 via-blue-200 to-green-300">
+    <div className="min-h-screen flex items-center justify-center bg-cyan-50">
       <div className="bg-white shadow-lg rounded-lg flex max-w-4xl mx-auto p-6">
         {/* Left Section */}
         <div className="hidden lg:flex w-1/2 items-center justify-center">

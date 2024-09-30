@@ -9,7 +9,7 @@ import { addQuestion, updateQuestion, deleteQuestion } from '../../redux/slices/
 
 const QuestionsPage = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Use history hook for navigation
+  const navigate = useNavigate(); 
   const interviewId = location.state;
 
   const dispatch = useDispatch();
@@ -50,10 +50,10 @@ const QuestionsPage = () => {
   const handleSave = () => {
     if (isEditing) {
       dispatch(updateQuestion({ interviewId, questionId: currentId, questionData: { text: currentQuestion } }))
-        .then(() => dispatch(fetchInterviewWithQuestions(interviewId))); // Fetch updated questions
+        .then(() => dispatch(fetchInterviewWithQuestions(interviewId))); 
     } else {
       dispatch(addQuestion({ interviewId, questionData: { text: currentQuestion } }))
-        .then(() => dispatch(fetchInterviewWithQuestions(interviewId))); // Fetch updated questions
+        .then(() => dispatch(fetchInterviewWithQuestions(interviewId))); 
     }
     setOpenModal(false);
   };
@@ -65,7 +65,7 @@ const QuestionsPage = () => {
 
   const confirmDelete = () => {
     dispatch(deleteQuestion({ interviewId, questionId: questionToDelete }))
-      .then(() => dispatch(fetchInterviewWithQuestions(interviewId))); // Fetch updated questions
+      .then(() => dispatch(fetchInterviewWithQuestions(interviewId)));
     setOpenConfirmDelete(false);
   };
 
@@ -79,7 +79,7 @@ const QuestionsPage = () => {
 
   // Function to go back to the main technical page
   const handleBack = () => {
-    navigate('/admin/behavioraladmin'); // Adjust the path to your main technical page route
+    navigate('/admin/behavioraladmin'); 
   };
 
   return (

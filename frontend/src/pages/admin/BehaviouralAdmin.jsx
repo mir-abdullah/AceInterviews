@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField ,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllInterviews, addInterviewTopic ,deleteInterviewTopic,editInterviewTopic,fetchInterviewWithQuestions} from "../../redux/slices/admin/behaviouralAdmin/behaviouralAdmin.slice";
+import { fetchAllInterviews, addInterviewTopic ,deleteInterviewTopic,editInterviewTopic} from "../../redux/slices/admin/behaviouralAdmin/behaviouralAdmin.slice";
 import { FaPlus,FaTrash } from "react-icons/fa";
-import BackButton from "../../components/BackButton";
 import { useNavigate } from "react-router-dom";
 
 const BehavioralAdmin = () => {

@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import {  getAllInterviewTopics,addInterviewTopic ,deleteInterviewTopic,editInterviewTopic,} from "../../redux/slices/admin/technicalAdmin/technicalAdmin.slice";
 import { FaPlus,FaTrash } from "react-icons/fa";
-import BackButton from "../../components/BackButton";
 import { useNavigate } from "react-router-dom";
 
 const TechnicalAdmin = () => {
@@ -12,8 +11,8 @@ const TechnicalAdmin = () => {
   const { topics, currentTopic, loading, error } = useSelector((state) => state.technicalInterviews);
   const [openModal, setOpenModal] = useState(false);
   const [currentInterview, setCurrentInterview] = useState({ title: "", description: "", picture: "" });
-  const [imagePreview, setImagePreview] = useState(null); // For image preview
-  const [open, setOpen] = useState(false); // To control the modal visibility
+  const [imagePreview, setImagePreview] = useState(null);
+  const [open, setOpen] = useState(false); 
   const [selectedInterviewId, setSelectedInterviewId] = useState(null);
   const navigate =useNavigate()
 
@@ -38,21 +37,20 @@ const TechnicalAdmin = () => {
   // Open modal for editing an existing interview
   const handleEdit = (interview) => {
     setCurrentInterview(interview);
-    setImagePreview(interview.picture); // Set the current image for preview
+    setImagePreview(interview.picture); 
     setOpenModal(true);
   };
 
-  // Save interview (dispatch add/update action)
+  // Save interview
   const handleSave = () => {
     if (currentInterview._id) {
-      // Editing an existing interview
+      // Editing an interview
       dispatch(editInterviewTopic({ interviewId: currentInterview._id, updatedData: currentInterview }));
     } else {
-      // Adding a new interview
+      // Adding a interview
       dispatch(addInterviewTopic(currentInterview));
     }
-    setOpenModal(false); // Close modal after saving
-  };
+    setOpenModal(false); 
   
 
   // Close modal
@@ -66,8 +64,8 @@ const TechnicalAdmin = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result); // Set image preview
-        setCurrentInterview({ ...currentInterview, picture: reader.result }); // Update current interview with the image
+        setImagePreview(reader.result); 
+        setCurrentInterview({ ...currentInterview, picture: reader.result }); 
       };
       reader.readAsDataURL(file);
     }
@@ -85,13 +83,14 @@ const TechnicalAdmin = () => {
   // Function to confirm the delete action
   const handleDeleteConfirm = () => {
     dispatch(deleteInterviewTopic(selectedInterviewId));
-    setOpen(false); // Close modal after deletion
+    setOpen(false); 
   };
   
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
   console.log(currentInterview)
+}
 
   return (
     <Box
@@ -251,7 +250,7 @@ const TechnicalAdmin = () => {
             overflowY: 'auto',
           }}
         >
-          {/* Left Side: Image Upload */}
+          {/* Left Side Image Upload */}
           <Box sx={{ flex: '1', mr: 2 }}>
             <Typography variant="h5" align="center" sx={{ mb: 2, fontWeight: 'bold', color: '#4CAF4F' }}>
               {currentInterview._id ? "Edit Interview" : "Add Interview"}

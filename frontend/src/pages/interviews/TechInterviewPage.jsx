@@ -10,49 +10,49 @@ import {
   CircularProgress,
   Stack,
   Avatar,
-} from "@mui/material"; // Added necessary imports
+} from "@mui/material"; 
 import { useTimer } from "react-timer-hook";
 import { FaMicrophone, FaStop } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   startInterview,
-} from "../../redux/slices/technicalInterview/technicalInterview.slice"; // Import the startInterview action
-import FeedbackModal from "../../components/modals/FeedbackModal,"; // Fixed import typo
+} from "../../redux/slices/technicalInterview/technicalInterview.slice"; 
+import FeedbackModal from "../../components/modals/FeedbackModal,"; 
 import { motion } from "framer-motion";
 
 const TechInterviewPage = () => {
-  const location = useLocation(); // Get location object
-  const navigate = useNavigate(); // Add navigation
+  const location = useLocation(); 
+  const navigate = useNavigate(); 
   const dispatch = useDispatch();
   const { interviewId } = useParams();
 
-  const { questions = [], difficulty } = location.state || {}; // Retrieve questions and difficulty from state
+  const { questions = [], difficulty } = location.state || {}; 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [transcribedText, setTranscribedText] = useState("");
-  const [answers, setAnswers] = useState({}); // Store answers in the format { questionId: answer }
-  const [showModal, setShowModal] = useState(false); // State for showing modal
-  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [answers, setAnswers] = useState({}); 
+  const [showModal, setShowModal] = useState(false); 
+  const [loading, setLoading] = useState(false); 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   const handleFeedbackClose = () => {
-    setShowFeedbackModal(false); // Close feedback modal when feedback is submitted
-    navigate("/dashboard/results", { state: { answers, difficulty } }); // Navigate to review page
+    setShowFeedbackModal(false); 
+    navigate("/dashboard/results", { state: { answers, difficulty } }); 
   };
 
   // Filter questions based on the selected difficulty level
   const filteredQuestions = questions.filter((q) => q.difficulty === difficulty);
 
-  // Log to ensure correct questions and difficulty
+  
   useEffect(() => {
-    console.log("Filtered Questions:", filteredQuestions);
-    console.log("Difficulty:", difficulty);
+    console.log("Filtered Questions", filteredQuestions);
+    console.log("Difficulty", difficulty);
   }, [filteredQuestions, difficulty]);
 
   const { seconds, minutes, start, pause, restart } = useTimer({
-    expiryTimestamp: new Date().getTime() + 90 * 1000, // 90 seconds timer
-    onExpire: () => handleSubmitAnswer(), // Use handleSubmitAnswer on timer expiry
+    expiryTimestamp: new Date().getTime() + 90 * 1000,
+    onExpire: () => handleSubmitAnswer(), 
   });
 
   const handleNextQuestion = useCallback(() => {
@@ -62,11 +62,11 @@ const TechInterviewPage = () => {
         [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
-    setTranscribedText(""); // Clear text field
+    setTranscribedText(""); 
     setCurrentQuestionIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
       if (nextIndex < filteredQuestions.length) {
-        restart(new Date().getTime() + 90 * 1000); // Reset timer for the next question
+        restart(new Date().getTime() + 90 * 1000); 
         return nextIndex;
       } else {
         return prevIndex;

@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux"; 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ToastContainer } from 'react-toastify'; // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 import store from './redux/store/store.js';
 import App from "./App.jsx";
 import "./index.css";
@@ -135,7 +134,7 @@ createRoot(document.getElementById("root")).render(
         <ToastContainer
         theme="colored"
         autoClose={3000} 
-        /> {/* Add ToastContainer here */}
+        /> 
       </Provider>
     </GoogleOAuthProvider>
   </StrictMode>
