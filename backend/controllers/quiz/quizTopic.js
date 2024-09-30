@@ -3,13 +3,11 @@ import QuizTopic from "../../models/quiz/quizTopic.js";
 import QuizQuestion from "../../models/quiz/quizQuestion.js";
 import cloudinary from "../../utils/cloudinaryConfig.js";
 
-// Route to add a quiz topic with an image upload
+// Route to add a quiz topic
 export const addQuizTopic = async (req, res) => {
-  const { title, description,picture } = req.body;
+  const { title, description, picture } = req.body;
   try {
     let pictureUrl = null;
-
-    
 
     if (!title || !description) {
       return res.status(400).json({ message: "Please fill in all fields" });
@@ -25,7 +23,7 @@ export const addQuizTopic = async (req, res) => {
     const newQuizTopic = await QuizTopic.create({
       title,
       description,
-      picture:pictureUrl, 
+      picture: pictureUrl,
     });
 
     res
@@ -51,7 +49,9 @@ export const getQuizTopic = async (req, res) => {
   try {
     const { quizTopicId } = req.params;
 
-    const quizTopic = await QuizTopic.findById(quizTopicId).populate("questions");
+    const quizTopic = await QuizTopic.findById(quizTopicId).populate(
+      "questions"
+    );
 
     if (!quizTopic) {
       return res.status(404).json({ message: "Quiz Topic not found" });
@@ -69,8 +69,8 @@ export const getQuizTopic = async (req, res) => {
 export const editQuizTopic = async (req, res) => {
   try {
     const { quizTopicId } = req.params;
-    const { title, description,picture } = req.body;
-    let pictureUrl =null
+    const { title, description, picture } = req.body;
+    let pictureUrl = null;
     if (picture) {
       // Upload picture to Cloudinary and get the URL
       const result = await cloudinary.uploader.upload(picture, {
@@ -81,7 +81,7 @@ export const editQuizTopic = async (req, res) => {
 
     const updatedQuizTopic = await QuizTopic.findByIdAndUpdate(
       quizTopicId,
-      { title, description, picture:pictureUrl },
+      { title, description, picture: pictureUrl },
       { new: true, runValidators: true }
     );
 
@@ -115,7 +115,9 @@ export const deleteQuizTopic = async (req, res) => {
 
     await QuizTopic.findByIdAndDelete(quizTopicId);
 
-    res.status(200).json({ message: "Quiz Topic and associated questions deleted" });
+    res
+      .status(200)
+      .json({ message: "Quiz Topic and associated questions deleted" });
   } catch (error) {
     res
       .status(500)
@@ -128,35 +130,27 @@ export const getQuestionsByDifficulty = async (req, res) => {
   try {
     const { quizTopicId } = req.params;
     const { difficulty } = req.body;
-    console.log(difficulty)
+    console.log(difficulty);
 
-    // Validate quizTopicId
     if (!quizTopicId) {
       return res.status(400).json({ message: "Quiz Topic ID is required" });
     }
 
     // Fetch quiz topic and populate questions
-    const quizTopic = await QuizTopic.findById(quizTopicId).populate("questions");
+    const quizTopic = await QuizTopic.findById(quizTopicId).populate(
+      "questions"
+    );
 
     if (!quizTopic) {
       return res.status(404).json({ message: "Quiz Topic not found" });
     }
-    
 
     let questions = quizTopic.questions;
 
- 
-
-    // if (difficulty) {
-    //   const validDifficulties = ["Easy", "Medium", "Hard"];
-    //   if (!validDifficulties.includes(difficulty)) {
-    //     return res.status(400).json({ message: "Invalid difficulty level" });
-    //   }
-
-// Filter questions based on difficulty
-questions = questions.filter((question) => {
-  return question.difficulty === difficulty; // Ensure filter returns a boolean
-});
+    // Filter questions based on difficulty
+    questions = questions.filter((question) => {
+      return question.difficulty === difficulty;
+    });
     // console.log(questions)
 
     res.status(200).json({
@@ -166,30 +160,30 @@ questions = questions.filter((question) => {
     });
   } catch (error) {
     console.error("Error retrieving quiz topic:", error);
-    res.status(500).json({ message: "Error retrieving quiz topic", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error retrieving quiz topic", error: error.message });
   }
 };
 
 export const getMostClickedQuiz = async (req, res) => {
   try {
-    console.log("Received request for most clicked quiz"); // Debug log
-    const quizzes = await QuizTopic.find()
-      .sort({ clicks: -1 })
-      
+    console.log("Received ");
+    const quizzes = await QuizTopic.find().sort({ clicks: -1 });
+
     if (quizzes.length === 0) {
-      return res.status(404).json({ message: 'No quizzes found.' });
+      return res.status(404).json({ message: "No quizzes found." });
     }
 
     res.status(200).json(quizzes);
   } catch (error) {
-    console.error('Error retrieving most clicked quiz:', error);
+    console.error("Error retrieving most clicked quiz:", error);
     res.status(500).json({
-      message: 'Error retrieving most clicked quiz',
+      message: "Error retrieving most clicked quiz",
       error: error.message,
     });
   }
 };
-      
 
 //controller for adding to clicks
 export const addClick = async (req, res) => {
@@ -199,15 +193,10 @@ export const addClick = async (req, res) => {
     quiz.clicks += 1;
     await quiz.save();
     res.status(200).json({ message: "Click added successfully" });
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error adding click:", error);
-    res.status(500).json({ message: "Error adding click", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error adding click", error: error.message });
   }
-}
-
-
-
-
-
-
+};

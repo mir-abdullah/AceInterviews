@@ -9,7 +9,7 @@ import {
   getMostClickedQuiz,
   addClick
 } from "../../controllers/quiz/quizTopic.js";
-import upload from '../../utils/multerConfig.js'
+
 const router = express.Router();
 
 //route to add quiz topic
@@ -32,8 +32,6 @@ router.delete("/:quizTopicId", deleteQuizTopic);
 
 //get interview by difficulty
 router.get("/:quizTopicId/difficulty", getQuestionsByDifficulty);
-
-
 
 //route to add click
 router.post("/addclick/:quizTopicId", addClick)

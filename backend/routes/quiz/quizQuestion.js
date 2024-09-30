@@ -3,7 +3,6 @@ import { addQuestion,deleteQuestion,updateQuestion } from '../../controllers/qui
 const router = express.Router()
 
 //route to add a question
-//route to add a question
 router.post('/:quizId/add', addQuestion);
 
 //route to delete a question
