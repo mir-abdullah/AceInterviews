@@ -48,6 +48,7 @@ const Overview = () => {
       </div>
 
       {/* Previous Interviews Section */}
+
       {/* <div className="flex justify-between items-center py-4">
         <h1 className="text-lg font-semibold">Previous Interviews</h1>
         <p className="text-sm underline text-indigo-600">See all</p>
@@ -63,12 +64,34 @@ const Overview = () => {
       {/* <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
         {interview &&
           interview.map((interview, index) => (
+=======
+      <div className="flex justify-between items-center py-4">
+        <h1 className="text-lg font-semibold">Previous Interviews</h1>
+        <p className="text-sm underline text-indigo-600">See all</p>
+      </div>
+
+      <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+        {behavoiralInterview &&
+          behavoiralInterview.map((interview, index) => (
+
             <Interviews key={index} interview={interview} />
           ))}
       </div>
 
+
       <QuizCard />
       {/* Quiz Section */}
+
+//       <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+//         {interview &&
+//           interview.map((interview, index) => (
+//             <Interviews key={index} interview={interview} />
+//           ))}
+//       </div>
+
+//       {/* Quiz Section */}
+//       <QuizCard />
+
     </div>
   );
 };
