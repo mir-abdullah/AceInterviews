@@ -6,8 +6,8 @@ export const fetchUserProfile = createAsyncThunk(
   'user/fetchProfile', 
   async (_, thunkAPI) => {
     try {
-      const response = await API.get('/api/user/profile'); // Adjust the endpoint
-      return response.data; // Adjust according to your API response
+      const response = await API.get('/api/user/profile'); 
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -19,8 +19,8 @@ export const confirmOldPassword = createAsyncThunk(
   'user/confirm-old-password',
   async (password, thunkAPI) => {
     try {
-      const response = await API.post('/api/user/confirm-old-password', { oldPassword: password }); // Wrap password in an object
-      return response.data; // Return the response from the API
+      const response = await API.post('/api/user/confirm-old-password', { oldPassword: password }); 
+      return response.data; 
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || 'Something went wrong');
     }
@@ -33,8 +33,8 @@ export const updateProfile = createAsyncThunk(
   async (profileData, thunkAPI) => {
     try {
       const response = await API.put('/api/user/update-profile', profileData);
-    //   console.log(profileData) // Adjust the endpoint and data
-      return response.data; // Adjust according to your API response
+    //   console.log(profileData)
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -46,11 +46,10 @@ export const changePassword = createAsyncThunk(
   'user/setNewPassword',
   async (newPassword, thunkAPI) => {
     try {
-      // Send only the new password to the API
       const response = await API.post('/api/user/reset-password',  newPassword );
-      return response.data; // Return the response from the API
+      return response.data; 
     } catch (error) {
-      // Return error payload if the request fails
+      
       return thunkAPI.rejectWithValue(error.response?.data || 'Something went wrong');
     }
   }
@@ -61,8 +60,8 @@ export const deleteProfile = createAsyncThunk(
   'user/deleteProfile',
   async (_, thunkAPI) => {
     try {
-      const response = await API.delete('/api/user/delete-profile'); // Adjust the endpoint
-      return response.data; // Return response data if needed
+      const response = await API.delete('/api/user/delete-profile'); 
+      return response.data; 
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || 'Something went wrong');
     }
@@ -71,22 +70,21 @@ export const deleteProfile = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk('user/logout', async (_, thunkAPI) => {
   try {
-    // Call the logout API endpoint
-    const response = await API.post('/api/user/logout'); // Assuming POST for logout
-    return response.data; // Return the success message or data
+    const response = await API.post('/api/user/logout'); 
+    return response.data; 
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response?.data || 'Failed to logout');
   }
 });
-// Thunks for OTP and Password Reset
+
 
 // Send OTP action
 export const sendOtp = createAsyncThunk(
   'user/sendOtp',
   async (email, thunkAPI) => {
     try {
-      const response = await API.post('/api/user/send-otp', { email }); // Adjust the endpoint
-      return response.data; // Return the response from the API
+      const response = await API.post('/api/user/send-otp', { email });
+      return response.data; 
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -98,8 +96,8 @@ export const verifyOtp = createAsyncThunk(
   'user/verifyOtp',
   async ({ email, otp }, thunkAPI) => {
     try {
-      const response = await API.post('/api/user/verify-otp', { email, otp }); // Adjust the endpoint
-      return response.data; // Return the response from the API
+      const response = await API.post('/api/user/verify-otp', { email, otp }); 
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -111,8 +109,8 @@ export const forgotPassword = createAsyncThunk(
   'user/forgotPassword',
   async ({ email, newPassword }, thunkAPI) => {
     try {
-      const response = await API.post('/api/user/forgot-password', { email, newPassword }); // Adjust the endpoint
-      return response.data; // Return the response from the API
+      const response = await API.post('/api/user/forgot-password', { email, newPassword });
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -172,11 +170,11 @@ const userSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.profileUpdateStatus = "succeeded";
-        state.user = action.payload; // Update the user state with new profile data
+        state.user = action.payload;
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.profileUpdateStatus = "failed";
-        state.profileUpdateError = action.payload; // Handle the error for profile update
+        state.profileUpdateError = action.payload; 
       })
 
         // Set New Password Reducers
@@ -186,7 +184,6 @@ const userSlice = createSlice({
         })
         .addCase(changePassword.fulfilled, (state) => {
           state.newPasswordStatus = "succeeded";
-          // Optionally handle success (e.g., clear the old password field or show a success message)
         })
         .addCase(changePassword.rejected, (state, action) => {
           state.newPasswordStatus = "failed";
@@ -200,7 +197,7 @@ const userSlice = createSlice({
       })
       .addCase(deleteProfile.fulfilled, (state) => {
         state.deleteProfileStatus = "succeeded";
-        state.user = null; // Clear user data or handle as needed
+        state.user = null; 
       })
       .addCase(deleteProfile.rejected, (state, action) => {
         state.deleteProfileStatus = "failed";
@@ -214,8 +211,8 @@ const userSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.logoutStatus = "succeeded";
-        state.user = null; // Clear the user data on logout
-        state.status = "idle"; // Reset user-related states
+        state.user = null;
+        state.status = "idle"; 
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.logoutStatus = "failed";
@@ -231,11 +228,11 @@ const userSlice = createSlice({
       .addCase(sendOtp.fulfilled, (state) => {
         state.status = "succeeded";
         state.otpSent = true;
-        state.otpError=null // OTP sent successfully
+        state.otpError=null 
       })
       .addCase(sendOtp.rejected, (state, action) => {
         state.status = "failed";
-        state.otpError = action.payload; // Handle the error for OTP sending
+        state.otpError = action.payload;
       })
 
       // Verify OTP Reducers
@@ -245,11 +242,11 @@ const userSlice = createSlice({
       })
       .addCase(verifyOtp.fulfilled, (state) => {
         state.status = "succeeded";
-        state.otpVerified = true; // OTP verified successfully
+        state.otpVerified = true; 
       })
       .addCase(verifyOtp.rejected, (state, action) => {
         state.status = "failed";
-        state.otpError = action.payload; // Handle the error for OTP verification
+        state.otpError = action.payload; 
       })
 
       // Forgot Password Reducers
@@ -258,11 +255,11 @@ const userSlice = createSlice({
         state.resetPasswordError = null;
       })
       .addCase(forgotPassword.fulfilled, (state) => {
-        state.resetPasswordStatus = "succeeded"; // Password reset successfully
+        state.resetPasswordStatus = "succeeded";
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.resetPasswordStatus = "failed";
-        state.resetPasswordError = action.payload; // Handle the error for password reset
+        state.resetPasswordError = action.payload; 
       });
   },
 });

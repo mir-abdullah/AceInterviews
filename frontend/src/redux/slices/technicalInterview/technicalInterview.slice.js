@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { API } from '../../../utils/api';
 
 // Async thunk for fetching interview topics
@@ -17,7 +16,7 @@ export const fetchQuestionsByDifficulty = createAsyncThunk(
   async ({ interviewId, difficulty }) => {
     try {
       const response = await API.get(`/technicalInterviewTopic/difficulty/${interviewId}`, {
-        params: { difficulty }, // Ensure to send parameters correctly
+        params: { difficulty }, 
       });
       return response.data;
     } catch (error) {
@@ -67,8 +66,8 @@ const interviewTopicsSlice = createSlice({
     interview: null,
     interviewStatus: 'idle',
     interviewError: null,
-    addClickStatus: 'idle', // Add status for addClick
-    addClickError: null, // Error state for adding click
+    addClickStatus: 'idle', 
+    addClickError: null, 
   },
   reducers: {
     resetQuestions: (state) => {
@@ -126,11 +125,11 @@ const interviewTopicsSlice = createSlice({
       })
       .addCase(addClick.fulfilled, (state, action) => {
         state.addClickStatus = 'succeeded';
-        state.addClickError = null; // Clear any previous errors
+        state.addClickError = null; 
       })
       .addCase(addClick.rejected, (state, action) => {
         state.addClickStatus = 'failed';
-        state.addClickError = action.payload; // Capture error
+        state.addClickError = action.payload; 
       });
   },
 });

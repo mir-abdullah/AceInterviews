@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { API } from '../../../utils/api';
-// Async thunks for fetching data
 
 // Fetch behavioral interview results
 export const fetchBehavioralInterviewResults = createAsyncThunk(
@@ -180,5 +179,4 @@ const resultsSlice = createSlice({
   },
 });
 
-// Export actions and reducer
 export default resultsSlice.reducer;

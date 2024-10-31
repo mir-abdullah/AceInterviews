@@ -14,9 +14,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { motion } from "framer-motion";
 
 const Feedback = () => {
-  const location = useLocation(); // Get the location object
-  const navigate = useNavigate(); // Initialize useHistory for navigation
-  const { item, type } = location.state; // Destructure the item and type from location.state
+  const location = useLocation();
+  const navigate = useNavigate(); 
+  const { item, type } = location.state; 
   console.log(type)
   console.log(item)
 
@@ -27,13 +27,12 @@ const Feedback = () => {
   };
 
   const handleBackClick = () => {
-    navigate("/dashboard/results"); // Navigate back to results page
+    navigate("/dashboard/results"); 
   };
 
   if (type === "quizzes") {
-    // Calculate quiz score and total possible score
     const totalMarks = item.score;
-    const maxMarks = item.answers.length; // Assuming each question is worth 1 point
+    const maxMarks = item.answers.length; 
 
     return (
       <Box className="p-6 min-h-screen bg-gradient-to-t from-lime-100 to-cyan-100 rounded-2xl">
@@ -107,12 +106,12 @@ const Feedback = () => {
     );
   }
 
-  // Interview feedback (your original logic)
+  
   const totalMarks = item.responses.reduce(
     (acc, response) => acc + response.evaluation.score,
     0
   );
-  const maxMarks = item.responses.length * 5; // Each question is out of 5
+  const maxMarks = item.responses.length * 5; 
 
   return (
     <Box className="p-6 min-h-screen bg-gradient-to-t from-lime-100 to-cyan-100 rounded-2xl">

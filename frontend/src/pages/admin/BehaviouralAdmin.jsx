@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField ,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllInterviews, addInterviewTopic ,deleteInterviewTopic,editInterviewTopic,fetchInterviewWithQuestions} from "../../redux/slices/admin/behaviouralAdmin/behaviouralAdmin.slice";
+import { fetchAllInterviews, addInterviewTopic ,deleteInterviewTopic,editInterviewTopic} from "../../redux/slices/admin/behaviouralAdmin/behaviouralAdmin.slice";
 import { FaPlus,FaTrash } from "react-icons/fa";
-import BackButton from "../../components/BackButton";
 import { useNavigate } from "react-router-dom";
 
 const BehavioralAdmin = () => {
@@ -12,8 +11,8 @@ const BehavioralAdmin = () => {
   const { interviews, selectedInterview,loading, error } = useSelector((state) => state.interviews);
   const [openModal, setOpenModal] = useState(false);
   const [currentInterview, setCurrentInterview] = useState({ title: "", description: "", picture: "" });
-  const [imagePreview, setImagePreview] = useState(null); // For image preview
-  const [open, setOpen] = useState(false); // To control the modal visibility
+  const [imagePreview, setImagePreview] = useState(null); 
+  const [open, setOpen] = useState(false); 
   const [selectedInterviewId, setSelectedInterviewId] = useState(null);
   const navigate =useNavigate()
 
@@ -38,7 +37,7 @@ const BehavioralAdmin = () => {
   // Open modal for editing an existing interview
   const handleEdit = (interview) => {
     setCurrentInterview(interview);
-    setImagePreview(interview.picture); // Set the current image for preview
+    setImagePreview(interview.picture); 
     setOpenModal(true);
   };
 
@@ -52,7 +51,7 @@ const BehavioralAdmin = () => {
     } else {
       // Dispatch addInterviewTopic when creating a new interview
       dispatch(addInterviewTopic(currentInterview));
-      setOpenModal(false); // Close the modal after saving
+      setOpenModal(false); 
     }
   };
 
@@ -85,7 +84,7 @@ const BehavioralAdmin = () => {
 
   // Function to confirm the delete action
   const handleDeleteConfirm = () => {
-    dispatch(deleteInterviewTopic(selectedInterviewId)); // Dispatch the delete action
+    dispatch(deleteInterviewTopic(selectedInterviewId)); 
     setOpen(false); // Close the modal after deletion
   };
 
@@ -101,7 +100,7 @@ const BehavioralAdmin = () => {
         backgroundColor: "#f5f7fa",
         borderRadius: '20px',
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+      className="bg-white"
     >
       {/* <BackButton/>  */}
       <Typography

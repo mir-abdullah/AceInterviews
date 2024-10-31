@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { API } from '../../../utils/api';
 
 // Async thunk for adding a quiz topic
@@ -16,7 +15,7 @@ export const deleteQuizTopic = createAsyncThunk(
   'quiz/deleteQuizTopic',
   async (quizTopicId) => {
     const response = await API.delete(`/quizTopic/${quizTopicId}`);
-    return response.data; // Return the quizId for removing from the state
+    return response.data; 
   }
 );
 
@@ -56,7 +55,7 @@ export const getQuestionsByDifficulty = createAsyncThunk(
     {difficulty}
     );
     console.log(response.data)
-    return response.data; // Adjust this based on your API response structure
+    return response.data; 
   }
 )
 // Async thunk for adding a click to a quiz topic
@@ -64,7 +63,7 @@ export const addClick = createAsyncThunk(
   'quiz/addClick',
   async (quizTopicId) => {
     const response = await API.post(`/quizTopic/addClick/${quizTopicId}`);
-    return response.data; // Adjust this based on your API response structure
+    return response.data; 
   }
 );
 
@@ -84,13 +83,12 @@ const quizSlice = createSlice({
     initialState: {
       topics: [],
       currentTopic: null,
-      status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-      error: null,
-      questions: [], // Store questions
-      questionsError: null, // Error state for questions
-      evaluationStatus: 'idle', // Add state for evaluation
-      evaluationResult: null, // Store the result of the evaluation
-      evaluationError: null, // Store error for evaluation
+      status: 'idle',
+      questions: [], 
+      questionsError: null, 
+      evaluationStatus: 'idle',
+      evaluationResult: null,
+      evaluationError: null, 
     },
   reducers: {},
   extraReducers: (builder) => {
@@ -168,15 +166,15 @@ const quizSlice = createSlice({
       builder
       .addCase(getQuestionsByDifficulty.pending, (state) => {
         state.status = 'loading';
-        state.questionsError = null; // Reset error on new request
+        state.questionsError = null;
       })
       .addCase(getQuestionsByDifficulty.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.questions = action.payload; // Store questions
+        state.questions = action.payload;
       })
       .addCase(getQuestionsByDifficulty.rejected, (state, action) => {
         state.status = 'failed';
-        state.questionsError = action.error.message; // Store error message
+        state.questionsError = action.error.message; 
       })
 
  
@@ -185,11 +183,11 @@ const quizSlice = createSlice({
       })
       .addCase(evaluateQuiz.fulfilled, (state, action) => {
         state.evaluationStatus = 'succeeded';
-        state.evaluationResult = action.payload.quizResult; // Store the evaluation result
+        state.evaluationResult = action.payload.quizResult; 
       })
       .addCase(evaluateQuiz.rejected, (state, action) => {
         state.evaluationStatus = 'failed';
-        state.evaluationError = action.error.message; // Store the error message
+        state.evaluationError = action.error.message; 
       })
 
        // Add click to quiz topic
@@ -199,7 +197,7 @@ const quizSlice = createSlice({
     })
     .addCase(addClick.fulfilled, (state, action) => {
       state.status = 'succeeded';
-      // You might want to handle any specific updates related to clicks if needed
+      
     })
     .addCase(addClick.rejected, (state, action) => {
       state.status = 'failed';

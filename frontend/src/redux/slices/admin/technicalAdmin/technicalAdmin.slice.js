@@ -1,16 +1,15 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { API } from '../../../../utils/api';
-
-// Async actions (thunks)
-
-
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API } from "../../../../utils/api";
 
 // Add a new interview topic
 export const addInterviewTopic = createAsyncThunk(
-  'technicalInterviews/addInterviewTopic',
+  "technicalInterviews/addInterviewTopic",
   async (topicData, { rejectWithValue }) => {
     try {
-      const response = await API.post('/technicalInterviewTopic/add', topicData);
+      const response = await API.post(
+        "/technicalInterviewTopic/add",
+        topicData
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -20,10 +19,10 @@ export const addInterviewTopic = createAsyncThunk(
 
 // Get all interview topics
 export const getAllInterviewTopics = createAsyncThunk(
-  'technicalInterviews/getAllInterviewTopics',
+  "technicalInterviews/getAllInterviewTopics",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await API.get('/technicalInterviewTopic');
+      const response = await API.get("/technicalInterviewTopic");
       return response.data.allInterviews;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -33,11 +32,11 @@ export const getAllInterviewTopics = createAsyncThunk(
 
 // Get a specific interview topic by ID
 export const getInterviewTopic = createAsyncThunk(
-  'technicalInterviews/getInterviewTopic',
+  "technicalInterviews/getInterviewTopic",
   async (interviewId, { rejectWithValue }) => {
     try {
       const response = await API.get(`/technicalInterviewTopic/${interviewId}`);
-      console.log(response.data.interview)
+      console.log(response.data.interview);
       return response.data.interview;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -47,10 +46,13 @@ export const getInterviewTopic = createAsyncThunk(
 
 // Update an interview topic
 export const editInterviewTopic = createAsyncThunk(
-  'technicalInterviews/editInterviewTopic',
+  "technicalInterviews/editInterviewTopic",
   async ({ interviewId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await API.patch(`/technicalInterviewTopic/${interviewId}`, updatedData);
+      const response = await API.patch(
+        `/technicalInterviewTopic/${interviewId}`,
+        updatedData
+      );
       return response.data.updatedInterviewTopic;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -60,11 +62,13 @@ export const editInterviewTopic = createAsyncThunk(
 
 // Delete an interview topic
 export const deleteInterviewTopic = createAsyncThunk(
-  'technicalInterviews/deleteInterviewTopic',
+  "technicalInterviews/deleteInterviewTopic",
   async (interviewId, { rejectWithValue }) => {
     try {
-      const response = await API.delete(`/technicalInterviewTopic/${interviewId}`);
-      return interviewId; // Return the deleted interviewId to remove it from the state
+      const response = await API.delete(
+        `/technicalInterviewTopic/${interviewId}`
+      );
+      return interviewId;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -73,12 +77,15 @@ export const deleteInterviewTopic = createAsyncThunk(
 
 // Get questions by difficulty
 export const getQuestionsByDifficulty = createAsyncThunk(
-  'technicalInterviews/getQuestionsByDifficulty',
+  "technicalInterviews/getQuestionsByDifficulty",
   async ({ interviewId, difficulty }, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/technicalInterviewTopic/${interviewId}/difficulty`, {
-        data: { difficulty },
-      });
+      const response = await API.get(
+        `/technicalInterviewTopic/${interviewId}/difficulty`,
+        {
+          data: { difficulty },
+        }
+      );
       return response.data.questions;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -88,7 +95,7 @@ export const getQuestionsByDifficulty = createAsyncThunk(
 
 // Slice
 const technicalInterviewsSlice = createSlice({
-  name: 'technicalInterviews',
+  name: "technicalInterviews",
   initialState: {
     topics: [],
     currentTopic: null,
@@ -149,7 +156,9 @@ const technicalInterviewsSlice = createSlice({
       .addCase(editInterviewTopic.fulfilled, (state, action) => {
         state.loading = false;
         state.currentTopic = action.payload;
-        const index = state.topics.findIndex((topic) => topic._id === action.payload._id);
+        const index = state.topics.findIndex(
+          (topic) => topic._id === action.payload._id
+        );
         if (index !== -1) {
           state.topics[index] = action.payload;
         }
@@ -166,7 +175,9 @@ const technicalInterviewsSlice = createSlice({
       })
       .addCase(deleteInterviewTopic.fulfilled, (state, action) => {
         state.loading = false;
-        state.topics = state.topics.filter((topic) => topic._id !== action.payload);
+        state.topics = state.topics.filter(
+          (topic) => topic._id !== action.payload
+        );
       })
       .addCase(deleteInterviewTopic.rejected, (state, action) => {
         state.loading = false;
@@ -189,5 +200,4 @@ const technicalInterviewsSlice = createSlice({
   },
 });
 
-// Export the slice reducer
 export default technicalInterviewsSlice.reducer;

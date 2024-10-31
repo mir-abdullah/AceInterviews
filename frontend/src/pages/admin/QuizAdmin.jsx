@@ -50,19 +50,18 @@ const QuizAdmin = () => {
 
   // Open modal for editing an existing quiz topic
   const handleEdit = (quiz) => {
-    setCurrentQuiz(quiz); // Load the existing quiz data, including the picture
-    setImagePreview(quiz.picture); // Set the current image preview
-    setOpenModal(true); // Open the modal for editing
+    setCurrentQuiz(quiz); 
+    setImagePreview(quiz.picture); 
+    setOpenModal(true);
   };
   
 
   // Save quiz topic (dispatch add/update action)
   const handleSave = () => {
     if (currentQuiz._id) {
-      // For editing an existing quiz, send the existing image if no new image is uploaded
       const quizData = {
         ...currentQuiz,
-        picture: currentQuiz.picture || imagePreview, // Preserve the existing image if no new image is selected
+        picture: currentQuiz.picture || imagePreview, 
       };
       dispatch(editQuizTopic({ quizTopicId: currentQuiz._id, updatedData: quizData }));
     } else {
@@ -119,7 +118,7 @@ const QuizAdmin = () => {
         backgroundColor: "#f5f7fa",
         borderRadius: "20px",
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+      className="bg-white"
     >
       <Typography
         variant="h4"

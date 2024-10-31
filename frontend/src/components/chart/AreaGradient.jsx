@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+// eslint-disable-next-line no-unused-vars
 import * as React from "react";
 
 export default function AreaGradient({ color, id }) {

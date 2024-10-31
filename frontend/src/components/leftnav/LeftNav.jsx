@@ -12,6 +12,7 @@ import {
   LuMail,
   LuChevronDown,
   LuChevronUp,
+  LuActivity,
   LuBookMarked,
 } from "react-icons/lu";
 import {
@@ -53,15 +54,20 @@ const Sidebar = () => {
       ],
     },
     { path: "/dashboard/quizes", name: "Quizes", icon: <LuMail /> },
+    {
+      path: "/dashboard/language-proficiency",
+      name: "language Proficieny ",
+      icon: <LuActivity />,
+    },
     { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
     // { path: "/settings", name: "Settings", icon: <LuSettings /> },
   ];
-
+  // bg-gradient-to-tl from-teal-400 to-green-900
   return (
     <motion.div
-      className="bg-gradient-to-tl from-teal-400 to-green-900 text-white h-screen flex flex-col relative"
-      animate={{ width: isOpen ? "200px" : "45px" }}
+      className="bg-gradient-to-tl from-teal-400 to-green-800 text-white h-screen flex flex-col relative"
+      animate={{ width: isOpen ? "250px" : "45px" }}
       transition={{ duration: 0.5, type: "spring", damping: 10 }}
     >
       <div className="flex items-center justify-between p-6">
@@ -77,7 +83,7 @@ const Sidebar = () => {
             transition={{ duration: 0.5 }}
           >
             <motion.h1
-              className="text-xl leading-none font-cursive"
+              className="text-2xl leading-none font-bold" // Increased font size and weight
               initial={{ y: -10 }}
               animate={{ y: 0 }}
               transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
@@ -94,7 +100,8 @@ const Sidebar = () => {
               <div key={index} className="flex flex-col">
                 <button
                   onClick={toggleInterviewMenu}
-                  className={`flex items-center justify-between gap-4 p-4 border-r-4 transition-colors duration-200 ease-in-out text-sm ${
+                  className={`flex items-center justify-between gap-4 p-4 border-r-4 transition-colors duration-200 ease-in-out text-lg font-semibold ${
+                    // Increased text size and weight
                     isInterviewOpen
                       ? "bg-green-700 border-green-300"
                       : "border-transparent hover:border-green-300 hover:bg-green-700"
@@ -124,7 +131,7 @@ const Sidebar = () => {
                         <NavLink
                           key={idx}
                           to={submenuItem.path}
-                          className="flex items-center gap-4 p-2 transition-colors duration-200 ease-in-out hover:bg-green-600 text-sm"
+                          className="flex items-center gap-4 p-3 transition-colors duration-200 ease-in-out hover:bg-green-600 text-lg font-medium" // Increased text size and weight
                         >
                           {submenuItem.name}
                         </NavLink>
@@ -140,7 +147,8 @@ const Sidebar = () => {
               key={index}
               to={route.path}
               className={({ isActive }) =>
-                `flex items-center gap-4 p-4 border-r-4 transition-colors duration-200 ease-in-out text-sm ${
+                `flex items-center gap-4 p-4 border-r-4 transition-colors duration-200 ease-in-out text-lg font-semibold ${
+                  // Increased text size and weight
                   isActive
                     ? "bg-green-700 border-green-300"
                     : "border-transparent hover:border-green-300 hover:bg-green-700"
@@ -160,10 +168,10 @@ const Sidebar = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.3 }}
-          className="flex items-center gap-2 bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all w-full"
+          className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition-all w-full text-lg font-semibold" // Increased padding and text size
           onClick={() => setLogoutModalOpen(true)} // Open modal on logout click
         >
-          <LuLogOut className="text-xl" />
+          <LuLogOut className="text-2xl" /> {/* Increased icon size */}
           {isOpen && <span>Logout</span>}
         </motion.button>
       </div>
@@ -230,6 +238,7 @@ const Sidebar = () => {
               color: "#4CAF50",
               borderRadius: "8px",
               padding: "8px 16px",
+              fontSize: "1rem", // Increased font size
               "&:hover": {
                 borderColor: "#388E3C",
                 color: "#388E3C",
@@ -247,6 +256,7 @@ const Sidebar = () => {
               color: "#fff",
               borderRadius: "8px",
               padding: "8px 16px",
+              fontSize: "1rem", // Increased font size
               "&:hover": {
                 backgroundColor: "#C62828",
               },

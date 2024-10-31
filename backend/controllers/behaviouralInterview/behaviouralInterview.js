@@ -2,13 +2,13 @@ import BehaviourInterviewTopic from "../../models/behaviouralInterview/behaviour
 import Question from "../../models/behaviouralInterview/behaviouralQuestion.js";
 import behaviouralInterview from "../../models/behaviouralInterview/behaviouralInterview.js";
 
+//start interview
 export const startInterview = async (req, res) => {
   try {
     const { interviewTopicId } = req.params;
     const userId = req.userId;
     const { answers } = req.body;
 
-    // Find the interview topic and populate the questions
     const interviewTopic = await BehaviourInterviewTopic.findById(
       interviewTopicId
     ).populate("questions");
@@ -24,25 +24,19 @@ export const startInterview = async (req, res) => {
         .json({ message: "No questions found for this interview topic." });
     }
 
-    // Create a new interview document
     const interview = new behaviouralInterview({
       user: userId,
       topic: interviewTopicId,
       responses: [],
-      totalScore: 0, // Initialize totalScore
+      totalScore: 0,
     });
 
     // Iterate over the questions and evaluate the answers
     for (let question of questions) {
-      const userAnswer = answers[question._id]; // Retrieve user's answer for this question
+      const userAnswer = answers[question._id];
 
-      // Evaluate the answer using the Gemini API
-      const evaluation = await evaluateAnswer(
-        question.text,
-        userAnswer
-      );
+      const evaluation = await evaluateAnswer(question.text, userAnswer);
 
-      // Add the question, user's answer, and evaluation to the interview responses
       interview.responses.push({
         question: question.text,
         answer: userAnswer,
@@ -55,7 +49,6 @@ export const startInterview = async (req, res) => {
       });
     }
 
-    // Save the interview to the database
     await interview.save();
 
     res
@@ -71,7 +64,6 @@ export const startInterview = async (req, res) => {
 // Evaluation function
 async function evaluateAnswer(question, answer) {
   try {
-    // Construct the prompt for evaluation with a request for structured JSON format
     const prompt = `
         You are an expert evaluator. Please evaluate the following answer based on the given question.
         Question: ${question}
@@ -93,39 +85,31 @@ async function evaluateAnswer(question, answer) {
          }
         }`;
 
-    // Generate the evaluation content
     const result = await model.generateContent(prompt);
 
-    // Ensure the result is valid and the content is returned properly
-      // Ensure the result is valid
-      if (
-        !result ||
-        !result.response ||
-        typeof result.response.text !== "function"
-      ) {
-        throw new Error("Invalid response from the AI model.");
-      }
-  
+    if (
+      !result ||
+      !result.response ||
+      typeof result.response.text !== "function"
+    ) {
+      throw new Error("Invalid response from the AI model.");
+    }
 
-    // The result is likely already in the desired format, so you can directly parse it
     const evaluationText = await result.response.text();
-    
+
     const evaluation = JSON.parse(evaluationText);
-  
 
     const accuracyOfAnswer = evaluation.accuracyOfAnswer;
     const speechAndGrammarAnalysis = evaluation.speechAndGrammarAnalysis;
     const speechQualityAndConfidence = evaluation.speechQualityAndConfidence;
     const tipsAndIdealAnswer = evaluation.tipsAndIdealAnswer;
-    
 
-    // Return the structured evaluation
+    // Return
     return {
       accuracyOfAnswer,
       speechAndGrammarAnalysis,
       speechQualityAndConfidence,
       tipsAndIdealAnswer,
-
     };
   } catch (error) {
     console.error("Error evaluating answer:", error.message);
@@ -133,83 +117,68 @@ async function evaluateAnswer(question, answer) {
       accuracyOfAnswer: "N/A",
       speechAndGrammarAnalysis: "N/A",
       speechQualityAndConfidence: "N/A",
-      tipsAndIdealAnswer: "Unable to evaluate answer at this time"
+      tipsAndIdealAnswer: "Unable to evaluate answer at this time",
     };
   }
 }
 
 //get all interview results
 export const interviewResults = async (req, res) => {
-    try {
-      // Destructure userId from the request object
-      const userId = req.userId;
-  
-      // Fetch interviews for the specific user
-      const interviews = await behaviouralInterview.find({ user: userId }).populate('topic' ,'title picture');
-  
-      // Check if no interviews are found
-      if (!interviews || interviews.length === 0) {
-        return res.status(404).json({ message: "No interviews found." });
-      }
-  
-      // Return the interviews if found
-      return res.status(200).json(interviews);
-    } catch (error) {
-      // Return a 500 error if something goes wrong
-      return res.status(500).json({ message: error.message });
-    }
-  };
+  try {
+    const userId = req.userId;
 
+    const interviews = await behaviouralInterview
+      .find({ user: userId })
+      .populate("topic", "title picture");
+
+    if (!interviews || interviews.length === 0) {
+      return res.status(404).json({ message: "No interviews found." });
+    }
+
+    return res.status(200).json(interviews);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 //get a single interview result
 export const getInterviewResult = async (req, res) => {
-    try {
-      // Destructure interviewId from the request object
-      const { interviewId } = req.params;
-      const userId = req.userId;
-      // Fetch the interview result for the specific user and interview
-      const interview = await behaviouralInterview.findOne({ user: userId, _id: interviewId });
-      // Check if no interview is found
-      if (!interview || interview.length === 0) {
-        return res.status(404).json({ message: "No interview found." });
-      }
-      // Return the interview if found
-      return res.status(200).json(interview);
-    } catch (error) {
-      // Return a 500 error if something goes wrong
-      return res.status(500).json({ message: error.message });
+  try {
+    const { interviewId } = req.params;
+    const userId = req.userId;
+    const interview = await behaviouralInterview.findOne({
+      user: userId,
+      _id: interviewId,
+    });
+    if (!interview || interview.length === 0) {
+      return res.status(404).json({ message: "No interview found." });
     }
-  };  
+    return res.status(200).json(interview);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 //count number of behavioural interviews given by user
 export const countInterviews = async (req, res) => {
-    try {
-      // Destructure userId from the request object
-      const userId = req.userId;
-  
-      // Fetch the count of interviews for the specific user
-      const count = await behaviouralInterview.countDocuments({ user: userId });
-  
-      // Return the count as a JSON object
-      return res.status(200).json({ count });
-    } catch (error) {
-      // Return the error message
-      return res.status(500).json({ message: error.message });
-    }
-  };
+  try {
+    const userId = req.userId;
 
-  //count interviews overall
-  export const countBehaviouralInterviews = async (req, res) => {
-    try{
-      const count = await behaviouralInterview.countDocuments( );
-  
-      // Return the count as a JSON object
-      return res.status(200).json({ count });
-    } catch (error) {
-      // Return the error message
-      return res.status(500).json({ message: error.message });
-    }
-    }
-  
+    const count = await behaviouralInterview.countDocuments({ user: userId });
 
+    return res.status(200).json({ count });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
+//count interviews overall
+export const countBehaviouralInterviews = async (req, res) => {
+  try {
+    const count = await behaviouralInterview.countDocuments();
+
+    return res.status(200).json({ count });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

@@ -15,6 +15,9 @@ const router = express.Router();
 //route to add interview topic
 router.post("/add", addInterviewTopic);
 
+//route for counting number of times clicked
+router.get("/most-clicked", getMostClickedInterview)
+
 //route to get a specific interview
 router.get("/:interviewId", getInterview);
 
@@ -30,8 +33,7 @@ router.delete("/:interviewId", deleteInterviewTopic);
 //get interview by difficulty
 router.get("/difficulty/:interviewId", getQuestionsByDifficulty);
 
-//route for counting number of times clicked
-router.get("/most-clicked", getMostClickedInterview)
+
 
 //route to add click
 router.post("/addclick/:interviewId", addClick)

@@ -1,47 +1,59 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { API } from '../../../../utils/api';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API } from "../../../../utils/api";
 
 // Async thunk to add a new question
 export const addQuestion = createAsyncThunk(
-  'behaviourQuestions/addQuestion',
+  "behaviourQuestions/addQuestion",
   async ({ interviewId, questionData }, { rejectWithValue }) => {
     try {
-      const response = await API.post(`/behaviouralQuestion/${interviewId}/add`, questionData);
+      const response = await API.post(
+        `/behaviouralQuestion/${interviewId}/add`,
+        questionData
+      );
       return response.data; // Return the response containing the new question
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Failed to add question');
+      return rejectWithValue(error.response?.data || "Failed to add question");
     }
   }
 );
 
 // Async thunk to update a question
 export const updateQuestion = createAsyncThunk(
-  'behaviourQuestions/updateQuestion',
+  "behaviourQuestions/updateQuestion",
   async ({ interviewId, questionId, questionData }, { rejectWithValue }) => {
     try {
-      const response = await API.patch(`/behaviouralQuestion/${interviewId}/${questionId}/update`, questionData);
+      const response = await API.patch(
+        `/behaviouralQuestion/${interviewId}/${questionId}/update`,
+        questionData
+      );
       return response.data; // Return the updated question
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Failed to update question');
+      return rejectWithValue(
+        error.response?.data || "Failed to update question"
+      );
     }
   }
 );
 
 // Async thunk to delete a question
 export const deleteQuestion = createAsyncThunk(
-  'behaviourQuestions/deleteQuestion',
+  "behaviourQuestions/deleteQuestion",
   async ({ interviewId, questionId }, { rejectWithValue }) => {
     try {
-      await API.delete(`/behaviouralQuestion/${interviewId}/${questionId}/delete`);
-      return questionId; // Return the question ID to remove it from the state
+      await API.delete(
+        `/behaviouralQuestion/${interviewId}/${questionId}/delete`
+      );
+      return questionId;
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Failed to delete question');
+      return rejectWithValue(
+        error.response?.data || "Failed to delete question"
+      );
     }
   }
 );
 
 const behaviourQuestionsSlice = createSlice({
-  name: 'behaviourQuestions',
+  name: "behaviourQuestions",
   initialState: {
     questions: [],
     loading: false,
@@ -57,30 +69,32 @@ const behaviourQuestionsSlice = createSlice({
       })
       .addCase(addQuestion.fulfilled, (state, action) => {
         state.loading = false;
-        state.questions.push(action.payload); // Push the new question
+        state.questions.push(action.payload);
       })
       .addCase(addQuestion.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      
+
       // Update question
       .addCase(updateQuestion.pending, (state) => {
         state.loading = true;
         state.error = null;
-      })    
+      })
       .addCase(updateQuestion.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.questions.findIndex(q => q._id === action.payload._id);
+        const index = state.questions.findIndex(
+          (q) => q._id === action.payload._id
+        );
         if (index !== -1) {
-          state.questions[index] = action.payload; // Update the question
+          state.questions[index] = action.payload;
         }
       })
       .addCase(updateQuestion.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      
+
       // Delete question
       .addCase(deleteQuestion.pending, (state) => {
         state.loading = true;
@@ -88,7 +102,9 @@ const behaviourQuestionsSlice = createSlice({
       })
       .addCase(deleteQuestion.fulfilled, (state, action) => {
         state.loading = false;
-        state.questions = state.questions.filter(q => q._id !== action.payload); // Remove the deleted question
+        state.questions = state.questions.filter(
+          (q) => q._id !== action.payload
+        );
       })
       .addCase(deleteQuestion.rejected, (state, action) => {
         state.loading = false;
@@ -97,5 +113,4 @@ const behaviourQuestionsSlice = createSlice({
   },
 });
 
-// Export the reducer to be used in the store
 export default behaviourQuestionsSlice.reducer;

@@ -56,7 +56,7 @@ const quizQuestionsSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
-    // Handle addQuestion
+    //  addQuestion
     builder
       .addCase(addQuestion.pending, (state) => {
         state.loading = true;
@@ -70,7 +70,7 @@ const quizQuestionsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Handle deleteQuestion
+    //  deleteQuestion
     builder
       .addCase(deleteQuestion.pending, (state) => {
         state.loading = true;
@@ -86,7 +86,7 @@ const quizQuestionsSlice = createSlice({
         state.error = action.payload;
       });
 
-    // Handle updateQuestion
+    //  updateQuestion
     builder
       .addCase(updateQuestion.pending, (state) => {
         state.loading = true;

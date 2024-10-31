@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { API } from '../../../../utils/api';
 
-// Thunks for asynchronous actions
 
 // Add a new quiz topic
 export const addQuizTopic = createAsyncThunk(
@@ -173,7 +172,7 @@ const quizAdminSlice = createSlice({
       })
       .addCase(getQuizTopicById.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentQuizTopic = action.payload; // Store the specific quiz topic
+        state.currentQuizTopic = action.payload; 
       })
       .addCase(getQuizTopicById.rejected, (state, action) => {
         state.loading = false;

@@ -61,8 +61,8 @@ const ProfileAdmin = () => {
         {
           username,
           email,
-          avatarUrl: `https://i.pravatar.cc/150?u=${email}`, // Generate a unique avatar based on email
-          createdAt: new Date().toISOString().split("T")[0], // Current date
+          avatarUrl: `https://i.pravatar.cc/150?u=${email}`, 
+          createdAt: new Date().toISOString().split("T")[0], // 
         },
       ]);
       setNewAdmin({ username: "", email: "", password: "" });

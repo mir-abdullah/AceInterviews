@@ -1,6 +1,6 @@
 import express from "express";
 import User from "../../models/user/user.js";
-import BehaviourInterviewTopic from '../../models/behaviouralInterview/behaviourTopic.js'
+import BehaviourInterviewTopic from "../../models/behaviouralInterview/behaviourTopic.js";
 import cloudinary from "../../utils/cloudinaryConfig.js";
 import BehaviourQuestion from "../../models/behaviouralInterview/behaviouralQuestion.js";
 
@@ -10,7 +10,7 @@ const router = express.Router();
 export const addInterviewTopic = async (req, res) => {
   try {
     const { title, description, picture } = req.body;
-    
+
     if (!title || !description) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
@@ -25,16 +25,17 @@ export const addInterviewTopic = async (req, res) => {
       pictureUrl = result.secure_url;
     }
 
-    // Create a new InterviewTopic with the provided data
     const newInterviewTopic = await BehaviourInterviewTopic.create({
       title,
       description,
-      picture: pictureUrl, // Use the URL obtained from Cloudinary
+      picture: pictureUrl, //  URL obtained from Cloudinary
     });
 
-    res.status(201).json({ message: "Topic added successfully", newInterviewTopic });
+    res
+      .status(201)
+      .json({ message: "Topic added successfully", newInterviewTopic });
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.log(error);
     res.status(500).send("Something went wrong, try again later");
   }
 };
@@ -45,7 +46,9 @@ export const getAllInterviews = async (req, res) => {
     const allInterviews = await BehaviourInterviewTopic.find();
     res.status(200).json({ message: "All Interviews", allInterviews });
   } catch (error) {
-    res.status(500).send("Something Went Wrong Try again later" + error.message);
+    res
+      .status(500)
+      .send("Something Went Wrong Try again later" + error.message);
   }
 };
 
@@ -54,9 +57,9 @@ export const getInterview = async (req, res) => {
   try {
     const { interviewId } = req.params;
 
-    const interview = await BehaviourInterviewTopic.findById(interviewId).populate(
-      "questions"
-    );
+    const interview = await BehaviourInterviewTopic.findById(
+      interviewId
+    ).populate("questions");
 
     if (!interview) {
       return res.status(404).json({ message: "Interview Topic not found" });
@@ -74,7 +77,7 @@ export const getInterview = async (req, res) => {
 export const editInterviewTopic = async (req, res) => {
   try {
     const { interviewId } = req.params;
-    const { title, description ,picture } = req.body;
+    const { title, description, picture } = req.body;
     let pictureUrl = null;
 
     if (picture) {
@@ -84,14 +87,15 @@ export const editInterviewTopic = async (req, res) => {
       });
       pictureUrl = result.secure_url;
     }
-    const updatedInterviewTopic = await BehaviourInterviewTopic.findByIdAndUpdate(
-      interviewId,
-      { title, description,picture:pictureUrl },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedInterviewTopic =
+      await BehaviourInterviewTopic.findByIdAndUpdate(
+        interviewId,
+        { title, description, picture: pictureUrl },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
 
     if (!updatedInterviewTopic) {
       return res.status(404).json({ message: "Interview Topic not found" });
@@ -121,7 +125,9 @@ export const deleteInterviewTopic = async (req, res) => {
       return res.status(404).json({ message: "Interview Topic not found" });
     }
 
-    await BehaviourQuestion.deleteMany({ _id: { $in: interviewTopic.questions } });
+    await BehaviourQuestion.deleteMany({
+      _id: { $in: interviewTopic.questions },
+    });
 
     await BehaviourInterviewTopic.findByIdAndDelete(interviewId);
 
@@ -136,17 +142,23 @@ export const deleteInterviewTopic = async (req, res) => {
 };
 
 //controller to find most clicked interview
-export const getMostClickedInterview = async (req, res) => {
+export const getMostClickedBehaviouralInterview = async (req, res) => {
   try {
-    const interviews = await BehaviourInterviewTopic.find().sort({ clicks: -1 }).limit(1);
+    const interviews = await BehaviourInterviewTopic.find().sort({
+      clicks: -1,
+    });
     res.status(200).json(interviews);
-    } catch (error) {
-      console.error('Error retrieving most clicked interview:', error);
-      res.status(500).json({ message: 'Error retrieving most clicked interview', error: error
-        })
-      }
-    }
-      
+  } catch (error) {
+    console.error("Error retrieving most clicked interview:", error);
+    res
+      .status(500)
+      .json({
+        message: "Error retrieving most clicked interview",
+        error: error,
+      });
+  }
+};
+
 //controller for adding to clicks
 export const addClick = async (req, res) => {
   try {
@@ -155,12 +167,10 @@ export const addClick = async (req, res) => {
     topic.clicks += 1;
     await topic.save();
     res.status(200).json({ message: "Click added successfully" });
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error adding click:", error);
-    res.status(500).json({ message: "Error adding click", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error adding click", error: error.message });
   }
-}
-
-  
-  
+};

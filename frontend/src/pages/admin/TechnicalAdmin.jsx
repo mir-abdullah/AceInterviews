@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField ,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Box, Card, CardMedia, CardContent, Typography, Grid, Button, Modal, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import {  getAllInterviewTopics,addInterviewTopic ,deleteInterviewTopic,editInterviewTopic,} from "../../redux/slices/admin/technicalAdmin/technicalAdmin.slice";
-import { FaPlus,FaTrash } from "react-icons/fa";
-import BackButton from "../../components/BackButton";
+import { getAllInterviewTopics, addInterviewTopic, deleteInterviewTopic, editInterviewTopic } from "../../redux/slices/admin/technicalAdmin/technicalAdmin.slice";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const TechnicalAdmin = () => {
@@ -12,21 +11,19 @@ const TechnicalAdmin = () => {
   const { topics, currentTopic, loading, error } = useSelector((state) => state.technicalInterviews);
   const [openModal, setOpenModal] = useState(false);
   const [currentInterview, setCurrentInterview] = useState({ title: "", description: "", picture: "" });
-  const [imagePreview, setImagePreview] = useState(null); // For image preview
-  const [open, setOpen] = useState(false); // To control the modal visibility
+  const [imagePreview, setImagePreview] = useState(null);
+  const [open, setOpen] = useState(false); 
   const [selectedInterviewId, setSelectedInterviewId] = useState(null);
-  const navigate =useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getAllInterviewTopics());
   }, [dispatch]);
 
-  //fetchInterview
+  // Fetch Interview
   const handleFetchInterview = async (id) => {
-    navigate('/admin/technical/questions',{state:id});
-
-  
-  }
+    navigate('/admin/technical/questions', { state: id });
+  };
 
   // Open modal for adding a new interview
   const handleAdd = () => {
@@ -38,22 +35,21 @@ const TechnicalAdmin = () => {
   // Open modal for editing an existing interview
   const handleEdit = (interview) => {
     setCurrentInterview(interview);
-    setImagePreview(interview.picture); // Set the current image for preview
+    setImagePreview(interview.picture); 
     setOpenModal(true);
   };
 
-  // Save interview (dispatch add/update action)
+  // Save interview
   const handleSave = () => {
     if (currentInterview._id) {
-      // Editing an existing interview
+      // Editing an interview
       dispatch(editInterviewTopic({ interviewId: currentInterview._id, updatedData: currentInterview }));
     } else {
-      // Adding a new interview
+      // Adding a interview
       dispatch(addInterviewTopic(currentInterview));
     }
-    setOpenModal(false); // Close modal after saving
-  };
-  
+    setOpenModal(false); 
+  }; // <-- Added closing brace here
 
   // Close modal
   const handleCloseModal = () => {
@@ -66,32 +62,33 @@ const TechnicalAdmin = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result); // Set image preview
-        setCurrentInterview({ ...currentInterview, picture: reader.result }); // Update current interview with the image
+        setImagePreview(reader.result); 
+        setCurrentInterview({ ...currentInterview, picture: reader.result }); 
       };
       reader.readAsDataURL(file);
     }
   };
+
   const handleOpenDeleteModal = (id) => {
     setSelectedInterviewId(id);
     setOpen(true);
   };
 
-  // Close the modal
+  // Close the delete confirmation modal
   const handleClose = () => {
     setOpen(false);
   };
 
-  // Function to confirm the delete action
+  // Confirm delete action
   const handleDeleteConfirm = () => {
     dispatch(deleteInterviewTopic(selectedInterviewId));
-    setOpen(false); // Close modal after deletion
+    setOpen(false); 
   };
-  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-  console.log(currentInterview)
+
+  console.log(currentInterview);
 
   return (
     <Box
@@ -101,7 +98,7 @@ const TechnicalAdmin = () => {
         backgroundColor: "#f5f7fa",
         borderRadius: '20px',
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+      className="bg-white"
     >
       {/* <BackButton/>  */}
       <Typography
@@ -190,40 +187,47 @@ const TechnicalAdmin = () => {
                       View Questions
                     </Button>
                     <Button
-                        variant="contained"
-                        sx={{mt: 2, backgroundColor: '#FF5252', color: '#ffffff', fontWeight: 'bold', borderRadius: '20px', '&:hover': { backgroundColor: '#E53935' } }}
-                        onClick={() => handleOpenDeleteModal(interview._id)}
-                      >
-                        <FaTrash /> Delete
-                      </Button>
-                      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="delete-confirmation-dialog"
-        aria-describedby="confirm-delete-interview"
-      >
-        <DialogTitle id="delete-confirmation-dialog">Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="confirm-delete-interview">
-            Are you sure you want to delete this interview? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} sx={{ color: '#999' }}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            sx={{
-              backgroundColor: '#FF5252',
-              color: '#fff',
-              '&:hover': { backgroundColor: '#E53935' },
-            }}
-          >
-            Confirm Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: '#FF5252',
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        borderRadius: '20px',
+                        '&:hover': { backgroundColor: '#E53935' },
+                      }}
+                      onClick={() => handleOpenDeleteModal(interview._id)}
+                    >
+                      <FaTrash /> Delete
+                    </Button>
+                    <Dialog
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="delete-confirmation-dialog"
+                      aria-describedby="confirm-delete-interview"
+                    >
+                      <DialogTitle id="delete-confirmation-dialog">Confirm Delete</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="confirm-delete-interview">
+                          Are you sure you want to delete this interview? This action cannot be undone.
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleClose} sx={{ color: '#999' }}>
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleDeleteConfirm}
+                          sx={{
+                            backgroundColor: '#FF5252',
+                            color: '#fff',
+                            '&:hover': { backgroundColor: '#E53935' },
+                          }}
+                        >
+                          Confirm Delete
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -251,7 +255,7 @@ const TechnicalAdmin = () => {
             overflowY: 'auto',
           }}
         >
-          {/* Left Side: Image Upload */}
+          {/* Left Side Image Upload */}
           <Box sx={{ flex: '1', mr: 2 }}>
             <Typography variant="h5" align="center" sx={{ mb: 2, fontWeight: 'bold', color: '#4CAF4F' }}>
               {currentInterview._id ? "Edit Interview" : "Add Interview"}

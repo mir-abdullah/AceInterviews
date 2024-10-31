@@ -4,7 +4,7 @@ import BehavioralProgress from "../cards/BehavioralProgress";
 import TechnicalProgress from "../cards/TechnicalProgress";
 import MainCard from "../MainCard";
 import Interviews from "../Interviews";
-import QuizCard from "../QuizCard";
+import QuizProgressCard from "../cards/QuizProgress";
 
 const interview = [
   {
@@ -39,6 +39,9 @@ const Overview = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Behavioral Progress Card */}
         <BehavioralProgress />
+
+        {/* quiz card*/}
+        <QuizProgressCard />
 
         {/* Technical Progress Card */}
         <TechnicalProgress />
