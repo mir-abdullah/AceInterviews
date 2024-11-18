@@ -20,7 +20,7 @@ const QuestionsPage = () => {
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState("");
-  const [currentDifficulty, setCurrentDifficulty] = useState(""); // New state for difficulty
+  const [currentDifficulty, setCurrentDifficulty] = useState(""); 
   const [currentId, setCurrentId] = useState(null);
   const [questionToDelete, setQuestionToDelete] = useState(null);
 
@@ -37,7 +37,7 @@ const QuestionsPage = () => {
 
   const handleEdit = (id, text, difficulty) => {
     setCurrentQuestion(text);
-    setCurrentDifficulty(difficulty); // Set difficulty when editing
+    setCurrentDifficulty(difficulty); 
     setCurrentId(id);
     setIsEditing(true);
     setOpenModal(true);
@@ -45,8 +45,7 @@ const QuestionsPage = () => {
 
   const handleAdd = () => {
     setCurrentQuestion("");
-    setCurrentDifficulty(""); // Reset difficulty when adding
-    setCurrentId(null);
+    setCurrentDifficulty(""); 
     setIsEditing(false);
     setOpenModal(true);
   };
@@ -128,7 +127,7 @@ const QuestionsPage = () => {
           >
             <div>
               <span className="text-lg font-medium text-gray-700">{question.text}</span>
-              <p className="text-sm text-gray-800">Difficulty: {question.difficulty}</p> {/* Show difficulty */}
+              <p className="text-sm text-gray-800">Difficulty: {question.difficulty}</p> 
             </div>
             <div className="flex gap-4">
               <motion.button
@@ -170,7 +169,7 @@ const QuestionsPage = () => {
       onChange={(e) => setCurrentQuestion(e.target.value)}
       multiline
       rows={3}
-      className="mb-3" // Added margin-bottom for spacing
+      className="mb-3" 
     />
     <FormControl fullWidth className="mb-4">
       <InputLabel>Difficulty</InputLabel>
