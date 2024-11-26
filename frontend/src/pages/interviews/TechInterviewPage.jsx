@@ -160,14 +160,14 @@ const TechInterviewPage = () => {
           mb: 4,
         }}
       >
-        {/* <Button
+        <Button
           variant="outlined"
           color="primary"
           onClick={() => navigate("/dashboard/questions")}
           sx={{ textTransform: "none" }}
         >
           ← Back to Questions
-        </Button> */}
+        </Button>
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#263238" }}>
           Question {currentQuestionIndex + 1} of {filteredQuestions.length}
         </Typography>

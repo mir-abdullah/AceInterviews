@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { API } from '../../../../utils/api';
-
+// Thunks for asynchronous actions
 
 // Add a new question
 export const addQuestion = createAsyncThunk(

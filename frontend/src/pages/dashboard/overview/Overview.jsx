@@ -44,7 +44,7 @@ const Overview = () => {
         <QuizProgressCard />
 
         {/* Technical Progress Card */}
-        <TechnicalProgress className="ml-10"/>
+        <TechnicalProgress />
       </div>
 
       {/* Previous Interviews Section */}

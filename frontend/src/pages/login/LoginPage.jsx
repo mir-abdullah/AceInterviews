@@ -122,7 +122,7 @@ export default function LoginPage() {
 
             {/* Forgot Password Link */}
             <div className="text-center">
-              <a className="text-sm text-green-500 hover:underline cursor-pointer" onClick={openForgotPasswordModal}>
+              <a className="text-sm text-purple-500 hover:underline cursor-pointer" onClick={openForgotPasswordModal}>
                 Forgot your password?
               </a>
             </div>
@@ -136,7 +136,7 @@ export default function LoginPage() {
               <button
                 disabled={loading}
                 type="submit"
-                className={`w-full py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-purple-400 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {loading ? <CircularProgress /> : 'Login'}
               </button>
@@ -157,7 +157,7 @@ export default function LoginPage() {
             <div className="text-sm text-center mt-4">
               Don’t have an account yet?{' '}
               <Link to="/signup">
-                <span className="text-green-500 hover:underline">Sign up for free!</span>
+                <span className="text-purple-500 hover:underline">Sign up for free!</span>
               </Link>
             </div>
           </form>

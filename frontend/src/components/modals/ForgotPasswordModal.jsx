@@ -190,7 +190,6 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <p className="text-sm text-gray-600 mb-4">Enter your new password below.</p>
             <input
               type="password"
-              minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="New Password"

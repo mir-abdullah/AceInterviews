@@ -71,7 +71,7 @@ const Technical = () => {
                       },
                       overflow: 'hidden',
                       maxWidth: 300, 
-                      height: 360, 
+                      height: 350, 
                       margin: '0 auto', 
                     }}
                   >

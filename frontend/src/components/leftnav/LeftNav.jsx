@@ -63,7 +63,6 @@ const Sidebar = () => {
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
     // { path: "/settings", name: "Settings", icon: <LuSettings /> },
   ];
-
   // bg-gradient-to-tl from-teal-400 to-green-900
   return (
     <motion.div
