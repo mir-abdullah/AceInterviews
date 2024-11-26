@@ -17,7 +17,7 @@ const MainCard = () => {
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PlatformStatistic
-          count={158}
+          count={8}
           icon={<AiOutlineUsergroupAdd />}
           metric="Total Interviews"
         />

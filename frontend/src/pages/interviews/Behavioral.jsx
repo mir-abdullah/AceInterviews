@@ -72,52 +72,61 @@ const Behavioral = () => {
   };
 
   // Capture the image from webcam
-  const captureImage = useCallback(async () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
+// Capture the image from webcam
+const captureImage = useCallback(async () => {
+  if (webcamRef.current) {
+    const imageSrc = webcamRef.current.getScreenshot();
 
-      // Send the image to FastAPI server
-      if (imageSrc) {
-        try {
-          const blob = await fetch(imageSrc).then((res) => res.blob());
+    // Send the image to FastAPI server
+    if (imageSrc) {
+      try {
+        const blob = await fetch(imageSrc).then((res) => res.blob());
 
-          const formData = new FormData();
-          formData.append("file", blob, "image.jpg");
+        const formData = new FormData();
+        formData.append("file", blob, "image.jpg");
 
-          // Post to FastAPI backend
-          const response = await axios.post(
-            "http://localhost:8000/analyze_frame",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
+        // Post to FastAPI backend
+        const response = await axios.post(
+          "http://localhost:8000/analyze_frame",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-          // Ensure response.data.status and response.data.gaze are strings
-          const receivedStatus =
-            typeof response.data.status === "string"
-              ? response.data.status
-              : response.data.status?.message || "N/A";
-          const receivedGaze =
-            typeof response.data.gaze === "string"
-              ? response.data.gaze
-              : response.data.gaze?.message || "N/A";
+        // Ensure response.data.status and response.data.gaze are strings
+        const receivedStatus =
+          typeof response.data.status === "string"
+            ? response.data.status
+            : response.data.status?.message || "N/A";
+        const receivedGaze =
+          typeof response.data.gaze === "string"
+            ? response.data.gaze
+            : response.data.gaze?.message || "N/A";
 
-          // Update the UI with the result from the backend
-          setStatus(receivedStatus);
-          setGaze(receivedGaze);
-          setError(null);
-        } catch (err) {
-          console.error("Error sending image to backend:", err);
-          setError(
-            err.response?.data?.message || "Failed to analyze the frame."
-          );
+        // Update the UI with the result from the backend
+        setStatus(receivedStatus);
+
+        // Update gaze based on the gaze analysis
+        if (receivedGaze === "Looking: Forward") {
+          setGaze("Focused");
+        } else if (receivedGaze === "Looking: Right" || receivedGaze === "Looking: Left") {
+          setGaze("Unfocused");
+        } else {
+          setGaze("N/A"); // Default if gaze data isn't conclusive
         }
+
+        setError(null);
+      } catch (err) {
+        console.error("Error sending image to backend:", err);
+        setError(err.response?.data?.message || "Failed to analyze the frame.");
       }
     }
-  }, []);
+  }
+}, []);
+
 
   const handleVideoSave = useCallback(() => {
     const videoElement = document.querySelector("video");
@@ -352,8 +361,8 @@ const Behavioral = () => {
         {/* Analysis Results */}
         {!error && (
           <Box className="mt-4" sx={{ textAlign: "center", marginTop: 2 }}>
-            <Typography variant="h6">Status: {status || "Attentive"}</Typography>
-            <Typography variant="h6">Gaze: {gaze || "N/A"}</Typography>
+            <Typography variant="h6">Status: {status || "N/A"}</Typography>
+            <Typography variant="h6">Concentration: {gaze || "N/A"}</Typography>
           </Box>
         )}
       </Box>

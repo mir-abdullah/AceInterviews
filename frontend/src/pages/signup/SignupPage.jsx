@@ -166,25 +166,26 @@ export default function SignupPage() {
 
             {/* Signup Button */}
             <div>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={loading}
-                sx={{
-                  py: 1.5,
-                  fontWeight: 'bold',
-                  backgroundColor: 'purple.500',
-                  '&:hover': {
-                    backgroundColor: 'purple.600',
-                  },
-                  opacity: loading ? 0.6 : 1,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
-              </Button>
+            <Button
+  type="submit"
+  variant="contained"
+  color="primary"
+  fullWidth
+  disabled={loading}
+  sx={{
+    py: 1.5,
+    fontWeight: 'bold',
+    backgroundColor: loading ? 'rgba(34,197,94,0.6)' : '#22c55e', // Green when not loading, slightly faded green when loading
+    '&:hover': {
+      backgroundColor: '#16a34a', // Darker green on hover
+    },
+    opacity: loading ? 0.6 : 1,
+    cursor: loading ? 'not-allowed' : 'pointer',
+  }}
+>
+  {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+</Button>
+
             </div>
           </form>
 
@@ -203,7 +204,7 @@ export default function SignupPage() {
           <div className="text-sm text-center mt-6">
             Already have an account?{' '}
             <Link to="/login">
-              <Typography component="span" sx={{ color: 'blue', '&:hover': { textDecoration: 'underline' } }}>
+              <Typography component="span" sx={{ color: 'green', '&:hover': { textDecoration: 'underline' } }}>
                 Login here
               </Typography>
             </Link>
@@ -243,9 +244,9 @@ export default function SignupPage() {
                 mt: 3,
                 px: 4,
                 py: 1.5,
-                backgroundColor: 'purple.500',
+                backgroundColor: 'green.500',
                 '&:hover': {
-                  backgroundColor: 'purple.600',
+                  backgroundColor: 'green.600',
                 },
               }}
             >

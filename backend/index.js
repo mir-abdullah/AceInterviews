@@ -16,7 +16,9 @@ import BehaviouralQuestionRouter from './routes/behaviouralInterview/behaviourQu
 import BehaviouralTopicRouter from './routes/behaviouralInterview/behaviourTopic.js'
 import Admin from './routes/admin/admin.js'
 import FeedbackRouter from './routes/feedback/feedback.js'
-
+import mcqQuestionRouter from './routes/languageProficiencyTest/mcqQuestion.js'
+import speechQuestionRouter from './routes/languageProficiencyTest/speechQuestion.js'
+import responseQuestionRouter from './routes/languageProficiencyTest/responseQuestion.js'
 
 
 dotenv.config()
@@ -58,6 +60,11 @@ app.use('/quizTopic',quizTopicRouter)
 
 //feedback
 app.use('/feedback',FeedbackRouter)
+
+//language Proficiency test
+app.use('/langauge-test/mcq',mcqQuestionRouter)
+app.use('/language-test/speech',speechQuestionRouter)
+app.use('/language-test/response',responseQuestionRouter)
 
 app.get('/',(req,res)=>{
     res.send('Hello World')
