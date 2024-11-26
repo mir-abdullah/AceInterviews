@@ -11,10 +11,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@aws-sdk/client-transcribe-streaming": "^3.699.0",
-    "@aws-sdk/eventstream-marshaller": "^3.118.1",
-    "@aws-sdk/types": "^3.696.0",
-    "@aws-sdk/util-utf8-node": "^3.259.0",
     "@google/generative-ai": "^0.17.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
@@ -32,9 +28,6 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",
-    "punycode": "^2.3.1",
-    "uuid": "^11.0.3",
-    "websocket": "^1.0.35",
-    "ws": "^8.18.0"
+    "punycode": "^2.3.1"
   }
 }
