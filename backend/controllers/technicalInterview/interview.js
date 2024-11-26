@@ -1,34 +1,16 @@
-import express from "express";
-import User from "../../models/user/user.js";
 import InterviewTopic from "../../models/technicalInterview/interviewTopic.js";
 import Interview from "../../models/technicalInterview/interview.js";
-import { auth } from "../../middleware/auth.js";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { SchemaType } from "@google/generative-ai";
 
 dotenv.config();
 
-const router = express.Router();
-
-
+//call model
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
   generationConfig: {
     responseMimeType: "application/json",
-    // responseSchema:{
-    //     type: SchemaType.OBJECT,
-    //     properties:{
-    //         score:{
-    //             type: SchemaType.NUMBER
-    //         },
-    //         feedback:{
-    //             type: SchemaType.STRING
-    //         },
-    //     },
-
-    // }
   },
 });
 
@@ -37,7 +19,7 @@ export const startInterview = async (req, res) => {
   try {
     const { interviewTopicId } = req.params;
     const userId = req.userId;
-    const { answers, difficulty } = req.body; // Include difficulty in the request body
+    const { answers, difficulty } = req.body;
 
     // Find the interview topic and populate the questions
     const interviewTopic = await InterviewTopic.findById(
@@ -48,38 +30,35 @@ export const startInterview = async (req, res) => {
       return res.status(404).json({ message: "Interview Topic not found" });
     }
 
-    // Retrieve the questions from the interview topic
     let questions = interviewTopic.questions;
 
-    // Filter questions based on the selected difficulty level
+    // Filter questions
     if (difficulty) {
       questions = questions.filter((question) => {
-        return question.difficulty === difficulty; // Filter questions by difficulty
+        return question.difficulty === difficulty;
       });
 
       if (questions.length === 0) {
         return res
           .status(404)
-          .json({ message: "No questions found for the selected difficulty level" });
+          .json({
+            message: "No questions found for the selected difficulty level",
+          });
       }
     }
 
-    // Create a new interview document
     const interview = new Interview({
       user: userId,
       topic: interviewTopicId,
       responses: [],
-      totalScore: 0, // Initialize totalScore
+      totalScore: 0,
     });
 
-    // Iterate over the filtered questions and evaluate the answers
     for (let question of questions) {
-      const userAnswer = answers[question._id]; // Retrieve user's answer for this question
+      const userAnswer = answers[question._id];
 
-      // Evaluate the answer using the Gemini API (this should be a function you have implemented elsewhere)
       const evaluation = await evaluateAnswer(question.text, userAnswer);
 
-      // Add the question, user's answer, and evaluation to the interview responses
       interview.responses.push({
         question: question.text,
         answer: userAnswer,
@@ -90,14 +69,14 @@ export const startInterview = async (req, res) => {
         },
       });
 
-      // Update the total score
       interview.totalScore += evaluation.score;
     }
 
-    // Save the interview to the database
     await interview.save();
 
-    res.status(200).json({ message: "Interview completed successfully", interview });
+    res
+      .status(200)
+      .json({ message: "Interview completed successfully", interview });
   } catch (error) {
     res
       .status(500)
@@ -105,17 +84,16 @@ export const startInterview = async (req, res) => {
   }
 };
 
-
 // Evaluation function
 async function evaluateAnswer(question, answer) {
   try {
-    // Construct the prompt for evaluation with a request for structured JSON format
     const prompt = `
       You are an expert evaluator. Please evaluate the following answer based on the given question.
       Question: ${question}
       Answer: ${answer}
       Provide a score from 1 to 5, and include detailed feedback with your evaluation.If user answer is empty mark it zero.
-      provide an ideal answer also.
+      provide an ideal answer also and make sure the ideal answer is how a user should respond to a question during an interview.
+      Show some leniency while scoring the candidate.
       Provide your evaluation in the following JSON format:
       { "type" :"object",
        "properties":{
@@ -126,10 +104,8 @@ async function evaluateAnswer(question, answer) {
        
       }`;
 
-    // Generate the evaluation content
     const result = await model.generateContent(prompt);
 
-    // Ensure the result is valid
     if (
       !result ||
       !result.response ||
@@ -148,11 +124,11 @@ async function evaluateAnswer(question, answer) {
     // console.log(feedback);
     // console.log(idealAnswer)
 
-    // Return the structured evaluation
+    // Return
     return {
       score,
       feedback,
-      idealAnswer
+      idealAnswer,
     };
   } catch (error) {
     console.error("Error evaluating answer:", error.message);
@@ -166,14 +142,12 @@ async function evaluateAnswer(question, answer) {
 //get all interview results
 export const interviewResults = async (req, res) => {
   try {
-    // Destructure userId from the request object
     const userId = req.userId;
 
-    // Fetch interviews for the specific user and populate topicTitle and picture from the related Topic collection
-    const interviews = await Interview.find({ user: userId })
-      .populate('topic', 'title picture') // Assuming 'topic' is the reference field
-
-    // Check if no interviews are found
+    const interviews = await Interview.find({ user: userId }).populate(
+      "topic",
+      "title picture"
+    );
     if (!interviews || interviews.length === 0) {
       return res.status(404).json({ message: "No interviews found." });
     }
@@ -181,28 +155,26 @@ export const interviewResults = async (req, res) => {
     // Return the interviews with topic details
     return res.status(200).json(interviews);
   } catch (error) {
-    // Return a 500 error if something goes wrong
     return res.status(500).json({ message: error.message });
   }
 };
 
-
 //get a single interview result
 export const getInterviewResult = async (req, res) => {
   try {
-    // Destructure interviewId from the request object
     const { interviewId } = req.params;
     const userId = req.userId;
-    // Fetch the interview result for the specific user and interview
-    const interview = await Interview.findOne({ user: userId, _id: interviewId });
+    const interview = await Interview.findOne({
+      user: userId,
+      _id: interviewId,
+    });
     // Check if no interview is found
     if (!interview || interview.length === 0) {
       return res.status(404).json({ message: "No interview found." });
     }
-    // Return the interview if found
+
     return res.status(200).json(interview);
   } catch (error) {
-    // Return a 500 error if something goes wrong
     return res.status(500).json({ message: error.message });
   }
 };
@@ -210,30 +182,23 @@ export const getInterviewResult = async (req, res) => {
 //count number of interviews given by user
 export const countInterviews = async (req, res) => {
   try {
-    // Destructure userId from the request object
     const userId = req.userId;
 
-    // Fetch the count of interviews for the specific user
     const count = await Interview.countDocuments({ user: userId });
 
-    // Return the count as a JSON object
     return res.status(200).json({ count });
   } catch (error) {
-    // Return the error message
     return res.status(500).json({ message: error.message });
   }
 };
 
 //count total overall interviews
 export const countTechnicalInterviews = async (req, res) => {
-  try{
-    const count = await Interview.countDocuments( );
+  try {
+    const count = await Interview.countDocuments();
 
-    // Return the count as a JSON object
     return res.status(200).json({ count });
   } catch (error) {
-    // Return the error message
     return res.status(500).json({ message: error.message });
   }
-  }
-
+};

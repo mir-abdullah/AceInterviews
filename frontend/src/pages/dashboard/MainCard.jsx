@@ -1,9 +1,7 @@
 import React from "react";
-// Icons
 import { AiOutlineClockCircle, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { IoIosThumbsUp } from "react-icons/io";
 import { FaGlobeAmericas } from "react-icons/fa";
-// Motion
 import { motion } from "framer-motion";
 
 const MainCard = () => {
@@ -19,7 +17,7 @@ const MainCard = () => {
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PlatformStatistic
-          count={158}
+          count={8}
           icon={<AiOutlineUsergroupAdd />}
           metric="Total Interviews"
         />
@@ -43,8 +41,6 @@ const MainCard = () => {
   );
 };
 
-// Statistic card with animations
-// eslint-disable-next-line react/prop-types
 const PlatformStatistic = ({ count, icon, metric }) => (
   <motion.div
     className="bg-neutralSilver p-5 rounded-lg flex items-center justify-between hover:bg-brandPrimary transition-all duration-300 shadow-sm hover:shadow-lg"

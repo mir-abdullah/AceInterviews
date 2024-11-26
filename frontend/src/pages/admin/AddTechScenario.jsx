@@ -62,10 +62,9 @@ const AddTechScenario = ({ onSaveInterview }) => {
       questions,
     };
 
-    // Here you can handle the logic of saving the interview scenario
-    onSaveInterview(newScenario); // Send data to parent component or backend
+    onSaveInterview(newScenario); 
 
-    // Reset the form after saving
+ 
     setTitle("");
     setDescription("");
     setIcon("");

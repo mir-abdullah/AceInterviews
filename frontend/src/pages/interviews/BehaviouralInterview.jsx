@@ -3,7 +3,7 @@ import { Box, Card, CardContent, Typography, Grid, Button, CardMedia } from '@mu
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllInterviews } from '../../redux/slices/behaviouralInterview/behaviouralInterview.slice';
+import { fetchAllInterviews,addClick } from '../../redux/slices/behaviouralInterview/behaviouralInterview.slice';
 
 const BehaviouralInterview = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const BehaviouralInterview = () => {
         backgroundColor: '#f5f7fa',
         borderRadius: '20px',
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100 "
+      className="bg-white"
     >
       <Typography
         variant="h4"
@@ -94,7 +94,11 @@ const BehaviouralInterview = () => {
                           backgroundColor: '#388E3C',
                         },
                       }}
-                      onClick={() => navigate(`/dashboard/behavioural/${interview._id}`)}
+                      onClick={() => {
+                        dispatch(addClick(interview._id))
+                        navigate(`/dashboard/behavioural/${interview._id}`, { state: { interviewId: interview._id } });
+}
+                    }
                     >
                       Start Interview
                     </Button>

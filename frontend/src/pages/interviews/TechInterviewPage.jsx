@@ -1,37 +1,58 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Button, Card, Typography, TextField, IconButton, Modal, CircularProgress } from "@mui/material"; // Added CircularProgress
+import {
+  Box,
+  Button,
+  Card,
+  Typography,
+  TextField,
+  IconButton,
+  Modal,
+  CircularProgress,
+  Stack,
+  Avatar,
+} from "@mui/material"; 
 import { useTimer } from "react-timer-hook";
 import { FaMicrophone, FaStop } from "react-icons/fa";
-import { useLocation, useNavigate, useParams } from "react-router-dom"; // Add useNavigate
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { startInterview } from "../../redux/slices/technicalInterview/technicalInterview.slice"; // Import the startInterview action
+import {
+  startInterview,
+} from "../../redux/slices/technicalInterview/technicalInterview.slice"; 
+import FeedbackModal from "../../components/modals/FeedbackModal,"; 
+import { motion } from "framer-motion";
 
 const TechInterviewPage = () => {
-  const location = useLocation(); // Get location object
-  const navigate = useNavigate(); // Add navigation
+  const location = useLocation(); 
+  const navigate = useNavigate(); 
   const dispatch = useDispatch();
   const { interviewId } = useParams();
 
-  const { questions = [], difficulty } = location.state || {}; // Retrieve questions and difficulty from state
+  const { questions = [], difficulty } = location.state || {}; 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [transcribedText, setTranscribedText] = useState("");
-  const [answers, setAnswers] = useState({}); // Store answers in the format { questionId: answer }
-  const [showModal, setShowModal] = useState(false); // State for showing modal
-  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [answers, setAnswers] = useState({}); 
+  const [showModal, setShowModal] = useState(false); 
+  const [loading, setLoading] = useState(false); 
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
-    // Filter questions based on the selected difficulty level
-    const filteredQuestions = questions.filter((q) => q.difficulty === difficulty);
+  const handleFeedbackClose = () => {
+    setShowFeedbackModal(false); 
+    navigate("/dashboard/results", { state: { answers, difficulty } }); 
+  };
 
-    // Log to ensure correct questions and difficulty
-    useEffect(() => {
-      console.log("Filtered Questions:", filteredQuestions);
-      console.log("Difficulty:", difficulty);
-    }, [filteredQuestions, difficulty])
+  // Filter questions based on the selected difficulty level
+  const filteredQuestions = questions.filter((q) => q.difficulty === difficulty);
+
+  
+  useEffect(() => {
+    console.log("Filtered Questions", filteredQuestions);
+    console.log("Difficulty", difficulty);
+  }, [filteredQuestions, difficulty]);
 
   const { seconds, minutes, start, pause, restart } = useTimer({
-    expiryTimestamp: new Date().getTime() + 90 * 1000, // 90 seconds timer
-    onExpire: () => handleNextQuestion(), // Use arrow function to ensure handleNextQuestion is defined
+    expiryTimestamp: new Date().getTime() + 90 * 1000,
+    onExpire: () => handleSubmitAnswer(), 
   });
 
   const handleNextQuestion = useCallback(() => {
@@ -41,11 +62,11 @@ const TechInterviewPage = () => {
         [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
-    setTranscribedText(""); // Clear text field
+    setTranscribedText(""); 
     setCurrentQuestionIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
       if (nextIndex < filteredQuestions.length) {
-        restart(new Date().getTime() + 90 * 1000); // Reset timer for the next question
+        restart(new Date().getTime() + 90 * 1000); 
         return nextIndex;
       } else {
         return prevIndex;
@@ -59,7 +80,8 @@ const TechInterviewPage = () => {
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.onstart = () => setIsRecording(true);
-    recognition.onresult = (event) => setTranscribedText(transcribedText + " " + event.results[0][0].transcript);
+    recognition.onresult = (event) =>
+      setTranscribedText((prev) => prev + " " + event.results[0][0].transcript);
     recognition.onend = () => setIsRecording(false);
     if (isRecording) recognition.start();
     else recognition.stop();
@@ -85,28 +107,26 @@ const TechInterviewPage = () => {
     }
 
     if (currentQuestionIndex === filteredQuestions.length - 1) {
-      // Last question - wait for answers to be updated and then call startInterview
+      // Last question - submit the interview
       setLoading(true); // Show loading indicator
-      setTimeout(() => {
-        dispatch(
-          startInterview({
-            interviewTopicId: interviewId, // Assuming topicId is passed in the location state
-            answers: {
-              ...answers,
-              [questions[currentQuestionIndex]?._id]: transcribedText.trim(), // Include the last answer
-            },
-            difficulty,
-          })
-        )
-          .then(() => {
-            setLoading(false); // Hide loading indicator
-            setShowModal(true); // Show completion modal
-          })
-          .catch((error) => {
-            setLoading(false); // Hide loading indicator
-            console.error("Error submitting interview:", error);
-          });
-      }, 0); // Slight delay to ensure state updates before dispatching
+      dispatch(
+        startInterview({
+          interviewTopicId: interviewId, // Assuming topicId is passed in the location state
+          answers: {
+            ...answers,
+            [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(), // Include the last answer
+          },
+          difficulty,
+        })
+      )
+        .then(() => {
+          setLoading(false); // Hide loading indicator
+          setShowModal(true); // Show completion modal
+        })
+        .catch((error) => {
+          setLoading(false); // Hide loading indicator
+          console.error("Error submitting interview:", error);
+        });
     } else {
       handleNextQuestion();
     }
@@ -115,7 +135,7 @@ const TechInterviewPage = () => {
   // Close modal and navigate to review page
   const handleCloseModal = () => {
     setShowModal(false);
-    navigate("/dashboard/results", { state: { answers, difficulty } }); // Navigate to review page
+    setShowFeedbackModal(true);
   };
 
   return (
@@ -129,40 +149,90 @@ const TechInterviewPage = () => {
         minHeight: "100vh",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%", mb: 4 }}>
-        <Button variant="contained" color="primary">
+      {/* Header Section */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          maxWidth: 900,
+          mb: 4,
+        }}
+      >
+        {/* <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => navigate("/dashboard/questions")}
+          sx={{ textTransform: "none" }}
+        >
           ← Back to Questions
-        </Button>
+        </Button> */}
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#263238" }}>
-          Question {currentQuestionIndex + 1}
+          Question {currentQuestionIndex + 1} of {filteredQuestions.length}
         </Typography>
-        <Button variant="contained" color="secondary" disabled={currentQuestionIndex >= questions.length - 1}>
-          End & Review
-        </Button>
+        <Typography
+          variant="h6"
+          sx={{
+            backgroundColor: "#e3f2fd",
+            color: "#0288d1",
+            padding: "8px 16px",
+            borderRadius: "20px",
+            fontWeight: "bold",
+          }}
+        >
+          Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+        </Typography>
       </Box>
 
+      {/* Timer Section */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#0288d1" }}>
+          {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+        </Typography>
+        <Typography variant="subtitle1" sx={{ ml: 2, color: "#424242" }}>
+          / 1:30
+        </Typography>
+      </Box>
+
+      {/* Question Card */}
       <Card
         sx={{
           padding: "30px",
-          maxWidth: 700,
+          maxWidth: 800,
           width: "100%",
           boxShadow: "0 8px 16px rgba(0, 0, 0, 0.15)",
           borderRadius: "20px",
           backgroundColor: "#ffffff",
         }}
       >
-        <Typography variant="h5" align="center" sx={{ mb: 3, color: "#424242", fontWeight: "500" }}>
+        <Typography
+          variant="h5"
+          align="center"
+          sx={{ mb: 3, color: "#424242", fontWeight: "500" }}
+        >
           {filteredQuestions[currentQuestionIndex]?.text || "No questions available"}
         </Typography>
 
-        <Typography variant="h6" align="center" sx={{ mb: 3, color: "#0288d1" }}>
-          {minutes}:{seconds < 10 ? `0${seconds}` : seconds} / 1:30
-        </Typography>
-
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
+        {/* Recording Controls */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <IconButton
-            onClick={handleStartRecording}
-            disabled={isRecording}
+            onClick={isRecording ? handleStopRecording : handleStartRecording}
+            disabled={loading}
             sx={{
               fontSize: 40,
               color: isRecording ? "error.main" : "primary.main",
@@ -172,70 +242,68 @@ const TechInterviewPage = () => {
               },
               padding: "12px",
               borderRadius: "50%",
+              transition: "background-color 0.3s, transform 0.2s",
+              transform: isRecording ? "scale(1.1)" : "scale(1)",
             }}
           >
             {isRecording ? <FaStop /> : <FaMicrophone />}
           </IconButton>
-
-          <TextField
-            label="Your Answer"
-            variant="outlined"
-            multiline
-            rows={4}
-            fullWidth
-            value={transcribedText}
-            onChange={(e) => setTranscribedText(e.target.value)}
-            sx={{
-              mt: 4,
-              mb: 2,
-              borderRadius: "12px",
-              backgroundColor: "#fafafa",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#0288d1",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#0277bd",
-                },
-              },
-            }}
-            placeholder="Start speaking or type your answer here..."
-          />
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+        {/* Answer Input */}
+        <TextField
+          label="Your Answer"
+          variant="outlined"
+          multiline
+          rows={4}
+          fullWidth
+          value={transcribedText}
+          onChange={(e) => setTranscribedText(e.target.value)}
+          sx={{
+            mb: 3,
+            borderRadius: "12px",
+            backgroundColor: "#fafafa",
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#0288d1",
+              },
+              "&:hover fieldset": {
+                borderColor: "#0277bd",
+              },
+            },
+          }}
+          placeholder="Start speaking or type your answer here..."
+        />
+
+        {/* Action Buttons */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+          }}
+        >
           <Button
             variant="contained"
             color="primary"
             onClick={handleSubmitAnswer}
-            disabled={loading} // Disable button when loading
+            disabled={loading || !transcribedText.trim()}
             sx={{
-              padding: "10px 20px",
+              padding: "10px 30px",
               borderRadius: "20px",
               backgroundColor: "#0288d1",
               "&:hover": {
                 backgroundColor: "#0277bd",
               },
+              textTransform: "none",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            {currentQuestionIndex === filteredQuestions.length - 1 ? "Submit Interview" : "Submit Answer"}
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleNextQuestion}
-            sx={{
-              padding: "10px 20px",
-              borderRadius: "20px",
-              borderColor: "#ff9800",
-              color: "#ff9800",
-              "&:hover": {
-                backgroundColor: "#fff3e0",
-              },
-            }}
-            disabled={currentQuestionIndex >= filteredQuestions.length - 1}
-          >
-            Next Question
+            {currentQuestionIndex === filteredQuestions.length - 1
+              ? "Submit Interview"
+              : "Submit Answer"}
           </Button>
         </Box>
       </Card>
@@ -267,25 +335,40 @@ const TechInterviewPage = () => {
             borderRadius: "12px",
           }}
         >
-          <Typography id="modal-title" variant="h6" component="h2">
-            Interview Completed!
-          </Typography>
-          <Typography id="modal-description" sx={{ mt: 2 }}>
-            Your interview has been submitted successfully.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCloseModal}
-            sx={{ mt: 3, display: "block", marginLeft: "auto" }}
-          >
-            Close & Review
-          </Button>
+          <Stack spacing={2} alignItems="center">
+            <Avatar sx={{ bgcolor: 'green.500', width: 56, height: 56 }}>
+              <Typography variant="h4" color="white">✓</Typography>
+            </Avatar>
+            <Typography id="modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+              Interview Completed!
+            </Typography>
+            <Typography id="modal-description" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+              Your interview has been submitted successfully.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCloseModal}
+              sx={{
+                mt: 3,
+                px: 4,
+                py: 1.5,
+                backgroundColor: '#0288d1',
+                '&:hover': {
+                  backgroundColor: '#0277bd',
+                },
+              }}
+            >
+              Close & Review
+            </Button>
+          </Stack>
         </Box>
       </Modal>
+
+      {/* Feedback Modal */}
+      <FeedbackModal open={showFeedbackModal} handleClose={handleFeedbackClose} />
     </Box>
   );
 };
 
 export default TechInterviewPage;
-  

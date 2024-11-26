@@ -3,7 +3,22 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { signupUser, googleLogin } from '../../redux/slices/auth/auth.slice';
 import { GoogleLogin } from '@react-oauth/google';
-import Modal from 'react-modal';
+import Modal from '@mui/material/Modal';
+import { Box, Typography, Button, CircularProgress, Avatar, Stack } from '@mui/material';
+import { motion } from 'framer-motion';
+import signup from '../../assets/signup.avif';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 3,
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -15,10 +30,7 @@ export default function SignupPage() {
     password: '',
   });
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
-
-  // Set the app element for accessibility
-  Modal.setAppElement('#root');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -33,7 +45,7 @@ export default function SignupPage() {
     const result = await dispatch(signupUser(formData));
 
     if (signupUser.fulfilled.match(result)) {
-      setIsModalOpen(true); // Show modal on success
+      setIsModalOpen(true); 
     } else if (signupUser.rejected.match(result)) {
       if (result.payload && result.payload.msg) {
         setError("This email is already registered. Please use another email.");
@@ -62,111 +74,187 @@ export default function SignupPage() {
   // Close modal handler
   const closeModal = () => {
     setIsModalOpen(false);
-    navigate('/login'); // Redirect to login page after closing the modal
+    navigate('/login'); 
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
-        <form onSubmit={submitHandler} className="space-y-6">
-          <h2 className="text-center text-2xl font-extrabold text-gray-900">
-            Sign Up
-          </h2>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              required
-              placeholder="Enter your name"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700" >
-              Email
-            </label>
-            <input
-  type="email"
-  name="email"
-  id="email"
-  required
-  placeholder="Enter your email"
-  pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-  title="Please enter a valid email address"
-  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-  onChange={handleChange}
-/>
-
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              required
-              minLength={8}
-              placeholder="Enter your password"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <button
-              disabled={loading}
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              {loading ? "Loading..." : "Sign Up"}
-            </button>
-          </div>
-        </form>
-        <div className="py-5">
-          <GoogleLogin
-            onSuccess={handleGoogleSignUp}
-            onError={() => console.log('Google Sign-Up Failed')}
-          />
-        </div>
-        <div className="text-sm text-center">
-          <Link to="/login">
-            <p className="font-medium text-green-600 hover:text-green-500">
-              Already have an account? Login
-            </p>
-          </Link>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white shadow-lg rounded-lg flex max-w-4xl mx-auto p-6">
+        {/* Left Section (Illustrative Image) */}
+        <div className="hidden lg:flex w-1/2 items-center justify-center">
+          <img src={signup} alt="Signup Illustration" className="w-full h-auto object-cover rounded-lg" />
         </div>
 
-        {/* Modal */}
-        <Modal
-  isOpen={isModalOpen}
-  onRequestClose={closeModal}
-  contentLabel="Account Created"
-  className="fixed inset-0 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50 transition-opacity duration-300"
+        {/* Right Section (Form) */}
+        <div className="w-full lg:w-1/2 p-8">
+          {/* Title */}
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{ fontWeight: 'bold', textAlign: 'center', color: 'text.primary' }}
+          >
+            Create Your <span className="text-gradient">AceInterview</span> Account
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ textAlign: 'center', color: 'text.secondary', mb: 4 }}
+          >
+            Sign up with your email and password
+          </Typography>
+
+          {/* Form */}
+          <form className="space-y-6" onSubmit={submitHandler}>
+            {/* Name Input */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                required
+                placeholder="Enter your name"
+                className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 ${
+                  error ? 'border-red-500' : 'border-gray-300'
+                }`}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Email Input */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                required
+                placeholder="Enter your email"
+                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                title="Please enter a valid email address"
+                className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 ${
+                  error ? 'border-red-500' : 'border-gray-300'
+                }`}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                required
+                minLength={8}
+                placeholder="Enter your password"
+                className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 ${
+                  error ? 'border-red-500' : 'border-gray-300'
+                }`}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Error Message */}
+            {error && <Typography className="text-red-500 text-sm text-center">{error}</Typography>}
+
+            {/* Signup Button */}
+            <div>
+            <Button
+  type="submit"
+  variant="contained"
+  color="primary"
+  fullWidth
+  disabled={loading}
+  sx={{
+    py: 1.5,
+    fontWeight: 'bold',
+    backgroundColor: loading ? 'rgba(34,197,94,0.6)' : '#22c55e', // Green when not loading, slightly faded green when loading
+    '&:hover': {
+      backgroundColor: '#16a34a', // Darker green on hover
+    },
+    opacity: loading ? 0.6 : 1,
+    cursor: loading ? 'not-allowed' : 'pointer',
+  }}
 >
-  <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto">
-    <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-      Account Created Successfully
-    </h2>
-    <p className="text-gray-600 mb-6 text-center">
-      An email has been sent to your email address. Please verify it to log in.
-    </p>
-    <button
-      onClick={closeModal}
-      className="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 shadow-md transform transition-transform duration-200 hover:scale-105"
-    >
-      Close
-    </button>
-  </div>
-</Modal>
+  {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+</Button>
 
+            </div>
+          </form>
+
+          {/* Google Sign-Up Section */}
+          <div className="text-center mt-6">
+            <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+              or
+            </Typography>
+            <GoogleLogin
+              onSuccess={handleGoogleSignUp}
+              onError={() => console.log('Google Sign-Up Failed')}
+            className="justify-center text-center "/>
+          </div>
+
+          {/* Sign In Link */}
+          <div className="text-sm text-center mt-6">
+            Already have an account?{' '}
+            <Link to="/login">
+              <Typography component="span" sx={{ color: 'green', '&:hover': { textDecoration: 'underline' } }}>
+                Login here
+              </Typography>
+            </Link>
+          </div>
+        </div>
       </div>
+
+      {/* Success Modal */}
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        aria-labelledby="account-created-title"
+        aria-describedby="account-created-description"
+        closeAfterTransition
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Box sx={style}>
+          <Stack spacing={2} alignItems="center">
+            <Avatar sx={{ bgcolor: 'green.500', width: 56, height: 56 }}>
+              <Typography variant="h4" color="white">✓</Typography>
+            </Avatar>
+            <Typography id="account-created-title" variant="h5" component="h2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+              Account Created Successfully
+            </Typography>
+            <Typography id="account-created-description" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+              An email has been sent to your email address. Please verify it to log in.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={closeModal}
+              sx={{
+                mt: 3,
+                px: 4,
+                py: 1.5,
+                backgroundColor: 'green.500',
+                '&:hover': {
+                  backgroundColor: 'green.600',
+                },
+              }}
+            >
+              Go to Login
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
     </div>
   );
 }

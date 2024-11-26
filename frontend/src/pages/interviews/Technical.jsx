@@ -27,8 +27,9 @@ const Technical = () => {
         borderRadius:'20px'
       
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100 "
+      className="bg-white "
     >
+      {/*bg-gradient-to-t from-lime-100 to-cyan-100 */}
       <Typography
         variant="h4"
         align="center"
@@ -69,27 +70,27 @@ const Technical = () => {
                         transform: 'translateY(-4px)',
                       },
                       overflow: 'hidden',
-                      maxWidth: 300, // Maintain the width of the card
-                      height: 350, // Set a smaller height for the card
-                      margin: '0 auto', // Center the card within its grid item
+                      maxWidth: 300, 
+                      height: 360, 
+                      margin: '0 auto', 
                     }}
                   >
                     {field.picture && (
                       <CardMedia
                         component="img"
-                        height="60" // Further reduce the height for the image
+                        height="60" 
                         image={field.picture}
                         alt={`${field.title} image`}
                         sx={{
-                          objectFit: 'contain', // Keep aspect ratio
-                          margin: '10px auto',  // Add some margin for better appearance
-                          width: '60%', // Control the width of the image
+                          objectFit: 'contain', 
+                          margin: '10px auto',  
+                          width: '60%', 
                         }}
                       />
                     )}
                     <CardContent
                       sx={{
-                        padding: '8px', // Reduce padding for a more compact card
+                        padding: '8px', 
                       }}
                     >
                       <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF4F', mb: 0.5 }}>
@@ -107,7 +108,7 @@ const Technical = () => {
                           fontWeight: 'bold',
                           borderRadius: '20px',
                           padding: '6px 12px',
-                          fontSize: '0.75rem', // Make the button text smaller
+                          fontSize: '0.75rem', 
                           '&:hover': {
                             backgroundColor: '#388E3C',
                           },

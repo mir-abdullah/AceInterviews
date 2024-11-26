@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { LuLogOut } from "react-icons/lu";
-import { useDispatch } from "react-redux";
+import logo from '../../assets/logo.png'
 import {
   LuBarChart4,
   LuHome,
@@ -12,35 +11,15 @@ import {
   LuMail,
   LuChevronDown,
   LuChevronUp,
-  LuBookMarked,
+  LuBookMarked
 } from "react-icons/lu";
-import {
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  Button,
-  DialogContent,
-  Typography,
-} from "@mui/material";
-import { logoutUser } from "../../redux/slices/user/user.slice.js"; // Import logoutUser action
+
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isInterviewOpen, setIsInterviewOpen] = useState(false);
-  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const toggle = () => setIsOpen(!isOpen);
   const toggleInterviewMenu = () => setIsInterviewOpen(!isInterviewOpen);
-
-  const handleLogout = () => {
-    // Close the modal and navigate to the landing page
-    setLogoutModalOpen(false);
-    dispatch(logoutUser()); // Dispatch logout action
-    navigate("/");
-    // Close profile menu after logout
-  };
 
   const routes = [
     { path: "/dashboard/overview", name: "Overview", icon: <LuHome /> },
@@ -55,7 +34,7 @@ const Sidebar = () => {
     { path: "/dashboard/quizes", name: "Quizes", icon: <LuMail /> },
     { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
-    // { path: "/settings", name: "Settings", icon: <LuSettings /> },
+
   ];
 
   return (
@@ -71,20 +50,20 @@ const Sidebar = () => {
         />
         {isOpen && (
           <motion.div
-            className="flex items-center ml-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.h1
-              className="text-xl leading-none font-cursive"
-              initial={{ y: -10 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            >
-              AceInterview
-            </motion.h1>
-          </motion.div>
+          className="flex items-center ml-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* <img
+            src={logo}
+            alt="AceInterview Logo"
+            className="w-5 h-6 mr-3" // Adjust size and margin as needed
+          /> */}
+          <motion.h1 className="text-xl leading-none font-bold">
+            AceInterview
+          </motion.h1>
+        </motion.div>
         )}
       </div>
       <nav className="mt-8 space-y-1 flex-grow">
@@ -153,109 +132,6 @@ const Sidebar = () => {
           );
         })}
       </nav>
-
-      {/* Logout Button */}
-      <div className="flex items-center justify-center p-4">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center gap-2 bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all w-full"
-          onClick={() => setLogoutModalOpen(true)} // Open modal on logout click
-        >
-          <LuLogOut className="text-xl" />
-          {isOpen && <span>Logout</span>}
-        </motion.button>
-      </div>
-
-      {/* Logout Confirmation Modal */}
-      <Dialog
-        open={logoutModalOpen}
-        onClose={() => setLogoutModalOpen(false)}
-        aria-labelledby="logout-dialog-title"
-        PaperProps={{
-          style: {
-            borderRadius: "12px", // Rounded corners
-            padding: "20px", // Internal padding
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)", // Softer shadow
-          },
-        }}
-        TransitionComponent={motion.div}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <DialogTitle
-          id="logout-dialog-title"
-          sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            fontSize: "1.5rem",
-            color: "#4D4D4D", // Dark grey color to maintain readability
-          }}
-        >
-          Confirm Logout
-        </DialogTitle>
-
-        <DialogContent
-          sx={{
-            textAlign: "center",
-            padding: "16px 24px",
-            backgroundColor: "#f5f7fa", // Light grey background for contrast
-          }}
-        >
-          <Typography
-            variant="body1"
-            sx={{
-              fontSize: "1.125rem",
-              color: "#717171", // Slightly lighter text color for description
-            }}
-          >
-            Are you sure you want to log out?
-          </Typography>
-        </DialogContent>
-
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            gap: 2, // Adding space between buttons
-            padding: "16px 24px",
-          }}
-        >
-          <Button
-            onClick={() => setLogoutModalOpen(false)}
-            variant="outlined"
-            sx={{
-              borderColor: "#4CAF50", // Matching brand color
-              color: "#4CAF50",
-              borderRadius: "8px",
-              padding: "8px 16px",
-              "&:hover": {
-                borderColor: "#388E3C",
-                color: "#388E3C",
-              },
-            }}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            onClick={handleLogout}
-            variant="contained"
-            sx={{
-              backgroundColor: "#D32F2F",
-              color: "#fff",
-              borderRadius: "8px",
-              padding: "8px 16px",
-              "&:hover": {
-                backgroundColor: "#C62828",
-              },
-            }}
-          >
-            Yes, Logout
-          </Button>
-        </DialogActions>
-      </Dialog>
     </motion.div>
   );
 };

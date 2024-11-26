@@ -6,7 +6,6 @@ export const signupUser = createAsyncThunk(
     'auth/signupUser',
     async (formData, { rejectWithValue }) => {
       try {
-        // Send formData directly as the request body
         const response = await API.post('/api/user/signup', formData, {
           headers: {
             'Content-Type': 'application/json',

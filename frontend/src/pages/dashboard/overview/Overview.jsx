@@ -4,7 +4,7 @@ import BehavioralProgress from "../cards/BehavioralProgress";
 import TechnicalProgress from "../cards/TechnicalProgress";
 import MainCard from "../MainCard";
 import Interviews from "../Interviews";
-import QuizCard from "../QuizCard";
+import QuizProgressCard from "../cards/QuizProgress";
 
 const interview = [
   {
@@ -40,8 +40,11 @@ const Overview = () => {
         {/* Behavioral Progress Card */}
         <BehavioralProgress />
 
+        {/* quiz card*/}
+        <QuizProgressCard />
+
         {/* Technical Progress Card */}
-        <TechnicalProgress />
+        <TechnicalProgress className="ml-10"/>
       </div>
 
       {/* Previous Interviews Section */}

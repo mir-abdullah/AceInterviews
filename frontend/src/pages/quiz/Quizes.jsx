@@ -41,7 +41,7 @@ const Quizes = () => {
       if (resultAction.meta.requestStatus === 'fulfilled') {
         console.log(resultAction.payload)
         const questionsData = resultAction.payload.quizTopic.questions
-        setQuestions(questionsData); // Store the questions
+        setQuestions(questionsData);
         navigate(`/dashboard/quiz/${selectedQuizId}`, {
           state: { difficulty, questions: questionsData }
         });
@@ -62,7 +62,7 @@ const Quizes = () => {
         backgroundColor: '#f5f7fa',
         borderRadius: '20px',
       }}
-      className="bg-gradient-to-t from-lime-100 to-cyan-100"
+      className="bg-white"
     >
       <Typography
         variant="h4"
@@ -78,7 +78,7 @@ const Quizes = () => {
         {status === 'succeeded' &&
           topics.allQuizTopics.map((quiz, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <Tilt
+              {/* <Tilt
                 glareEnable={true}
                 glareMaxOpacity={0.3}
                 scale={1.05}
@@ -86,7 +86,7 @@ const Quizes = () => {
                 tiltMaxAngleX={15}
                 tiltMaxAngleY={15}
                 style={{ height: '100%' }}
-              >
+              > */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -154,7 +154,7 @@ const Quizes = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
-              </Tilt>
+              {/* </Tilt> */}
             </Grid>
           ))}
       </Grid>
