@@ -11,6 +11,7 @@ import {
   LuMail,
   LuChevronDown,
   LuChevronUp,
+  LuLanguages
 } from "react-icons/lu";
 
 const AdminLeftNav = () => {
@@ -30,6 +31,8 @@ const AdminLeftNav = () => {
         { path: "/admin/technicaladmin", name: "Technical" },
       ],
     },
+    {path:"/admin/language-test" ,name:"Language Test",icon:<LuLanguages/>},
+
     { path: "/admin/quizes", name: "Quizes", icon: <LuMail /> },
     { path: "/admin/reviewfeedback", name: "Feedback", icon: <LuBarChart4 /> },
     { path: "/admin/profileadmin", name: "Profile", icon: <LuSettings /> },

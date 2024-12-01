@@ -11,7 +11,8 @@ import {
   LuMail,
   LuChevronDown,
   LuChevronUp,
-  LuBookMarked
+  LuBookMarked,
+  LuLanguages
 } from "react-icons/lu";
 
 const Sidebar = () => {
@@ -31,6 +32,7 @@ const Sidebar = () => {
         { path: "/dashboard/technical", name: "Technical" },
       ],
     },
+    {path:"/dashboard/language-test" ,name:"Language Test",icon:<LuLanguages/>},
     { path: "/dashboard/quizes", name: "Quizes", icon: <LuMail /> },
     { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },

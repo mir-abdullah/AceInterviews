@@ -10,10 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^5.16.7",
-    "@mui/material": "^5.16.7",
+    "@mui/material": "^5.16.8",
     "@mui/x-charts": "^7.18.0",
     "@mui/x-tree-view": "^7.14.0",
     "@react-oauth/google": "^0.12.1",
@@ -22,6 +22,7 @@
     "framer-motion": "^11.3.28",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
+    "mic-recorder-to-mp3": "^2.2.2",
     "react": "^18.3.1",
     "react-chartjs2": "^1.2.1",
     "react-dom": "^18.3.1",
@@ -33,11 +34,14 @@
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.26.1",
     "react-scroll": "^1.9.0",
+    "react-speech-recognition": "^3.10.0",
     "react-timer-hook": "^3.0.7",
     "react-toastify": "^10.0.5",
     "react-typed": "^2.0.12",
     "react-webcam": "^7.2.0",
-    "recharts": "^2.12.7"
+    "recharts": "^2.12.7",
+    "speech-recognition": "^0.0.1",
+    "wavesurfer.js": "^7.8.9"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
