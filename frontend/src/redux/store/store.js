@@ -14,6 +14,10 @@ import feedbackReducer from "../slices/feedback/userFeedback";
 import statsReducer from "../slices/admin/statistics/statisctics";
 import resultsReducer from "../slices/results/results.slice";
 import behaviouralInterviewReducer from "../slices/behaviouralInterview/behaviouralInterview.slice";
+import languageTestReducer from '../slices/languageProficiencyTest/languageTest.slice'
+import mcqReducer from '../slices/languageProficiencyTest/mcqQuestion.slice'
+import speechQuestionReducer from '../slices/languageProficiencyTest/speechQuestion.slice'
+import responseQuestionsReducer from '../slices/languageProficiencyTest/responseQuestion.slice'
 
 const store = configureStore({
   reducer: {
@@ -32,6 +36,11 @@ const store = configureStore({
     stats: statsReducer,
     results: resultsReducer,
     behaviouralInterview: behaviouralInterviewReducer,
+    languageTest :languageTestReducer,
+    mcq:mcqReducer,
+    speechQuestion: speechQuestionReducer,
+    responseQuestions : responseQuestionsReducer,
+
   },
 });
 

@@ -35,6 +35,12 @@ import QuizAdmin from "./pages/admin/QuizAdmin.jsx";
 import QuizQuestions from "./pages/QuestionsPage/QuizQuestions.jsx";
 import Results from "./pages/results/ResultMain.jsx";
 import BehaviouralInterview from "./pages/interviews/BehaviouralInterview.jsx";
+import IntroPage from "./pages/languageProficiencyTest/IntroPage.jsx";
+import Stage1Page from "./pages/languageProficiencyTest/Stage1Page.jsx";
+import Stage2Page from "./pages/languageProficiencyTest/Stage2page.jsx";
+import Stage3Page from "./pages/languageProficiencyTest/Stage3Page.jsx";
+import LanguageTestAdmin from './pages/admin/LanguageTestAdmin.jsx'
+import Stage1Questions from "./pages/QuestionsPage/Stage1Questions.jsx";
 
 const router = createBrowserRouter([
   {
@@ -67,7 +73,11 @@ const router = createBrowserRouter([
       {path:'behaviour/questions',element:<QuestionsPage/>},
       {path:"technical/questions",element:<TechnicalQuestions/>},
       {path:'quizes',element:<QuizAdmin/>},
-      {path:'quiz/questions',element:<QuizQuestions />}
+      {path:'quiz/questions',element:<QuizQuestions />},
+      {path:'language-test',element:<LanguageTestAdmin />},
+      {path:'language-test/stage1Questions',element:<Stage1Questions/>}
+
+
       // { path: "quizzes", element: <Quizzes /> },
       // { path: "feedback", element: <FeedbackAdmin /> },
     ],
@@ -92,6 +102,25 @@ const router = createBrowserRouter([
       {
         path: "technical",
         element: <Technical />,
+      },
+      {
+        path:'language-test',
+        element:<IntroPage/>
+      },
+      {
+        path:'stage1',
+        element:<Stage1Page/>
+
+      },
+      {
+        path:'stage2',
+        element:<Stage2Page/>
+
+      },
+      {
+        path:'stage3',
+        element:<Stage3Page/>
+
       },
       {
         path:"instructions/:interviewId",
@@ -121,6 +150,7 @@ const router = createBrowserRouter([
         path: "/dashboard/profile",
         element: <Profile />, 
       },
+     
          
     ],
   },

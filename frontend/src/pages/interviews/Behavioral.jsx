@@ -72,61 +72,52 @@ const Behavioral = () => {
   };
 
   // Capture the image from webcam
-// Capture the image from webcam
-const captureImage = useCallback(async () => {
-  if (webcamRef.current) {
-    const imageSrc = webcamRef.current.getScreenshot();
+  const captureImage = useCallback(async () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
 
-    // Send the image to FastAPI server
-    if (imageSrc) {
-      try {
-        const blob = await fetch(imageSrc).then((res) => res.blob());
+      // Send the image to FastAPI server
+      if (imageSrc) {
+        try {
+          const blob = await fetch(imageSrc).then((res) => res.blob());
 
-        const formData = new FormData();
-        formData.append("file", blob, "image.jpg");
+          const formData = new FormData();
+          formData.append("file", blob, "image.jpg");
 
-        // Post to FastAPI backend
-        const response = await axios.post(
-          "http://localhost:8000/analyze_frame",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+          // Post to FastAPI backend
+          const response = await axios.post(
+            "http://localhost:8000/analyze_frame",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
 
-        // Ensure response.data.status and response.data.gaze are strings
-        const receivedStatus =
-          typeof response.data.status === "string"
-            ? response.data.status
-            : response.data.status?.message || "N/A";
-        const receivedGaze =
-          typeof response.data.gaze === "string"
-            ? response.data.gaze
-            : response.data.gaze?.message || "N/A";
+          // Ensure response.data.status and response.data.gaze are strings
+          const receivedStatus =
+            typeof response.data.status === "string"
+              ? response.data.status
+              : response.data.status?.message || "N/A";
+          const receivedGaze =
+            typeof response.data.gaze === "string"
+              ? response.data.gaze
+              : response.data.gaze?.message || "N/A";
 
-        // Update the UI with the result from the backend
-        setStatus(receivedStatus);
-
-        // Update gaze based on the gaze analysis
-        if (receivedGaze === "Looking: Forward") {
-          setGaze("Focused");
-        } else if (receivedGaze === "Looking: Right" || receivedGaze === "Looking: Left") {
-          setGaze("Unfocused");
-        } else {
-          setGaze("N/A"); // Default if gaze data isn't conclusive
+          // Update the UI with the result from the backend
+          setStatus(receivedStatus);
+          setGaze(receivedGaze);
+          setError(null);
+        } catch (err) {
+          console.error("Error sending image to backend:", err);
+          setError(
+            err.response?.data?.message || "Failed to analyze the frame."
+          );
         }
-
-        setError(null);
-      } catch (err) {
-        console.error("Error sending image to backend:", err);
-        setError(err.response?.data?.message || "Failed to analyze the frame.");
       }
     }
-  }
-}, []);
-
+  }, []);
 
   const handleVideoSave = useCallback(() => {
     const videoElement = document.querySelector("video");
@@ -161,7 +152,6 @@ const captureImage = useCallback(async () => {
 
   useEffect(() => {
     return () => {
-      // Clear the interval when the component is unmounted
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
       }
@@ -289,11 +279,11 @@ const captureImage = useCallback(async () => {
           transition={{ duration: 0.5 }}
           className="rounded-lg overflow-hidden shadow-lg mb-4"
           style={{
-            borderRadius: "8px", // Rounded corners for a box shape
+            borderRadius: "8px",
             overflow: "hidden",
-            width: "100%", // You can control the dimensions here
-            maxWidth: "600px", // Limits the max width of the box
-            aspectRatio: "4/3", // Keeps the aspect ratio
+            width: "100%", 
+            maxWidth: "600px",
+            aspectRatio: "4/3", 
           }}
         >
           <Webcam
@@ -362,7 +352,7 @@ const captureImage = useCallback(async () => {
         {!error && (
           <Box className="mt-4" sx={{ textAlign: "center", marginTop: 2 }}>
             <Typography variant="h6">Status: {status || "N/A"}</Typography>
-            <Typography variant="h6">Concentration: {gaze || "N/A"}</Typography>
+            <Typography variant="h6">Gaze: {gaze || "N/A"}</Typography>
           </Box>
         )}
       </Box>

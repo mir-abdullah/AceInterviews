@@ -96,8 +96,7 @@ const BehaviouralInterview = () => {
                       }}
                       onClick={() => {
                         dispatch(addClick(interview._id))
-                        navigate(`/dashboard/behavioural/${interview._id}`, { state: { interviewId: interview._id } });
-}
+                        navigate(`/dashboard/behavioural/${interview._id}`)}
                     }
                     >
                       Start Interview

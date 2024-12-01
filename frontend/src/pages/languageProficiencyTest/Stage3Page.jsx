@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,73 +10,57 @@ import {
   CircularProgress,
   Stack,
   Avatar,
-} from "@mui/material"; 
-import { useTimer } from "react-timer-hook";
+} from "@mui/material";
 import { FaMicrophone, FaStop } from "react-icons/fa";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import {
-  startInterview,
-} from "../../redux/slices/technicalInterview/technicalInterview.slice"; 
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSpeechQuestions } from "../../redux/slices/languageProficiencyTest/speechQuestion.slice";
+import { submitSpeechAnswers } from "../../redux/slices/languageProficiencyTest/languageTest.slice";
 import FeedbackModal from "../../components/modals/FeedbackModal,"; 
-import { motion } from "framer-motion";
 
-const TechInterviewPage = () => {
-  const location = useLocation(); 
-  const navigate = useNavigate(); 
+const Stage3Page = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { interviewId } = useParams();
-
-  const { questions = [], difficulty } = location.state || {}; 
+  const location = useLocation();
+  const { testId } = location.state || {}; // Retrieve testId passed from Stage1
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [transcribedText, setTranscribedText] = useState("");
-  const [answers, setAnswers] = useState({}); 
-  const [showModal, setShowModal] = useState(false); 
-  const [loading, setLoading] = useState(false); 
+  const [answers, setAnswers] = useState({});
+  const [showModal, setShowModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [testSubmitting, setTestSubmitting] = useState(false); // Track test submission state
+
+  const { speechQuestions, loading, error } = useSelector(
+    (state) => state.speechQuestion
+  );
 
   const handleFeedbackClose = () => {
-    setShowFeedbackModal(false); 
-    navigate("/dashboard/results", { state: { answers, difficulty } }); 
+    setShowFeedbackModal(false);
+    navigate("/dashboard/results");
   };
 
-  // Filter questions based on the selected difficulty level
-  const filteredQuestions = questions.filter((q) => q.difficulty === difficulty);
-
-  
   useEffect(() => {
-    console.log("Filtered Questions", filteredQuestions);
-    console.log("Difficulty", difficulty);
-  }, [filteredQuestions, difficulty]);
+    dispatch(fetchSpeechQuestions());
+  }, [dispatch]);
 
-  const { seconds, minutes, start, pause, restart } = useTimer({
-    expiryTimestamp: new Date().getTime() + 90 * 1000,
-    onExpire: () => handleSubmitAnswer(), 
-  });
-
-  const handleNextQuestion = useCallback(() => {
+  const handleNextQuestion = () => {
     if (transcribedText.trim()) {
       setAnswers((prev) => ({
         ...prev,
-        [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
+        [speechQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
-    setTranscribedText(""); 
+    setTranscribedText("");
     setCurrentQuestionIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
-      if (nextIndex < filteredQuestions.length) {
-        restart(new Date().getTime() + 90 * 1000); 
-        return nextIndex;
-      } else {
-        return prevIndex;
-      }
+      return nextIndex < speechQuestions.length ? nextIndex : prevIndex;
     });
-  }, [currentQuestionIndex, restart, transcribedText, filteredQuestions]);
+  };
 
-  // Handle speech recognition
   useEffect(() => {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const recognition = new (window.SpeechRecognition ||
+      window.webkitSpeechRecognition)();
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.onstart = () => setIsRecording(true);
@@ -90,49 +74,38 @@ const TechInterviewPage = () => {
 
   const handleStartRecording = () => {
     setIsRecording(true);
-    start();
   };
 
   const handleStopRecording = () => {
     setIsRecording(false);
-    pause();
   };
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
     if (transcribedText.trim()) {
       setAnswers((prev) => ({
         ...prev,
-        [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
+        [speechQuestions[currentQuestionIndex]?._id]: transcribedText.trim(),
       }));
     }
-
-    if (currentQuestionIndex === filteredQuestions.length - 1) {
-      // Last question - submit the interview
-      setLoading(true); // Show loading indicator
-      dispatch(
-        startInterview({
-          interviewTopicId: interviewId, // Assuming topicId is passed in the location state
-          answers: {
-            ...answers,
-            [filteredQuestions[currentQuestionIndex]?._id]: transcribedText.trim(), // Include the last answer
-          },
-          difficulty,
-        })
-      )
+    if (currentQuestionIndex === speechQuestions.length - 1) {
+      setTestSubmitting(true); // Set loading state to true when test is being submitted
+      // Dispatch submitSpeechAnswers with testId and answers
+      await dispatch(submitSpeechAnswers({ testId, speechAnswers: answers }))
+        .unwrap()
         .then(() => {
-          setLoading(false); // Hide loading indicator
-          setShowModal(true); // Show completion modal
+          setShowModal(true);
         })
         .catch((error) => {
-          setLoading(false); // Hide loading indicator
-          console.error("Error submitting interview:", error);
+          console.error("Error submitting speech answers:", error);
+        })
+        .finally(() => {
+          setTestSubmitting(false); // Reset the loading state once submission is complete
         });
     } else {
       handleNextQuestion();
     }
   };
 
-  // Close modal and navigate to review page
   const handleCloseModal = () => {
     setShowModal(false);
     setShowFeedbackModal(true);
@@ -153,52 +126,15 @@ const TechInterviewPage = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           width: "100%",
           maxWidth: 900,
           mb: 4,
         }}
       >
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => navigate("/dashboard/questions")}
-          sx={{ textTransform: "none" }}
-        >
-          ← Back to Questions
-        </Button>
         <Typography variant="h5" sx={{ fontWeight: "bold", color: "#263238" }}>
-          Question {currentQuestionIndex + 1} of {filteredQuestions.length}
-        </Typography>
-        <Typography
-          variant="h6"
-          sx={{
-            backgroundColor: "#e3f2fd",
-            color: "#0288d1",
-            padding: "8px 16px",
-            borderRadius: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-        </Typography>
-      </Box>
-
-      {/* Timer Section */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#0288d1" }}>
-          {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-        </Typography>
-        <Typography variant="subtitle1" sx={{ ml: 2, color: "#424242" }}>
-          / 1:30
+          Question {currentQuestionIndex + 1} of {speechQuestions.length}
         </Typography>
       </Box>
 
@@ -218,7 +154,8 @@ const TechInterviewPage = () => {
           align="center"
           sx={{ mb: 3, color: "#424242", fontWeight: "500" }}
         >
-          {filteredQuestions[currentQuestionIndex]?.text || "No questions available"}
+          {speechQuestions[currentQuestionIndex]?.text ||
+            "No questions available"}
         </Typography>
 
         {/* Recording Controls */}
@@ -232,7 +169,6 @@ const TechInterviewPage = () => {
         >
           <IconButton
             onClick={isRecording ? handleStopRecording : handleStartRecording}
-            disabled={loading}
             sx={{
               fontSize: 40,
               color: isRecording ? "error.main" : "primary.main",
@@ -301,21 +237,24 @@ const TechInterviewPage = () => {
               alignItems: "center",
             }}
           >
-            {currentQuestionIndex === filteredQuestions.length - 1
-              ? "Submit Interview"
-              : "Submit Answer"}
+            {testSubmitting ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : currentQuestionIndex === speechQuestions.length - 1 ? (
+              "Submit Test"
+            ) : (
+              "Submit Answer"
+            )}
           </Button>
         </Box>
       </Card>
 
-      {/* Show loading spinner when submitting the last question */}
       {loading && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
           <CircularProgress />
         </Box>
       )}
 
-      {/* Modal for Interview Completion */}
+      {/* Modal for Test Completion */}
       <Modal
         open={showModal}
         onClose={handleCloseModal}
@@ -336,14 +275,24 @@ const TechInterviewPage = () => {
           }}
         >
           <Stack spacing={2} alignItems="center">
-            <Avatar sx={{ bgcolor: 'green.500', width: 56, height: 56 }}>
-              <Typography variant="h4" color="white">✓</Typography>
+            <Avatar sx={{ bgcolor: "green.500", width: 56, height: 56 }}>
+              <Typography variant="h4" color="white">
+                ✓
+              </Typography>
             </Avatar>
-            <Typography id="modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-              Interview Completed!
+            <Typography
+              id="modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: "bold", textAlign: "center" }}
+            >
+              Test Completed!
             </Typography>
-            <Typography id="modal-description" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
-              Your interview has been submitted successfully.
+            <Typography
+              id="modal-description"
+              sx={{ mt: 2, textAlign: "center", color: "text.secondary" }}
+            >
+              Your test has been submitted successfully.
             </Typography>
             <Button
               variant="contained"
@@ -353,22 +302,21 @@ const TechInterviewPage = () => {
                 mt: 3,
                 px: 4,
                 py: 1.5,
-                backgroundColor: '#0288d1',
-                '&:hover': {
-                  backgroundColor: '#0277bd',
-                },
+                backgroundColor: "#0288d1",
+                "&:hover": { backgroundColor: "#0277bd" },
+                textTransform: "none",
+                fontWeight: "bold",
               }}
             >
-              Close & Review
+              View Results
             </Button>
           </Stack>
         </Box>
       </Modal>
-
-      {/* Feedback Modal */}
-      <FeedbackModal open={showFeedbackModal} handleClose={handleFeedbackClose} />
+       {/* Feedback Modal */}
+       <FeedbackModal open={showFeedbackModal} handleClose={handleFeedbackClose} />
     </Box>
   );
 };
 
-export default TechInterviewPage;
+export default Stage3Page;

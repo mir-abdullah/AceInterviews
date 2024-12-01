@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Box, Typography, IconButton, TextField, Button, CircularProgress } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -11,15 +11,6 @@ const FeedbackModal = ({ open, handleClose }) => {
   const [comment, setComment] = useState(''); // Comment
   const dispatch = useDispatch(); // Get the dispatch function
   const { loading, successMessage, error } = useSelector((state) => state.feedback); // Get feedback state
-
-  useEffect(() => {
-    // Reset the state when the modal opens
-    if (open) {
-      setRating(0);
-      setComment('');
-      // Optionally reset other state here if needed
-    }
-  }, [open]);
 
   const handleStarClick = (index) => {
     setRating(index + 1); // Set rating based on the star clicked
@@ -41,7 +32,7 @@ const FeedbackModal = ({ open, handleClose }) => {
         }
       });
     }
-    handleClose();
+    handleClose()
   };
 
   return (
