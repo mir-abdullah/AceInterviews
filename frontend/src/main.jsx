@@ -41,6 +41,10 @@ import Stage2Page from "./pages/languageProficiencyTest/Stage2page.jsx";
 import Stage3Page from "./pages/languageProficiencyTest/Stage3Page.jsx";
 import LanguageTestAdmin from './pages/admin/LanguageTestAdmin.jsx'
 import Stage1Questions from "./pages/QuestionsPage/Stage1Questions.jsx";
+import Stage2Questions from "./pages/QuestionsPage/Stage2Questions.jsx";
+import Stage3Questions from "./pages/QuestionsPage/Stage3Questions.jsx";
+
+
 
 const router = createBrowserRouter([
   {
@@ -75,7 +79,12 @@ const router = createBrowserRouter([
       {path:'quizes',element:<QuizAdmin/>},
       {path:'quiz/questions',element:<QuizQuestions />},
       {path:'language-test',element:<LanguageTestAdmin />},
-      {path:'language-test/stage1Questions',element:<Stage1Questions/>}
+      {path:'language-test/stage1Questions',element:<Stage1Questions/>},
+      {path:'language-test/stage2Questions',element:<Stage2Questions/>},
+      {path:'language-test/stage3Questions',element:<Stage3Questions/>},
+
+
+
 
 
       // { path: "quizzes", element: <Quizzes /> },
