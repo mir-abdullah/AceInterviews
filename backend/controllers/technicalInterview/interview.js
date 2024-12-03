@@ -32,7 +32,7 @@ export const startInterview = async (req, res) => {
 
     let questions = interviewTopic.questions;
 
-    // Filter questions
+    // Filter questions based on difficulty
     if (difficulty) {
       questions = questions.filter((question) => {
         return question.difficulty === difficulty;
@@ -59,17 +59,21 @@ export const startInterview = async (req, res) => {
 
       const evaluation = await evaluateAnswer(question.text, userAnswer);
 
+      // Ensure that the score is a valid number
+      const score = isNaN(Number(evaluation.score)) ? 0 : Number(evaluation.score);
+
       interview.responses.push({
         question: question.text,
         answer: userAnswer,
         evaluation: {
-          score: evaluation.score,
+          score: score,
           feedback: evaluation.feedback,
           idealAnswer: evaluation.idealAnswer,
         },
       });
 
-      interview.totalScore += evaluation.score;
+      // Add score to totalScore
+      interview.totalScore += score;
     }
 
     await interview.save();
@@ -83,6 +87,7 @@ export const startInterview = async (req, res) => {
       .json({ message: "Error starting interview", error: error.message });
   }
 };
+
 
 // Evaluation function
 async function evaluateAnswer(question, answer) {
@@ -116,7 +121,7 @@ async function evaluateAnswer(question, answer) {
     // Get the evaluation text from the model response
     const evaluationText = await result.response.text();
     const evaluation = JSON.parse(evaluationText);
-    const score = evaluation.score;
+    const score = evaluation.score; // Converts to number, or NaN if invalid
     const feedback = evaluation.feedback;
     const idealAnswer = evaluation.idealAnswer;
     // console.log(score);

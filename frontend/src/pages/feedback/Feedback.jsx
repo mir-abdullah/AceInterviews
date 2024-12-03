@@ -17,8 +17,8 @@ const Feedback = () => {
   const location = useLocation();
   const navigate = useNavigate(); 
   const { item, type } = location.state; 
-  console.log(type)
-  console.log(item)
+  console.log(type);
+  console.log(item);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -31,8 +31,8 @@ const Feedback = () => {
   };
 
   if (type === "quizzes") {
-    const totalMarks = item.score;
-    const maxMarks = item.answers.length; 
+    const totalMarks = item.score || 0;
+    const maxMarks = item.answers.length;
 
     return (
       <Box className="p-6 min-h-screen bg-gradient-to-t from-lime-100 to-cyan-100 rounded-2xl">
@@ -80,9 +80,7 @@ const Feedback = () => {
 
                     <Typography
                       variant="body1"
-                      className={`font-bold ${
-                        answer.isCorrect ? "text-green-600" : "text-red-600"
-                      }`}
+                      className={`font-bold ${answer.isCorrect ? "text-green-600" : "text-red-600"}`}
                     >
                       {answer.isCorrect ? "Correct" : "Incorrect"}
                     </Typography>
@@ -106,12 +104,13 @@ const Feedback = () => {
     );
   }
 
-  
-  const totalMarks = item.responses.reduce(
-    (acc, response) => acc + response.evaluation.score,
-    0
-  );
-  const maxMarks = item.responses.length * 5; 
+  // For Interview Feedback Section
+  const totalMarks = item.responses.reduce((acc, response) => {
+    const score = response.evaluation?.score ?? 0; // Default to 0 if score is not available
+    return acc + score;
+  }, 0);
+
+  const maxMarks = item.responses.length * 5; // Assume max score per response is 5
 
   return (
     <Box className="p-6 min-h-screen bg-gradient-to-t from-lime-100 to-cyan-100 rounded-2xl">
@@ -152,10 +151,10 @@ const Feedback = () => {
                       variant="body1"
                       className="text-red-700 font-semibold mb-2"
                     >
-                      <strong>Score: {response.evaluation.score} / 5</strong>
+                      <strong>Score: {response.evaluation?.score ?? 0} / 5</strong>
                     </Typography>
                     <Typography variant="body2" className="text-black font-bold">
-                      <strong>Answer: {response.answer}</strong>
+                      <strong>Answer: {response.answer ?? "No answer provided"}</strong>
                     </Typography>
                   </Paper>
 
@@ -167,7 +166,7 @@ const Feedback = () => {
                       <strong>Feedback:</strong>
                     </Typography>
                     <Typography variant="body2" className="text-black text-bold">
-                      <strong>{response.evaluation.feedback}</strong>
+                      <strong>{response.evaluation?.feedback ?? "No feedback provided"}</strong>
                     </Typography>
                   </Paper>
 
@@ -179,7 +178,7 @@ const Feedback = () => {
                       <strong>Ideal Answer:</strong>
                     </Typography>
                     <Typography variant="body2" className="text-black">
-                      <strong>{response.evaluation.idealAnswer}</strong>
+                      <strong>{response.evaluation?.idealAnswer ?? "No ideal answer provided"}</strong>
                     </Typography>
                   </Paper>
                 </AccordionDetails>
