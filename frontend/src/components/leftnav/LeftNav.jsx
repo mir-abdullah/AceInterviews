@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import logo from '../../assets/logo.png'
+import videocall from '../../assets/video-call.png'
 import {
   LuBarChart4,
   LuHome,
@@ -12,8 +12,11 @@ import {
   LuChevronDown,
   LuChevronUp,
   LuBookMarked,
-  LuLanguages
+  LuLanguages,
+  LuClipboard,
+  LuBookCopy
 } from "react-icons/lu";
+import { MdOutlineQuiz } from "react-icons/md";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -26,15 +29,17 @@ const Sidebar = () => {
     { path: "/dashboard/overview", name: "Overview", icon: <LuHome /> },
     {
       name: "Interview",
-      icon: <LuUser2 />,
+      icon: <LuBookCopy/>,
       submenu: [
         { path: "/dashboard/behavioral-interviews", name: "Behavioral" },
         { path: "/dashboard/technical", name: "Technical" },
       ],
     },
+
     {path:"/dashboard/language-test" ,name:"Language Test",icon:<LuLanguages/>},
-    { path: "/dashboard/quizes", name: "Quizes", icon: <LuMail /> },
-    { path: "/dashboard/profile", name: "Profile", icon: <LuBarChart4 /> },
+    { path: "/dashboard/quizes", name: "Quizes", icon: <MdOutlineQuiz /> },
+    { path: "/dashboard/preperation", name: "Preperation Hub", icon: <LuClipboard /> },
+    { path: "/dashboard/profile", name: "Profile", icon: <LuUser2 /> },
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
 
   ];

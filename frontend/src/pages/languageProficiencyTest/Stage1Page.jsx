@@ -13,7 +13,7 @@ import {
   Card,
   CardContent,
   LinearProgress,
-  CircularProgress, // Import CircularProgress for loading spinner
+  CircularProgress,
 } from "@mui/material";
 import { fetchMcqQuestions } from "../../redux/slices/languageProficiencyTest/mcqQuestion.slice";
 import { submitMcqAnswers } from "../../redux/slices/languageProficiencyTest/languageTest.slice";
@@ -24,11 +24,12 @@ const Stage1Page = () => {
   const location = useLocation();
   const { testId } = location.state || {}; // Retrieve testId passed from IntroPage
   const questions = useSelector((state) => state.mcq.questions);
+  const isLoadingQuestions = useSelector((state) => state.mcq.loading); // Assume `loading` is part of mcq slice
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [answers, setAnswers] = useState({});
   const [showResult, setShowResult] = useState(false);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false); // Add loading state for submission
 
   useEffect(() => {
     if (testId) {
@@ -70,6 +71,26 @@ const Stage1Page = () => {
     }
   };
 
+  if (isLoadingQuestions) {
+    // Show loading spinner while questions are being fetched
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f5f7fa",
+        }}
+      >
+        <CircularProgress size={50} sx={{ color: "#4CAF4F" }} />
+        <Typography variant="h6" sx={{ ml: 2 }}>
+          Loading Questions...
+        </Typography>
+      </Box>
+    );
+  }
+
   if (!questions.length) {
     return (
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
@@ -105,8 +126,8 @@ const Stage1Page = () => {
               borderRadius: "15px",
               textAlign: "center",
               backgroundColor: "#ffffff",
-              width:'100%',
-              maxWidth:"600px",
+              width: "100%",
+              maxWidth: "600px",
               "&:hover": {
                 boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
               },
@@ -176,8 +197,8 @@ const Stage1Page = () => {
                 >
                   {questions[currentQuestionIndex]?.options.map((option) => (
                     <FormControlLabel
-                      key={option._id} // Use a unique key
-                      value={option.text} // Use `_id` as the value
+                      key={option._id}
+                      value={option.text}
                       control={
                         <Radio
                           sx={{
@@ -186,7 +207,7 @@ const Stage1Page = () => {
                           }}
                         />
                       }
-                      label={option.text} // Use `text` for the label
+                      label={option.text}
                       sx={{
                         marginBottom: "10px",
                         "& .MuiFormControlLabel-label": {
@@ -219,7 +240,7 @@ const Stage1Page = () => {
                   },
                 }}
                 onClick={handleNextQuestion}
-                disabled={!selectedAnswer || loading} // Disable button during loading
+                disabled={!selectedAnswer || loading}
               >
                 {loading ? (
                   <CircularProgress size={24} sx={{ color: "#ffffff" }} />

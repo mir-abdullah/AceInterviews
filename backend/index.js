@@ -20,6 +20,7 @@ import mcqQuestionRouter from './routes/languageProficiencyTest/mcqQuestion.js'
 import speechQuestionRouter from './routes/languageProficiencyTest/speechQuestion.js'
 import responseQuestionRouter from './routes/languageProficiencyTest/responseQuestion.js'
 import languageTestRouter from './routes/languageProficiencyTest/languageTest.js'
+import PersonalizedPreparationRouter from './routes/personalizedPerperation/personalizedPerperation.js'
 
 
 dotenv.config()
@@ -67,6 +68,9 @@ app.use('/language-test/mcq',mcqQuestionRouter)
 app.use('/language-test/speech',speechQuestionRouter)
 app.use('/language-test/response',responseQuestionRouter)
 app.use('/language-proficiency-test',languageTestRouter)
+
+//personalized perperation
+app.use('/personalized-preperation',PersonalizedPreparationRouter)
 
 app.get('/',(req,res)=>{
     res.send('Hello World')

@@ -41,7 +41,6 @@ const McqQuestions = () => {
 
   const handleAdd = () => {
     setCurrentQuestion("");
-    setCurrentDifficulty("");
     setCurrentOptions([
       { text: "", isCorrect: false },
       { text: "", isCorrect: false },
