@@ -43,7 +43,7 @@ import LanguageTestAdmin from './pages/admin/LanguageTestAdmin.jsx'
 import Stage1Questions from "./pages/QuestionsPage/Stage1Questions.jsx";
 import Stage2Questions from "./pages/QuestionsPage/Stage2Questions.jsx";
 import Stage3Questions from "./pages/QuestionsPage/Stage3Questions.jsx";
-
+import PreperationHub from "./pages/preperation/Preperation.jsx";
 
 
 const router = createBrowserRouter([
@@ -132,6 +132,10 @@ const router = createBrowserRouter([
 
       },
       {
+        path:'preperation',
+        element:<PreperationHub/>
+      },
+      {
         path:"instructions/:interviewId",
         element:<InstructionsPage/>
       },
@@ -143,6 +147,7 @@ const router = createBrowserRouter([
         path:"result-details/:type/:id",
         element: <Feedback />,
       },
+     
       {
         path: "quizes",
         element: <Quizes />,

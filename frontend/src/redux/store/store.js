@@ -18,6 +18,9 @@ import languageTestReducer from '../slices/languageProficiencyTest/languageTest.
 import mcqReducer from '../slices/languageProficiencyTest/mcqQuestion.slice'
 import speechQuestionReducer from '../slices/languageProficiencyTest/speechQuestion.slice'
 import responseQuestionsReducer from '../slices/languageProficiencyTest/responseQuestion.slice'
+import preperationReducer from '../slices/preperation/preperation.slice'
+
+
 
 const store = configureStore({
   reducer: {
@@ -40,6 +43,7 @@ const store = configureStore({
     mcq:mcqReducer,
     speechQuestion: speechQuestionReducer,
     responseQuestions : responseQuestionsReducer,
+    preperation:preperationReducer
 
   },
 });

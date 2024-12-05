@@ -90,7 +90,7 @@ export const getTestDetails = createAsyncThunk("languageTest/getTestDetails", as
 // Count tests for a user
 export const countUserTests = createAsyncThunk("languageTest/countUserTests", async (userId, thunkAPI) => {
   try {
-    const response = await API.get("/language-proficiency-test/count/user", );
+    const response = await API.get("/language-proficiency-test/count", );
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
