@@ -5,6 +5,7 @@ import TechnicalProgress from "../cards/TechnicalProgress";
 import MainCard from "../MainCard";
 import Interviews from "../Interviews";
 import QuizProgressCard from "../cards/QuizProgress";
+import LanguageProgressCard from "../cards/LanguageProgress";
 
 const interview = [
   {
@@ -42,6 +43,10 @@ const Overview = () => {
 
         {/* quiz card*/}
         <QuizProgressCard />
+
+        {/*language progress card*/}
+
+        <LanguageProgressCard/>
 
         {/* Technical Progress Card */}
         <TechnicalProgress />

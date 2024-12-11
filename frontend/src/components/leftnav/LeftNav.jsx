@@ -39,8 +39,8 @@ const Sidebar = () => {
     {path:"/dashboard/language-test" ,name:"Language Test",icon:<LuLanguages/>},
     { path: "/dashboard/quizes", name: "Quizes", icon: <MdOutlineQuiz /> },
     { path: "/dashboard/preperation", name: "Preperation Hub", icon: <LuClipboard /> },
-    { path: "/dashboard/profile", name: "Profile", icon: <LuUser2 /> },
     { path: "/dashboard/results", name: "Results", icon: <LuBookMarked /> },
+    { path: "/dashboard/profile", name: "Profile", icon: <LuUser2 /> },
 
   ];
 
