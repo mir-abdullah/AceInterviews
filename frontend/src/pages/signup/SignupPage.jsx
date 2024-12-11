@@ -175,7 +175,7 @@ export default function SignupPage() {
                 sx={{
                   py: 1.5,
                   fontWeight: 'bold',
-                  backgroundColor: 'purple.500',
+                  backgroundColor: 'green.600',
                   '&:hover': {
                     backgroundColor: 'purple.600',
                   },
@@ -203,7 +203,7 @@ export default function SignupPage() {
           <div className="text-sm text-center mt-6">
             Already have an account?{' '}
             <Link to="/login">
-              <Typography component="span" sx={{ color: 'blue', '&:hover': { textDecoration: 'underline' } }}>
+              <Typography component="span" sx={{ color: 'green', '&:hover': { textDecoration: 'underline' } }}>
                 Login here
               </Typography>
             </Link>

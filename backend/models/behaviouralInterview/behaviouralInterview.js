@@ -8,10 +8,9 @@ const interviewSchema = new mongoose.Schema({
       question: { type: String },
       answer: String,
       evaluation: {
-        accuracyOfAnswer:String,
-        speechAndGrammarAnalysis:String,
-        SpeechQualityAndConfidence:String,
-        TipsAndIdealAnswer:String,
+        feedback:String,
+        confidence:String,
+        IdealAnswer:String,
       },
     }
   ],

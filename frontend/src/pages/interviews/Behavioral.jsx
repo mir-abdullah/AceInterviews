@@ -1,90 +1,119 @@
-// src/components/Behavioral/Behavioral.jsx
-
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Box,
   Button,
   Card,
   Typography,
-  Paper,
-  Alert,
+  TextField,
+  CircularProgress,
+  Modal,
+  Stack,
+  Avatar,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Webcam from "react-webcam";
-import { FaMicrophone, FaCamera, FaStop } from "react-icons/fa";
 import axios from "axios";
-
-const questions = [
-  {
-    id: 1,
-    text: "Tell me about a time you had to work under pressure to meet a tight deadline in a previous kitchen environment.",
-  },
-  {
-    id: 2,
-    text: "Describe a situation where you had to deal with a difficult coworker.",
-  },
-  {
-    id: 3,
-    text: "Give me an example of a time you demonstrated leadership skills.",
-  },
-  {
-    id: 4,
-    text: "Tell me about a time you had to make a difficult decision at work.",
-  },
-  {
-    id: 5,
-    text: "Describe a scenario where you had to adapt to significant changes at work.",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { useParams ,useNavigate} from "react-router-dom";
+import {
+  fetchInterview,
+  addBehaviouralInterview,
+} from "../../redux/slices/behaviouralInterview/behaviouralInterview.slice";
 
 const Behavioral = () => {
+  const { interviewId } = useParams();
+  const dispatch = useDispatch();
+  const interview = useSelector(
+    (state) => state.behaviouralInterview.interview
+  );
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isRecording, setIsRecording] = useState(false);
-  const [status, setStatus] = useState("");
-  const [gaze, setGaze] = useState("");
-  const [error, setError] = useState(null);
+  const [answer, setAnswer] = useState("");
+  const [statusCounts, setStatusCounts] = useState({
+    Attentive: 0,
+    Distracted: 0,
+    Drowsy: 0,
+  });
+  const [answers, setAnswers] = useState({});
+  const [isSpeechActive, setIsSpeechActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const webcamRef = useRef(null);
   const intervalIdRef = useRef(null);
+  const speechRecognitionRef = useRef(null);
+  const navigate =useNavigate()
 
-  const handleNextQuestion = () => {
-    setCurrentQuestionIndex((prev) => (prev + 1) % questions.length);
+  useEffect(() => {
+    if (interviewId) {
+      dispatch(fetchInterview(interviewId));
+    }
+  }, [dispatch, interviewId]);
+
+  useEffect(() => {
+    startVideoProcessing();
+    handleSpeechStart();
+    return () => {
+      stopVideoProcessing();
+      handleSpeechStop();
+    };
+  }, []);
+
+  const handleSpeechStart = () => {
+    if (!("webkitSpeechRecognition" in window)) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+      const speechResult =
+        event.results[event.results.length - 1][0].transcript;
+      setAnswer((prev) => `${prev} ${speechResult}`);
+    };
+
+    recognition.onerror = (err) => {
+      console.error("Speech recognition error:", err);
+    };
+
+    recognition.onend = () => {
+      setIsSpeechActive(false);
+    };
+
+    speechRecognitionRef.current = recognition;
+    setIsSpeechActive(true);
+    recognition.start();
   };
 
-  const handlePrevQuestion = () => {
-    setCurrentQuestionIndex(
-      (prev) => (prev - 1 + questions.length) % questions.length
-    );
-  };
-
-  const handleRecording = () => {
-    if (!isRecording) {
-      setIsRecording(true);
-      setStatus("");
-      setGaze("");
-      // Start capturing images every 2 seconds
-      intervalIdRef.current = setInterval(() => {
-        captureImage();
-      }, 2000);
-    } else {
-      setIsRecording(false);
-      clearInterval(intervalIdRef.current);
+  const handleSpeechStop = () => {
+    if (speechRecognitionRef.current) {
+      speechRecognitionRef.current.stop();
+      setIsSpeechActive(false);
     }
   };
 
-  // Capture the image from webcam
-  const captureImage = useCallback(async () => {
+  const startVideoProcessing = () => {
+    intervalIdRef.current = setInterval(() => {
+      captureFrame();
+    }, 2000);
+  };
+
+  const stopVideoProcessing = () => {
+    clearInterval(intervalIdRef.current);
+  };
+
+  const captureFrame = useCallback(async () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
-
-      // Send the image to FastAPI server
       if (imageSrc) {
         try {
           const blob = await fetch(imageSrc).then((res) => res.blob());
-
           const formData = new FormData();
           formData.append("file", blob, "image.jpg");
 
-          // Post to FastAPI backend
           const response = await axios.post(
             "http://localhost:8000/analyze_frame",
             formData,
@@ -92,270 +121,153 @@ const Behavioral = () => {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
+              withCredentials: true,
             }
           );
 
-          // Ensure response.data.status and response.data.gaze are strings
-          const receivedStatus =
-            typeof response.data.status === "string"
-              ? response.data.status
-              : response.data.status?.message || "N/A";
-          const receivedGaze =
-            typeof response.data.gaze === "string"
-              ? response.data.gaze
-              : response.data.gaze?.message || "N/A";
-
-          // Update the UI with the result from the backend
-          setStatus(receivedStatus);
-          setGaze(receivedGaze);
-          setError(null);
+          const status = response.data[0].status;
+          setStatusCounts((prev) => ({
+            ...prev,
+            [status]: prev[status] + 1,
+          }));
         } catch (err) {
-          console.error("Error sending image to backend:", err);
-          setError(
-            err.response?.data?.message || "Failed to analyze the frame."
-          );
+          console.error("Error analyzing frame:", err);
         }
       }
     }
   }, []);
 
-  const handleVideoSave = useCallback(() => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      const stream = videoElement.srcObject;
-      if (stream) {
-        const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-        const chunks = [];
-
-        recorder.ondataavailable = (e) => {
-          if (e.data.size > 0) {
-            chunks.push(e.data);
-          }
-        };
-
-        recorder.onstop = () => {
-          const blob = new Blob(chunks, { type: "video/webm" });
-          const videoUrl = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = videoUrl;
-          link.download = `Interview_Question_${currentQuestionIndex + 1}.webm`;
-          link.click();
-        };
-
-        recorder.start();
-        setTimeout(() => {
-          recorder.stop();
-        }, 1000); // Stop recording after 1 second
-      }
+  const handleSubmitAnswer = () => {
+    const questionId = interview?.questions?.[currentQuestionIndex]?._id;
+  
+    // Make sure the last question's answer is added to the answers state
+    if (questionId) {
+      setAnswers((prev) => ({
+        ...prev,
+        [questionId]: {
+          answer,
+          statusCounts: { ...statusCounts },
+        },
+      }));
     }
-  }, [currentQuestionIndex]);
+  
+    // Reset the state for the next question or finish the interview
+    setAnswer("");
+    setStatusCounts({ Attentive: 0, Distracted: 0, Drowsy: 0 });
+  
+    // Move to the next question or reset to the first question if it's the last
+    setCurrentQuestionIndex((prev) => {
+      const nextIndex = prev + 1;
+      return nextIndex < (interview?.questions?.length || 1) ? nextIndex : prev;
+    });
+  
+    // If it's the last question, submit the interview
+    if (currentQuestionIndex === (interview?.questions?.length || 1) - 1) {
+      handleSubmitInterview();  // Submit the interview when the last question is answered
+    }
+  };
+  
+  
 
-  useEffect(() => {
-    return () => {
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
+  const handleSubmitInterview = async () => {
+    setLoading(true);
+    try {
+      // Ensure the last question's answer is added to the answers before submission
+      const questionId = interview?.questions?.[currentQuestionIndex]?._id;
+      if (questionId && answer) {
+        setAnswers((prev) => ({
+          ...prev,
+          [questionId]: {
+            answer,
+            statusCounts: { ...statusCounts },
+          },
+        }));
       }
-    };
-  }, []);
+  
+      // Dispatch the action to save the answers
+      await dispatch(addBehaviouralInterview({ interviewTopicId: interviewId, answers }));
+      setShowModal(true);  // Show success modal after submission
+    } catch (err) {
+      console.error("Error submitting interview:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate("dashboard/results")
+  };
 
   return (
-    <Box
-      className="p-5 md:flex gap-8"
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", md: "row" },
-        gap: 8,
-        padding: 5,
-      }}
-    >
-      {/* Question Card */}
-      <Box
-        className="md:w-1/2 w-full"
-        sx={{
-          width: { xs: "100%", md: "50%" },
-        }}
-      >
-        <Card
-          className="p-6 space-y-6 shadow-lg h-full flex flex-col justify-between"
-          sx={{
-            padding: 6,
-            boxShadow: 3,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          {/* Question Navigation */}
-          <Box>
-            <Box
-              className="flex justify-between flex-wrap p-6"
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "space-between",
-                padding: 2,
-              }}
-            >
-              {questions.map((question, index) => (
-                <Button
-                  key={question.id}
-                  variant={
-                    currentQuestionIndex === index ? "contained" : "outlined"
-                  }
-                  onClick={() => setCurrentQuestionIndex(index)}
-                  className="rounded-full mb-2"
-                  sx={{
-                    margin: 0.5,
-                    borderRadius: "50px",
-                    textTransform: "none",
-                  }}
-                >
-                  Question #{index + 1}
-                </Button>
-              ))}
-            </Box>
+    <Box className="p-5 md:flex gap-8" sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 8, padding: 5 }}>
+      <Box className="md:w-1/2 w-full" sx={{ width: { xs: "100%", md: "50%" } }}>
+        <Card className="p-6 space-y-6 shadow-lg h-full flex flex-col justify-between" sx={{ padding: 6, boxShadow: 3, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <Typography variant="h6" className="font-bold text-neutralBlack mt-4" sx={{ fontWeight: "bold", color: "#263238" }}>
+            Q. {interview?.questions?.[currentQuestionIndex]?.text || "Loading question..."}
+          </Typography>
 
-            {/* Current Question */}
-            <Typography
-              variant="h6"
-              className="font-bold text-neutralBlack mt-4"
-              sx={{ fontWeight: "bold", color: "#263238" }}
-            >
-              Q. {questions[currentQuestionIndex].text}
-            </Typography>
+          <TextField
+            multiline
+            rows={4}
+            placeholder="Type your answer here or use speech..."
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            sx={{ mt: 2, width: "100%" }}
+          />
 
-            {/* Status Icons */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: 2,
-                gap: 1,
-              }}
-            >
-              <FaMicrophone size={20} color="#4CAF50" />
-              <Typography variant="body1" color="text.secondary">
-                {isRecording ? "Recording..." : "Not Recording"}
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Note Section */}
-          <Paper
-            variant="outlined"
-            className="p-3 mt-6"
-            sx={{
-              backgroundColor: "#e8f5e9",
-              borderColor: "#4CAF4F",
-              padding: 2,
-            }}
+          <Button
+            variant="contained"
+            color="success"
+            onClick={currentQuestionIndex === (interview?.questions?.length || 1) - 1 ? handleSubmitInterview : handleSubmitAnswer}
+            sx={{ mt: 2 }}
+            disabled={loading}
           >
-            <Typography variant="body2" className="font-semibold text-gray-800">
-              <span className="font-semibold text-green-700">Note:</span> Click
-              on "Start Recording" when you want to answer the question. At the end
-              of the interview, we will provide you with feedback along with the
-              correct answers for each question to compare with your responses.
-            </Typography>
-          </Paper>
+            {loading ? <CircularProgress size={24} /> : currentQuestionIndex === (interview?.questions?.length || 1) - 1 ? "Submit Interview" : "Submit Answer"}
+          </Button>
         </Card>
       </Box>
 
-      {/* Webcam and Controls */}
-      <Box
-        className="md:w-1/2 w-full flex flex-col items-center mt-6 md:mt-0"
-        sx={{
-          width: { xs: "100%", md: "50%" },
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: { xs: 6, md: 0 },
-        }}
-      >
-        {/* Webcam Feed */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="rounded-lg overflow-hidden shadow-lg mb-4"
-          style={{
-            borderRadius: "8px",
-            overflow: "hidden",
-            width: "100%", 
-            maxWidth: "600px",
-            aspectRatio: "4/3", 
-          }}
-        >
+      <Box className="md:w-1/2 w-full flex flex-col items-center mt-6 md:mt-0" sx={{ width: { xs: "100%", md: "50%" }, display: "flex", flexDirection: "column", alignItems: "center", marginTop: { xs: 6, md: 0 } }}>
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="rounded-lg overflow-hidden shadow-lg mb-4" style={{ borderRadius: "8px", overflow: "hidden", width: "100%", maxWidth: "600px", aspectRatio: "4/3" }}>
           <Webcam
             ref={webcamRef}
-            audio={isRecording}
+            audio={false}
             screenshotFormat="image/jpeg"
             videoConstraints={{ width: 640, height: 480, facingMode: "user" }}
-            style={{
-              width: "100%", // Makes it responsive to the container
-              height: "100%", // Ensure it fills the container
-              objectFit: "cover", // Covers the box without distorting the feed
-            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </motion.div>
 
-        {/* Control Buttons */}
-        <Box
-          className="flex gap-4"
-          sx={{
-            display: "flex",
-            gap: 2,
-            marginTop: 2,
-          }}
-        >
-          <Button
-            variant="contained"
-            startIcon={isRecording ? <FaStop /> : <FaMicrophone />}
-            onClick={handleRecording}
-            className="bg-brandPrimary"
-            sx={{
-              backgroundColor: isRecording ? "#f44336" : "#4CAF50",
-              "&:hover": {
-                backgroundColor: isRecording ? "#d32f2f" : "#388E3C",
-              },
-              textTransform: "none",
-            }}
-          >
-            {isRecording ? "Stop Recording" : "Start Recording"}
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<FaCamera />}
-            onClick={handleVideoSave}
-            className="bg-purple-500"
-            sx={{
-              backgroundColor: "#9C27B0",
-              "&:hover": {
-                backgroundColor: "#7B1FA2",
-              },
-              textTransform: "none",
-            }}
-            disabled={!isRecording}
-          >
-            Submit Answer
-          </Button>
-        </Box>
-
-        {/* Error Message */}
-        {error && (
-          <Alert severity="error" sx={{ marginTop: 2, width: "100%" }}>
-            {error}
-          </Alert>
-        )}
-
-        {/* Analysis Results */}
-        {!error && (
-          <Box className="mt-4" sx={{ textAlign: "center", marginTop: 2 }}>
-            <Typography variant="h6">Status: {status || "N/A"}</Typography>
-            <Typography variant="h6">Gaze: {gaze || "N/A"}</Typography>
-          </Box>
-        )}
+        {/* <Typography variant="body2" color="textSecondary">
+          Attentive: {statusCounts.Attentive}, Distracted: {statusCounts.Distracted}, Drowsy: {statusCounts.Drowsy}
+        </Typography> */}
       </Box>
+
+      <Modal open={showModal} onClose={handleCloseModal} aria-labelledby="modal-title" aria-describedby="modal-description">
+        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 400, bgcolor: "background.paper", boxShadow: 24, p: 4, borderRadius: "12px" }}>
+          <Stack spacing={2} alignItems="center">
+            <Avatar sx={{ bgcolor: 'green.500', width: 56, height: 56 }}>
+              <Typography variant="h4" color="white">✓</Typography>
+            </Avatar>
+            <Typography id="modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+              Interview Completed!
+            </Typography>
+            <Typography id="modal-description" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+              Your interview has been submitted successfully.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCloseModal}
+              sx={{ mt: 3, px: 4, py: 1.5 }}
+            >
+              Close
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
     </Box>
   );
 };

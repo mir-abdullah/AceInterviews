@@ -66,7 +66,7 @@ app.use('/feedback',FeedbackRouter)
 //language Proficiency test
 app.use('/language-test/mcq',mcqQuestionRouter)
 app.use('/language-test/speech',speechQuestionRouter)
-app.use('/language-test/response',responseQuestionRouter)
+app.use('/language-test/response',responseQuestionRouter)   
 app.use('/language-proficiency-test',languageTestRouter)
 
 //personalized perperation

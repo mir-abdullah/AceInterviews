@@ -1,6 +1,19 @@
 import BehaviourInterviewTopic from "../../models/behaviouralInterview/behaviourTopic.js";
 import Question from "../../models/behaviouralInterview/behaviouralQuestion.js";
 import behaviouralInterview from "../../models/behaviouralInterview/behaviouralInterview.js";
+import dotenv from "dotenv";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+dotenv.config();
+
+//call model
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  generationConfig: {
+    responseMimeType: "application/json",
+  },
+});
 
 //start interview
 export const startInterview = async (req, res) => {
@@ -8,15 +21,18 @@ export const startInterview = async (req, res) => {
     const { interviewTopicId } = req.params;
     const userId = req.userId;
     const { answers } = req.body;
+    console.log("Answers received:", answers);
 
     const interviewTopic = await BehaviourInterviewTopic.findById(
       interviewTopicId
     ).populate("questions");
+
     if (!interviewTopic) {
       return res.status(404).json({ message: "Interview Topic not found" });
     }
 
     const questions = interviewTopic.questions;
+    // console.log("Questions:", questions);
 
     if (questions.length === 0) {
       return res
@@ -28,23 +44,35 @@ export const startInterview = async (req, res) => {
       user: userId,
       topic: interviewTopicId,
       responses: [],
-      totalScore: 0,
+     
     });
 
-    // Iterate over the questions and evaluate the answers
     for (let question of questions) {
-      const userAnswer = answers[question._id];
+      // Convert question ID to string to match object keys
+      const questionId = question._id.toString();
+      const userResponse = answers[questionId];
 
-      const evaluation = await evaluateAnswer(question.text, userAnswer);
+      if (!userResponse) {
+        console.error(`No response found for question ID: ${questionId}`);
+        continue; // Skip this question
+      }
+
+      const { answer, statusCounts } = userResponse;
+
+      const evaluation = await evaluateAnswer(
+        question.text,
+        answer,
+        statusCounts
+      );
 
       interview.responses.push({
         question: question.text,
-        answer: userAnswer,
+        answer,
         evaluation: {
-          accuracyOfAnswer: evaluation.accuracyOfAnswer,
-          speechAndGrammarAnalysis: evaluation.speechAndGrammarAnalysis,
-          speechQualityAndConfidence: evaluation.speechQualityAndConfidence,
-          tipsAndIdealAnswer: evaluation.tipsAndIdealAnswer,
+          feedback: evaluation.accuracyOfAnswer,
+          confidence: evaluation.confidence,
+          IdealAnswer: evaluation.tipsAndIdealAnswer,
+          // statusCounts,
         },
       });
     }
@@ -55,35 +83,41 @@ export const startInterview = async (req, res) => {
       .status(200)
       .json({ message: "Interview completed successfully", interview });
   } catch (error) {
+    console.error("Error starting interview:", error);
     res
       .status(500)
       .json({ message: "Error starting interview", error: error.message });
   }
 };
 
+
+
 // Evaluation function
-async function evaluateAnswer(question, answer) {
+async function evaluateAnswer(question, answer, statusCounts) {
   try {
+    const { Attentive, Distracted, Drowsy } = statusCounts;
+
     const prompt = `
-        You are an expert evaluator. Please evaluate the following answer based on the given question.
-        Question: ${question}
-        Answer: ${answer}
-        Provide a detailed feedback with your evaluation.
-        Your evaluation should focus on the following aspects:
-           1. Accuracy of the answer.
-           2. Speech and grammar analysis.
-           3. Speech quality and confidence.
-           4. Tips for improvement and the ideal answer.
-        Provide your evaluation in the following JSON format:
-        
-         evaluation ={
-         "accuracyOfAnswer" :  "string",
-         "speechAndGrammarAnalysis"  : "string",
-         "speechQualityAndConfidence" : "string",
-         "tipsAndIdealAnswer" :  "string",
-       
-         }
-        }`;
+      You are an expert evaluator. Please evaluate the following answer based on the given question.
+      Question: ${question}
+      Answer: ${answer}
+      The user's attentiveness during the answer is provided below:
+      - Attentive instances: ${Attentive}
+      - Distracted instances: ${Distracted}
+      - Drowsy instances: ${Drowsy}
+
+      Based on this information:
+      1. Provide an evaluation of the user's confidence level considering attentiveness, distraction, and drowsiness counts.
+      2. Evaluate the accuracy and quality of the answer.
+      3. Suggest improvements and provide an ideal answer.
+
+      Provide your evaluation in the following JSON format:
+      {
+        "accuracyOfAnswer": "string",
+        "confidence": "string",
+        "tipsAndIdealAnswer": "string"
+      }
+    `;
 
     const result = await model.generateContent(prompt);
 
@@ -99,28 +133,25 @@ async function evaluateAnswer(question, answer) {
 
     const evaluation = JSON.parse(evaluationText);
 
-    const accuracyOfAnswer = evaluation.accuracyOfAnswer;
-    const speechAndGrammarAnalysis = evaluation.speechAndGrammarAnalysis;
-    const speechQualityAndConfidence = evaluation.speechQualityAndConfidence;
-    const tipsAndIdealAnswer = evaluation.tipsAndIdealAnswer;
+    const accuracyOfAnswer = evaluation.accuracyOfAnswer || "N/A";
+    const confidence = evaluation.confidence || "N/A";
+    const tipsAndIdealAnswer = evaluation.tipsAndIdealAnswer || "N/A";
 
-    // Return
     return {
       accuracyOfAnswer,
-      speechAndGrammarAnalysis,
-      speechQualityAndConfidence,
+      confidence,
       tipsAndIdealAnswer,
     };
   } catch (error) {
     console.error("Error evaluating answer:", error.message);
     return {
       accuracyOfAnswer: "N/A",
-      speechAndGrammarAnalysis: "N/A",
-      speechQualityAndConfidence: "N/A",
+      confidence: "Unable to evaluate due to an error",
       tipsAndIdealAnswer: "Unable to evaluate answer at this time",
     };
   }
 }
+
 
 //get all interview results
 export const interviewResults = async (req, res) => {

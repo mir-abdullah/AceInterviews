@@ -265,6 +265,92 @@ const Feedback = () => {
     );
   }
 
+  if (type==="behavioral"){
+    return (
+      <Box className="p-6 min-h-screen bg-gradient-to-t from-lime-100 to-cyan-100 rounded-2xl">
+      <h1 className="text-black text-4xl font-semibold mb-2 text-center">
+        Interview Feedback
+      </h1>
+   
+      <Grid container spacing={2}>
+        {item.responses.map((response, index) => (
+          <Grid item xs={12} key={response._id}>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="p-2"
+            >
+              <Accordion
+                expanded={expanded === response._id}
+                onChange={handleChange(response._id)}
+                className="p-2"
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={`panel${response._id}a-content`}
+                  id={`panel${response._id}a-header`}
+                >
+                  <Typography className="text-gray-900">
+                    <strong>Q{index + 1}</strong>: {response.question}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails className="space-y-4">
+                  <Paper className="p-4 bg-red-50 border border-red-200">
+                  
+                    <Typography variant="body2" className="text-black font-bold">
+                      <strong>Answer: {response.answer ?? "No answer provided"}</strong>
+                    </Typography>
+                  </Paper>
+                  <Paper className="p-4 bg-purple-50 border border-purple-200">
+                    <Typography
+                      variant="body1"
+                      className="text-purple-700 font-semibold mb-2"
+                    >
+                      <strong>Feedback:</strong>
+                    </Typography>
+                    <Typography variant="body2" className="text-black text-bold">
+                      <strong>{response.evaluation?.feedback ?? "No feedback provided"}</strong>
+                    </Typography>
+                  </Paper>
+                  <Paper className="p-4 bg-green-50 border border-green-200">
+                    <Typography
+                      variant="body1"
+                      className="text-green-700 font-semibold mb-2"
+                    >
+                      <strong>Confidence Feedback:</strong>
+                    </Typography>
+                    <Typography variant="body2" className="text-black text-bold">
+                      <strong>{response.evaluation?.confidence ?? "No suggestion provided"}</strong>
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      className="text-green-700 font-semibold mb-2"
+                    >
+                      <strong>Ideal Answer:</strong>
+                    </Typography>
+                    <Typography variant="body2" className="text-black text-bold">
+                      <strong>{response.evaluation?.IdealAnswer ?? "No suggestion provided"}</strong>
+                    </Typography>
+                  </Paper>
+                </AccordionDetails>
+              </Accordion>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+      <div className="flex justify-center items-center mb-4">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleBackClick}
+        >
+          Back to Results
+        </Button>
+      </div>
+    </Box>
+    )
+  }
   const totalMarks = item.responses.reduce((acc, response) => {
     const score = response.evaluation?.score ?? 0;
     return acc + score;
