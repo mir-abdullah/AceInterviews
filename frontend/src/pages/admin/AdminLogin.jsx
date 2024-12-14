@@ -86,7 +86,7 @@ const AdminLogin = () => {
             <div>
               <button
                 type="submit"
-                className={`w-full py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
+                className={`w-full py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 disabled={loading}

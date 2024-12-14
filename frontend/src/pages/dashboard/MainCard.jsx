@@ -17,14 +17,15 @@ const MainCard = () => {
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PlatformStatistic
-          count={158}
+          count={30}
           icon={<AiOutlineUsergroupAdd />}
           metric="Total Interviews"
+          className="on hover:text-white"
         />
         <PlatformStatistic
-          count="27 min"
+          count="15"
           icon={<AiOutlineClockCircle />}
-          metric="Avg. Duration"
+          metric="Avg. Score"
         />
         <PlatformStatistic
           count="92%"
@@ -32,7 +33,7 @@ const MainCard = () => {
           metric="Satisfaction Rate"
         />
         <PlatformStatistic
-          count="Web & Mobile"
+          count="Web"
           icon={<FaGlobeAmericas />}
           metric="Accessibility"
         />
@@ -43,16 +44,16 @@ const MainCard = () => {
 
 const PlatformStatistic = ({ count, icon, metric }) => (
   <motion.div
-    className="bg-neutralSilver p-5 rounded-lg flex items-center justify-between hover:bg-brandPrimary transition-all duration-300 shadow-sm hover:shadow-lg"
+    className="bg-neutralSilver p-5 rounded-lg flex items-center justify-between hover:bg-brandPrimary transition-all duration-300 shadow-sm hover:shadow-lg on hover:text-white"
     whileHover={{ scale: 1.05 }}
     transition={{ duration: 0.3 }}
   >
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4 on hover:text-white" >
       <span className="text-4xl text-brandPrimary">{icon}</span>
-      <span className="text-lg font-semibold text-neutralGrey">{metric}</span>
+      <span className="text-lg font-semibold text-neutralGrey on hover:text-white">{metric}</span>
     </div>
     <motion.h1
-      className="text-4xl font-bold text-neutralBlack"
+      className="text-4xl font-bold text-neutralBlack on hover:text-white"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}

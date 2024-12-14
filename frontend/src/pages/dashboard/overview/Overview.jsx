@@ -48,8 +48,8 @@ const Overview = () => {
 
         <LanguageProgressCard/>
 
-        {/* Technical Progress Card */}
-        <TechnicalProgress />
+        {/* Technical Progress Card
+        <TechnicalProgress /> */}
       </div>
 
       {/* Previous Interviews Section */}

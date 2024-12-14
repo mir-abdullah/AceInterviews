@@ -197,7 +197,8 @@ const Behavioral = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    navigate("dashboard/results")
+    navigate("/dashboard/results", { state: { answers } }); 
+
   };
 
   return (
@@ -263,7 +264,7 @@ const Behavioral = () => {
               onClick={handleCloseModal}
               sx={{ mt: 3, px: 4, py: 1.5 }}
             >
-              Close
+              Close & Review
             </Button>
           </Stack>
         </Box>
