@@ -139,7 +139,7 @@ const Header = () => {
             }}
             TransitionComponent={Grow} // Using MUI's built-in Grow transition
           >
-            <MenuItem onClick={handleCloseProfileMenu}>My Profile</MenuItem>
+            {/* <MenuItem onClick={handleCloseProfileMenu}>My Profile</MenuItem> */}
             <MenuItem onClick={handleLogout}>Signout</MenuItem> {/* Call logout here */}
           </Menu>
         </div>

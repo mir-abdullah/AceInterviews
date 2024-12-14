@@ -418,10 +418,10 @@ const Feedback = () => {
                       variant="body1"
                       className="text-green-700 font-semibold mb-2"
                     >
-                      <strong>Suggestions:</strong>
+                      <strong>Ideal Answer:</strong>
                     </Typography>
                     <Typography variant="body2" className="text-black text-bold">
-                      <strong>{response.evaluation?.suggestion ?? "No suggestion provided"}</strong>
+                      <strong>{response.evaluation?.idealAnswer ?? "No suggestion provided"}</strong>
                     </Typography>
                   </Paper>
                 </AccordionDetails>

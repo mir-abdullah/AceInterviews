@@ -169,7 +169,7 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 variant="contained"
-                color="primary"
+                color="success"
                 fullWidth
                 disabled={loading}
                 sx={{

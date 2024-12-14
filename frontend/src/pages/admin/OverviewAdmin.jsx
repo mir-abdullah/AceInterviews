@@ -13,7 +13,7 @@ const OverviewAdmin = () => {
         <StatCard />
         <InterviewsChart/>
       </div>
-      <SessionsChart />
+      {/* <SessionsChart /> */}
     </>
   );
 };
